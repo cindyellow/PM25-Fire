@@ -1,0 +1,126 @@
+---
+title: "Week 1: Data Exploration"
+subtitle: "SURA 2022"
+author: "Shih-Ting (Cindy) Huang"
+date: "06/01/2022"
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE)
+
+library(data.table)
+library(tidyverse)
+library(dplyr)
+library(leaflet)
+```
+
+# Data Information
+## Time Frame
+
+
+## Data Structure, Variables, Etc.
+
+
+## Data Sources
+
+
+# Sample Data Visualization
+## Data Cleaning & Wrangling
+```{r}
+# Read the text file
+may1 <- read.delim("hms20220501.txt", sep=",", strip.white=TRUE)
+```
+
+```{r, eval=FALSE}
+str(may1)
+```
+
+```{r, eval=FALSE}
+head(may1)
+```
+
+```{r}
+# Rename columns
+may1 <- may1 %>%
+  rename(
+    longitude = Lon,
+    latitude = Lat,
+    date = YearDay,
+    time = Time, 
+    satellite = Satellite,
+    method_of_detect = Method.of.Detect,
+    ecosys = Ecosys,
+    frp = Fire.RadPower
+  )
+```
+
+```{r}
+# Convert to correct type for date
+may1 <- may1 %>%
+  mutate(
+    date = as.Date(as.character(date),          
+                   format = "%Y%j")
+  )
+```
+
+```{r}
+# Convert fill values to NA for FRP
+may1 <- may1 %>%
+   mutate(frp = na_if(frp, -999.000))
+```
+
+```{r}
+# Take a look at the distribution of FRP
+may1 %>%
+  ggplot(aes(x=frp)) +
+  geom_histogram(fill="#727D71") +
+  theme_minimal() +
+  xlab("FRP") + 
+  ylab("Frequency") +
+  labs(title = "Histogram for FRP") +
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
+```
+
+```{r}
+# Convert to factors
+may1 <- may1 %>%
+  mutate(
+    method_of_detect = as.factor(method_of_detect),
+    satellite = as.factor(satellite),
+    ecosys = as.factor(ecosys)
+  )
+```
+
+## Daily
+```{r}
+det_pal <- colorFactor(c('#5E565A', '#8B80F9', '#A9CBB7', '#FF934F'), domain = may1$method_of_detect[!is.na(may1$method_of_detect)], na.color = NA)
+
+may1 %>%
+  leaflet() %>%
+  addProviderTiles('OpenStreetMap') %>%
+  addCircles(lat=~latitude, lng=~longitude, color=~det_pal(method_of_detect), label =~paste('FRP', frp), opacity = 1, fillOpacity=1, radius=~30*frp) %>%
+  addLegend('bottomleft', pal = det_pal, values = may1$method_of_detect, title = "Method of Detection", opacity=1, na.label=NULL)
+```
+
+
+## Weekly
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
