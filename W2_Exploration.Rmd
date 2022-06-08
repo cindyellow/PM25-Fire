@@ -1,0 +1,343 @@
+---
+title: "Week 2: Data Exploration"
+subtitle: "SURA 2022"
+author: "Shih-Ting (Cindy) Huang"
+date: '2022-06-08'
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE)
+
+library(tidyverse)
+library(dplyr)
+library(leaflet)
+library(sf)
+library(mapview)
+library(rgdal)
+library(shiny)
+```
+
+## HMS Fire Data: More Exploration
+
+```{r}
+fire <- read.delim("hms20220501.txt", sep=",", strip.white=TRUE)
+```
+
+```{r}
+# Rename columns
+fire <- fire %>%
+  rename(
+    longitude = Lon,
+    latitude = Lat,
+    date = YearDay,
+    time = Time, 
+    satellite = Satellite,
+    method_of_detect = Method.of.Detect,
+    ecosys = Ecosys,
+    frp = Fire.RadPower
+  ) %>%
+  mutate(
+    date = as.Date(as.character(date),          
+                   format = "%Y%j"),
+    method_of_detect = as.factor(method_of_detect),
+    satellite = as.factor(satellite),
+    ecosys = as.factor(ecosys),
+    time = substr(as.POSIXct(sprintf("%04.0f", time), format='%H%M'), 12, 16)
+  )
+```
+
+```{r}
+# Add a new column for date and time
+fire <- fire %>%
+  mutate(
+    date_comp = as.POSIXct(paste(date, time), 
+                            format = "%Y-%m-%d %H:%M"),
+    frp = na_if(frp, -999.000)
+  )
+```
+
+```{r}
+# Combine data from different days
+filelist = list.files(path="./data/", pattern = "*.txt")
+
+#assuming tab separated values with a header    
+datalist = lapply(filelist, function(x)read.delim(paste("./data/",x,sep=""), sep=",", strip.white=TRUE))
+
+#assuming the same header/columns for all files
+califire <- do.call("rbind", datalist) 
+
+# Filter by California/West Coast
+califire <- califire %>%
+  filter(between(Lon,-125,-117) & between(Lat,32,44))
+
+# Preprocess them
+# Rename columns
+califire <- califire %>%
+  rename(
+    longitude = Lon,
+    latitude = Lat,
+    date = YearDay,
+    time = Time, 
+    satellite = Satellite,
+    method_of_detect = Method.of.Detect,
+    ecosys = Ecosys,
+    frp = Fire.RadPower
+  ) %>%
+  mutate(
+    date = as.Date(as.character(date),          
+                   format = "%Y%j"),
+    method_of_detect = as.factor(method_of_detect),
+    satellite = as.factor(satellite),
+    ecosys = as.factor(ecosys),
+    time = substr(as.POSIXct(sprintf("%04.0f", time), format='%H%M'), 12, 16)
+  )
+# Add a new column for date and time
+califire <- califire %>%
+  mutate(
+    date_comp = as.POSIXct(paste(date, time), 
+                            format = "%Y-%m-%d %H:%M"),
+    frp = na_if(frp, -999.000)
+  )
+```
+
+### Device 
+There is correspondence between method of detection and satellites:
+
+- VIIRs: SUOMI NPP, NOAA20
+- FDC: GOES-EAST
+- MODIS: MODIS-TERRA
+
+Plotting another date, we see that the satellites don't have a regular record time. 
+
+```{r, warning=FALSE}
+# Fire detection time by device
+fire %>%
+  ggplot(aes(x=date_comp, fill=satellite)) +
+  geom_histogram(bins=30) +
+  xlim(as.POSIXct("2022-05-01 00:00"), as.POSIXct("2022-05-01 23:59"))+
+  theme_minimal() +
+  xlab("Record Time") + 
+  ylab("Frequency") +
+  labs(title = "Histogram for Time") +
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
+
+fire %>%
+  ggplot(aes(x=date_comp, fill=method_of_detect)) +
+  geom_histogram(bins=30) +
+  xlim(as.POSIXct("2022-05-01 00:00"), as.POSIXct("2022-05-01 23:59"))+
+  theme_minimal() +
+  xlab("Record Time") + 
+  ylab("Frequency") +
+  labs(title = "Histogram for Time") +
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
+```
+```{r}
+califire %>%
+  filter(format(as.Date(date_comp,format="%Y-%m-%d %H:%M"), format = "%d") == "08") %>%
+  ggplot(aes(x=date_comp, fill=satellite)) +
+  geom_histogram(bins=30) +
+  xlim(as.POSIXct("2018-11-08 00:00"), as.POSIXct("2018-11-08 23:59"))+
+  theme_minimal() +
+  xlab("Record Time") + 
+  ylab("Frequency") +
+  labs(title = "Histogram for Time") +
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
+
+```
+
+### Ecosys
+
+The different types of ecosystems are listed in the [GLCC README file](https://www.usgs.gov/media/files/global-land-cover-characteristics-data-base-readme-version2) under Appendix 1. The ones we have in the dataset (during the Californian fire) are:
+
+```{r}
+califire %>%
+  ggplot(aes(ecosys)) +
+  geom_bar()+
+  theme_minimal() +
+  xlab("Ecosystem") + 
+  ylab("Frequency") +
+  labs(title = "Bar Graph for Ecosystem Code") +
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
+```
+From the bar chart, we can see that the following ecosystems are the most prominent during the Californian fire:
+
+- 22: Cool Conifer Forest 
+- 46: Mediterranean Scrub 
+- 26: Deciduous Broadleaf Forest 
+- 24: Mixed Forest 
+- 91: Woody Savanna
+
+### Fire Detection Overtime (Weeks)
+
+```{r}
+# Plot change overtime
+# PROBLEM: ONLY DISPLAYS UP TO 11/08 19:45
+# library(leaflet.extras2)
+# library(sf)
+# library(geojsonsf)
+# projcrs <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+# 
+# data <- sf::st_as_sf(califire,
+#                      coords = c("longitude", "latitude"),
+#                      crs=projcrs)
+# data <- st_cast(data, "POINT")
+# 
+# 
+# leaflet() %>%
+#   addTiles() %>%
+#   addTimeslider(data=data, radius=4,
+#              options = timesliderOptions(
+#                position = "topright",
+#                timeAttribute = "date_comp",
+#                maxValue = 10,
+#                minValue = 1,
+#                follow=FALSE)) %>%
+#   setView(-72, 22, 4)
+```
+
+```{r}
+# Plot histogram by date
+datelist <- unique(califire$date)
+
+draw_plot <- function(date_to_filter_by) {
+  filtered_cal <- califire %>%
+    filter(date == !!date_to_filter_by)
+  ggplot(filtered_cal, aes(x=date_comp, fill=satellite)) +
+    geom_histogram(bins=30) +
+    theme_minimal() +
+    xlab("Record Time") + 
+    ylab("Frequency") +
+    labs(title = "Histogram for Time") +
+    theme(plot.title = element_text(size = 12, hjust = 0.5))
+}
+
+ui <- fluidPage(
+  inputPanel(
+    selectInput(
+      "PlotDate",
+      label = "Select Date",
+      choices = datelist
+    )
+  ),
+  plotOutput('minplot')
+)
+
+server <- function(input, output) {
+  output$minplot <- renderPlot(draw_plot(input$PlotDate))
+}
+
+shinyApp(ui = ui, server = server)
+```
+
+
+```{r}
+# library(leaflet.extras2)
+# library(RColorBrewer)
+# library(shiny)
+# 
+# det_pal <- colorFactor(c('#5E565A', '#8B80F9', '#A9CBB7', '#FF934F'), domain = califire$method_of_detect[!is.na(califire$method_of_detect)], na.color = NA)
+# 
+# labels <- paste(
+#   paste0("FRP: ", califire$frp),
+#  paste0("<br>Ecosys: ", califire$ecosys)) %>%
+#   lapply(htmltools::HTML)
+# 
+# ui <- bootstrapPage(
+#   tags$style(type = "text/css", "html, body {width:100%;height:100%}"),
+#   leafletOutput("map", width = "100%", height = "100%"),
+#   absolutePanel(top = 10, right = 10,
+#     sliderInput("date", 
+#                      "Choose Date Range:", 
+#                      min = as.POSIXct("2018-11-07 00:00"),
+#                      max = as.POSIXct("2018-11-16 23:59"),
+#                      value = c(as.POSIXct("2018-11-07 00:00")),
+#                      timeFormat = "%y-%m-%d", ticks = F, animate = T
+#     ),
+#     selectInput("colors", "Color Scheme",
+#       rownames(subset(brewer.pal.info, category %in% c("seq", "div")))
+#     ),
+#     checkboxInput("legend", "Show legend", TRUE)    
+#   )
+# )
+# 
+# server <- function(input, output, session) {
+# 
+#   # Reactive expression for the data subsetted to what the user selected
+#   filteredData <- reactive({
+#     califire[califire$date == input$range[1],]
+#   })
+# 
+#   colorpal <- reactive({
+#     colorNumeric(input$colors, califire$method_of_detect)
+#   })
+#   
+#   output$map <- renderLeaflet({
+#     # Use leaflet() here, and only include aspects of the map that
+#     # won't need to change dynamically (at least, not unless the
+#     # entire map is being torn down and recreated).
+#    leaflet(califire) %>%
+#     addProviderTiles('OpenStreetMap') %>%
+#       fitBounds(~min(longitude), ~min(latitude), ~max(longitude), ~max(latitude))
+#   })
+# 
+#   # Incremental changes to the map (in this case, replacing the
+#   # circles when a new color is chosen) should be performed in
+#   # an observer. Each independent set of things that can change
+#   # should be managed in its own observer.
+#   observe({
+#     pal <- colorpal()
+# 
+#     leafletProxy("map", data = filteredData()) %>%
+#       clearShapes() %>%
+#       addCircles(radius = ~10^frp/10, weight = 1, color = "#777777",
+#         fillColor = ~pal(frp), fillOpacity = 0.7, popup = ~paste(frp)
+#       )
+#   })
+# 
+#   # Use a separate observer to recreate the legend as needed.
+#   observe({
+#     proxy <- leafletProxy("map", data = califire)
+# 
+#     # Remove any existing legend, and only if the legend is
+#     # enabled, create a new one.
+#     proxy %>% clearControls()
+#     if (input$legend) {
+#       pal <- colorpal()
+#       proxy %>% addLegend(position = "bottomright",
+#         pal = pal, values = ~method_of_detect
+#       )
+#     }
+#   })
+# }
+# 
+# shinyApp(ui = ui, server = server)
+```
+
+## Relating Smoke & Fire
+
+
+```{r}
+# https://stackoverflow.com/questions/50775357/how-to-read-in-kml-file-properly-in-r-or-separate-out-lumped-variables-into-col
+smoke <- read_sf("smoke20220501.kml")
+```
+
+```{r}
+# Calculate area
+smoke$area <- st_area(smoke)
+
+# Extract density
+# TODO: figure out why all densities are the same, how to read in layers
+smoke$density <- str_remove_all(str_extract(smoke$Description, "Density: [0-9]"),"[a-zA-Z]+: ")
+```
+
+
+```{r}
+fire <- st_as_sf(fire, coords = c("longitude", "latitude"))
+st_crs(fire) <- "+init=epsg:4326 +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0" # assign CRS to points
+```
+
+
+
+
+
