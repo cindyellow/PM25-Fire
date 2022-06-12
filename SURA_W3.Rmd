@@ -1,0 +1,54 @@
+---
+title: "SURA_W3"
+author: "Shih-Ting (Cindy) Huang"
+date: '2022-06-11'
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE)
+
+library(tidyverse)
+library(dplyr)
+library(leaflet)
+library(sf)
+library(mapview)
+library(rgdal)
+library(shiny)
+```
+
+```{r}
+# Read the text file
+nov8 <- st_read("data/fire/hms20181107.txt")
+```
+
+```{r}
+cal_bound <- st_read("ca-state-boundary/CA_State_TIGER2016.shp")
+
+# Convert to the same coordinate system as HMS
+cal_bound <- cal_bound %>%
+  st_set_crs(3857) %>% 
+  st_transform(4326)
+```
+
+```{r}
+# Get an array of whether each observation is in California
+in_bound <- lengths(st_intersects(nov8, cal_bound))>0
+```
+
+```{r}
+# Get subset with indexing
+in_cali <- nov8[in_bound,]
+```
+
+
+
+
+
+
+
+
+
+
+
+
