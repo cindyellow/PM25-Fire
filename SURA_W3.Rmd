@@ -38,8 +38,32 @@ in_bound <- lengths(st_intersects(nov8, cal_bound))>0
 
 ```{r}
 # Get subset with indexing
+# https://gis.stackexchange.com/questions/394954/r-using-st-intersects-to-classify-points-inside-outside-and-within-a-buffer
 in_cali <- nov8[in_bound,]
 ```
+
+# Figure out the smoke layer thing
+
+```{r}
+library(sf)
+library(xml2)
+library(tidyverse)
+```
+
+
+```{r}
+# Read light, medium, heavy separately
+smoke_light <- st_read("data/smoke/smoke20220501.kml", layer="Smoke (Light)")
+smoke_light <- as.data.frame(smoke_light)
+
+smoke_med <- st_read("data/smoke/smoke20220501.kml", layer="Smoke (Medium)")
+smoke_med <- as.data.frame(smoke_med)
+
+smoke_heavy <- st_read("data/smoke/smoke20220501.kml", layer="Smoke (Heavy)")
+smoke_heavy <- as.data.frame(smoke_heavy)
+```
+
+
 
 
 
