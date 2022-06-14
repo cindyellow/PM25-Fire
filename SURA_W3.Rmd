@@ -63,6 +63,36 @@ smoke_heavy <- st_read("data/smoke/smoke20220501.kml", layer="Smoke (Heavy)")
 smoke_heavy <- as.data.frame(smoke_heavy)
 ```
 
+```{r}
+smoke_light <- smoke_light %>%
+  # Remove prefix
+  mutate(Description = gsub('Smoke Attributes: Start Time: ', '', Description)) %>%
+  mutate(Description = gsub('[a-zA-Z]*: ', ',', Description)) %>%
+  separate(., col=Description, 
+           into = c('start_time', 'end_time', 'density', 'satellite'),
+           sep = ',') 
+  
+```
+
+```{r}
+smoke_light_mod <- smoke_light %>% 
+  mutate(start_time = (str_remove_all(start_time,"[a-zA-Z]")),
+         end_time = (str_remove_all(end_time,"[a-zA-Z]"))) %>%
+  separate(., col=start_time, 
+           into=c('start_date', 'st'),
+           sep=' ') %>%
+  separate(., col=end_time, 
+           into=c('end_date','et'),
+           sep=' ') %>%
+  mutate( st = substr(as.POSIXct(sprintf("%04.0f", as.integer(st)), format='%H%M'), 12, 16),
+          et = substr(as.POSIXct(sprintf("%04.0f", as.integer(et)), format='%H%M'), 12, 16),
+          start_time = as.POSIXct(paste(start_date, st),
+                            format = "%m/%d/%Y %H:%M"),
+         end_time = as.POSIXct(paste(end_date, et),
+                            format = "%m/%d/%Y %H:%M")) %>%
+  rowid_to_column("index")%>%
+  select(-start_date, -end_date, -st, -et,-Name)
+```
 
 
 
