@@ -26,7 +26,7 @@ library(leafpop)
 ### Restrict to California
 ```{r}
 # Read the kml file
-fire <- st_read("data/fire/fire20181107.kml")
+fire <- st_read("data/fire/fire20181108.kml")
 ```
 
 ```{r}
@@ -40,13 +40,13 @@ cal_bound <- cal_bound %>%
 
 ```{r}
 # Get an array of whether each observation is in California
-in_bound <- lengths(st_intersects(nov8, cal_bound))>0
+in_bound <- lengths(st_intersects(fire, cal_bound))>0
 ```
 
 ```{r}
 # Get subset with indexing
 # https://gis.stackexchange.com/questions/394954/r-using-st-intersects-to-classify-points-inside-outside-and-within-a-buffer
-in_cali <- nov8[in_bound,]
+in_cali <- fire[in_bound,]
 ```
 
 ### Cleaning
@@ -55,7 +55,9 @@ in_cali <- as.data.frame(in_cali) %>%
   dplyr::select(-Name) %>%
   # Remove prefix
   mutate(Description = gsub('Fire Attributes: YearDay: ', '', Description)) %>%
+  # Replace column name strings with comma
   mutate(Description = gsub('[a-zA-Z]*: ', ',', Description)) %>%
+  # Separate based on comma
   separate(., col=Description, 
            into = c('date', 'time', 'satellite','method_of_detect'),
            sep = ',') 
@@ -63,30 +65,28 @@ in_cali <- as.data.frame(in_cali) %>%
 
 ```{r}
 in_cali <- in_cali %>% 
+  # Remove unnecessary substrings
   mutate(satellite = (str_remove_all(satellite,"Method of"))) %>%
+  # Convert into correct datetime
   mutate( time = substr(as.POSIXct(sprintf("%04.0f", as.integer(time)), format='%H%M'), 12, 16),
           start_time = as.POSIXct(paste(date, time),
                             format = "%Y%j %H:%M")) %>%
   dplyr::select(-date,-time)
 ```
 
-```{r}
-in_cali <- st_as_sf(in_cali)
-```
-
 ## Smoke Data: Preprocessing & Visualization
 
 ```{r}
 # Read light, medium, heavy separately
-smoke_light <- st_read("data/smoke/smoke20220501.kml", layer="Smoke (Light)")
+smoke_light <- st_read("data/smoke/smoke20181108.kml", layer="Smoke (Light)")
 smoke_light <- as.data.frame(smoke_light) %>%
   mutate(type="light")
 
-smoke_med <- st_read("data/smoke/smoke20220501.kml", layer="Smoke (Medium)")
+smoke_med <- st_read("data/smoke/smoke20181108.kml", layer="Smoke (Medium)")
 smoke_med <- as.data.frame(smoke_med) %>%
   mutate(type="medium")
 
-smoke_heavy <- st_read("data/smoke/smoke20220501.kml", layer="Smoke (Heavy)")
+smoke_heavy <- st_read("data/smoke/smoke20181108.kml", layer="Smoke (Heavy)")
 smoke_heavy <- as.data.frame(smoke_heavy) %>%
   mutate(type="heavy")
 
@@ -99,7 +99,6 @@ smoke <- smoke %>%
 ```{r}
 smoke <- smoke %>%
   dplyr::select(-Name) %>%
-  # Remove prefix
   mutate(Description = gsub('Smoke Attributes: Start Time: ', '', Description)) %>%
   mutate(Description = gsub('[a-zA-Z]*: ', ',', Description)) %>%
   separate(., col=Description, 
@@ -108,33 +107,38 @@ smoke <- smoke %>%
 ```
 
 ```{r}
+# Clean time and add smoke area
 smoke <- smoke %>% 
+  # Remove unnecessary substrings
   mutate(start_time = (str_remove_all(start_time,"[a-zA-Z]")),
          end_time = (str_remove_all(end_time,"[a-zA-Z]"))) %>%
+  # Separate date and time based on space
   separate(., col=start_time, 
            into=c('start_date', 'st'),
            sep=' ') %>%
   separate(., col=end_time, 
            into=c('end_date','et'),
            sep=' ') %>%
+  # Convert into datetime object
   mutate( st = substr(as.POSIXct(sprintf("%04.0f", as.integer(st)), format='%H%M'), 12, 16),
           et = substr(as.POSIXct(sprintf("%04.0f", as.integer(et)), format='%H%M'), 12, 16),
           start_time = as.POSIXct(paste(start_date, st),
-                            format = "%m/%d/%Y %H:%M"),
+                            format = "%Y%j %H:%M"),
          end_time = as.POSIXct(paste(end_date, et),
-                            format = "%m/%d/%Y %H:%M")) %>%
+                            format = "%Y%j %H:%M"),
+         area = st_area(smoke$geometry)) %>%
   dplyr::select(-start_date, -end_date, -st, -et)
 ```
 
 ```{r}
+# Convert dataframes to sf objects for mapview
 smoke <- st_as_sf(smoke)
-smoke$area <- st_area(smoke$geometry)
+in_cali <- st_as_sf(in_cali)
 ```
-
 
 ```{r}
 # THANK YOU SAVIOR: https://bookdown.org/nicohahn/making_maps_with_r5/docs/mapview.html#using-mapview-to-create-maps
-mapview(smoke, zcol ="type", col.regions = brewer.pal(3, "RdYlGn"),
+mapview(smoke, zcol ="type", legend = TRUE, layer.name = 'Smoke Type',col.regions = brewer.pal(3, "RdYlGn"),
         popup = popupTable(
                 smoke,
                 zcol = c(
@@ -142,21 +146,27 @@ mapview(smoke, zcol ="type", col.regions = brewer.pal(3, "RdYlGn"),
                   "end_time",
                   "density",
                   "area"
-                  )
+                  ),
+                feature.id = FALSE
                 )        
         ) + 
-  mapview(in_cali,
+  mapview(in_cali, legend=FALSE,
           popup = popupTable(
                 in_cali,
                 zcol = c(
                   "start_time",
                   "method_of_detect",
                   "satellite"
-                  )
+                  ),
+                feature.id = FALSE
                 )
           )
 ```
 
+```{r}
+# Timeslider
+# Not possible with mapview, but can do a pop-up of time series graph: http://environmentalinformatics-marburg.github.io/mapview/popups/html/popups.html#popupgraph
+```
 
 
 
