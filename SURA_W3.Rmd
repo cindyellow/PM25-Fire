@@ -138,7 +138,7 @@ in_cali <- st_as_sf(in_cali)
 
 ```{r}
 # THANK YOU SAVIOR: https://bookdown.org/nicohahn/making_maps_with_r5/docs/mapview.html#using-mapview-to-create-maps
-mapview(smoke, zcol ="type", legend = TRUE, layer.name = 'Smoke Type',col.regions = brewer.pal(3, "RdYlGn"),
+mapview(smoke, zcol ="type", label=FALSE, legend = TRUE, layer.name = 'Smoke Type',col.regions = brewer.pal(3, "RdYlGn"),
         popup = popupTable(
                 smoke,
                 zcol = c(
@@ -150,7 +150,7 @@ mapview(smoke, zcol ="type", legend = TRUE, layer.name = 'Smoke Type',col.region
                 feature.id = FALSE
                 )        
         ) + 
-  mapview(in_cali, legend=FALSE,
+  mapview(in_cali, label=FALSE, legend=FALSE,
           popup = popupTable(
                 in_cali,
                 zcol = c(
