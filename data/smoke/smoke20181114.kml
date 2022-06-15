@@ -1,0 +1,3199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+ <name>smoke20181114.kml</name>
+ <Style id="Smoke_Light_hl">
+   <IconStyle>
+     <scale>1.3</scale>
+     <Icon>
+       <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+     </Icon>
+     <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+   </IconStyle>
+   <LineStyle>
+     <color>FFFFFFFF</color>
+     <width>1</width>
+   </LineStyle>
+   <PolyStyle>
+     <color>9900FF00</color>
+   </PolyStyle>
+ </Style>
+ <Style id="Smoke_Light">
+   <IconStyle>
+     <scale>1.1</scale>
+     <Icon>
+       <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+     </Icon>
+     <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+   </IconStyle>
+   <LineStyle>
+     <color>FFFFFFFF</color>
+     <width>1</width>
+   </LineStyle>
+   <PolyStyle>
+     <color>9900FF00</color>
+   </PolyStyle>
+ </Style>
+ <StyleMap id="Smoke_Light_style">
+   <Pair>
+     <key>normal</key>
+     <styleUrl>#Smoke_Light</styleUrl>
+   </Pair>
+   <Pair>
+     <key>highlight</key>
+     <styleUrl>#Smoke_Light_hl</styleUrl>
+   </Pair>
+ </StyleMap>
+ <Style id="Smoke_Medium_hl">
+   <IconStyle>
+     <scale>1.3</scale>
+     <Icon>
+       <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+     </Icon>
+     <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+   </IconStyle>
+   <LineStyle>
+     <color>FFFFFFFF</color>
+     <width>1</width>
+   </LineStyle>
+   <PolyStyle>
+     <color>9900FFFF</color>
+   </PolyStyle>
+ </Style>
+ <Style id="Smoke_Medium">
+   <IconStyle>
+     <scale>1.1</scale>
+     <Icon>
+       <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+     </Icon>
+     <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+   </IconStyle>
+   <LineStyle>
+     <color>FFFFFFFF</color>
+     <width>1</width>
+   </LineStyle>
+   <PolyStyle>
+     <color>9900FFFF</color>
+   </PolyStyle>
+ </Style>
+ <StyleMap id="Smoke_Medium_style">
+   <Pair>
+     <key>normal</key>
+     <styleUrl>#Smoke_Medium</styleUrl>
+   </Pair>
+   <Pair>
+     <key>highlight</key>
+     <styleUrl>#Smoke_Medium_hl</styleUrl>
+   </Pair>
+ </StyleMap>
+ <Style id="Smoke_Heavy_hl">
+   <IconStyle>
+     <scale>1.3</scale>
+     <Icon>
+       <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+     </Icon>
+     <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+   </IconStyle>
+   <LineStyle>
+     <color>FFFFFFFF</color>
+     <width>1</width>
+   </LineStyle>
+   <PolyStyle>
+     <color>990000FF</color>
+   </PolyStyle>
+ </Style>
+ <Style id="Smoke_Heavy">
+   <IconStyle>
+     <scale>1.1</scale>
+     <Icon>
+       <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+     </Icon>
+     <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+   </IconStyle>
+   <LineStyle>
+     <color>FFFFFFFF</color>
+     <width>1</width>
+   </LineStyle>
+   <PolyStyle>
+     <color>990000FF</color>
+   </PolyStyle>
+ </Style>
+ <StyleMap id="Smoke_Heavy_style">
+   <Pair>
+     <key>normal</key>
+     <styleUrl>#Smoke_Heavy</styleUrl>
+   </Pair>
+   <Pair>
+     <key>highlight</key>
+     <styleUrl>#Smoke_Heavy_hl</styleUrl>
+   </Pair>
+ </StyleMap>
+ <Folder>
+   <name>Overlay</name>
+   <open>0</open>
+   <Style>
+     <ListStyle>
+     <listItemType>check</listItemType>
+     <bgColor>00ffffff</bgColor>
+     <maxSnippetLines>2</maxSnippetLines>
+   </ListStyle>
+   </Style>
+   <ScreenOverlay>
+    <name>NOAA logo</name>
+    <color>ffffffff</color>
+    <visibility>1</visibility>
+    <Icon>
+      <href>https://www.ospo.noaa.gov/graphics/Products/land/fire/hms/png_logo/noaa_logo.png</href>
+    </Icon>
+    <overlayXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+    <screenXY x="1" y="13" xunits="pixels" yunits="insetPixels"/>
+    <size x="100" y="100" xunits="pixels" yunits="pixels"/>
+   </ScreenOverlay>
+   <ScreenOverlay>
+    <name>Analysis Date</name>
+    <color>ffffffff</color>
+    <visibility>1</visibility>
+    <Icon>
+      <href><![CDATA[http://chart.apis.google.com/chart?chst=d_text_outline&chld=FFBBBB|11|h|BB0000|b|Analysis%20For:%2020181114]]></href>
+    </Icon>
+     <overlayXY x="1" y="1" xunits="fraction" yunits="fraction"/>
+    <screenXY x="2" y="80" xunits="insetPixels" yunits="insetPixels"/>
+   </ScreenOverlay>
+   <ScreenOverlay>
+    <name>Generated DateTime</name>
+    <color>ffffffff</color>
+    <visibility>1</visibility>
+    <Icon>
+      <href><![CDATA[http://chart.apis.google.com/chart?chst=d_text_outline&chld=FFBBBB|11|h|BB0000|b|Generated:%201157GMT%2020181115]]></href>
+    </Icon>
+    <overlayXY x="1" y="1" xunits="fraction" yunits="fraction"/>
+    <screenXY x="2" y="92" xunits="insetPixels" yunits="insetPixels"/>
+   </ScreenOverlay>
+   <ScreenOverlay>
+     <name>Legend</name>
+     <color>ffffffff</color>
+     <visibility>1</visibility>
+     <Icon>
+        <href>https://www.ospo.noaa.gov/graphics/Products/land/fire/hms//png_logo/Keytry1a.png</href>
+     </Icon>
+     <overlayXY x="1" y="1" xunits="fraction" yunits="fraction"/>
+     <screenXY x="1" y="20" xunits="insetPixels" yunits="insetPixels"/>
+     <size x="210" y="60" xunits="pixels" yunits="pixels"/>
+   </ScreenOverlay>
+ </Folder>
+  <Folder>
+    <name>Smoke (Light)</name>
+    <open>0</open>
+    <Style>
+      <ListStyle>
+      <listItemType>check</listItemType>
+      <bgColor>00ffffff</bgColor>
+      <maxSnippetLines>2</maxSnippetLines>
+    </ListStyle>
+    </Style>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1545
+          End Time: 2018318 1700
+          Density: 5
+          Satellite: GOES-WEST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -118.6592300000000080,36.5062730000000002,0
+              -118.7627200000000016,36.5297929999999980,0
+              -118.9085400000000021,36.5297929999999980,0
+              -119.0308399999999835,36.4827530000000024,0
+              -119.1766700000000014,36.4216009999999955,0
+              -119.3036799999999999,36.4027850000000015,0
+              -119.3930499999999455,36.4357129999999927,0
+              -119.5059500000000412,36.5203849999999903,0
+              -119.6564800000000162,36.6850250000000031,0
+              -119.8070100000000053,36.8026259999999894,0
+              -119.8963800000000077,36.8120339999999899,0
+              -119.9904599999999988,36.7367690000000024,0
+              -119.9951700000000017,36.6097609999999989,0
+              -119.9246099999999728,36.4074889999999911,0
+              -119.8305299999999818,36.2616640000000032,0
+              -119.7599699999999814,36.0923200000000008,0
+              -119.7411500000000046,35.9700160000000011,0
+              -119.7129299999999859,35.7959669999999974,0
+              -119.7082199999999972,35.6078070000000011,0
+              -119.7787799999999834,35.4572780000000023,0
+              -119.8446399999999983,35.3584940000000003,0
+              -119.8916799999999938,35.2267820000000000,0
+              -119.8587499999999721,35.1138859999999937,0
+              -119.6988099999999520,34.9868769999999998,0
+              -119.4212799999999959,34.9069089999999917,0
+              -119.2190000000000083,34.8739810000000006,0
+              -118.9696899999999999,34.8598690000000033,0
+              -118.8050500000000085,34.9069089999999917,0
+              -118.6827499999999986,34.9304289999999966,0
+              -118.5886699999999792,35.0245090000000019,0
+              -118.5039900000000017,35.0950699999999998,0
+              -118.5228100000000211,35.2973420000000004,0
+              -118.5416299999999836,35.4055339999999958,0
+              -118.5557400000000001,35.5560629999999946,0
+              -118.5839600000000047,35.7724469999999926,0
+              -118.6074799999999811,35.9182709999999972,0
+              -118.5369199999999665,36.0499840000000020,0
+              -118.4945900000000165,36.0217600000000004,0
+              -118.4757699999999971,35.8712310000000016,0
+              -118.4710700000000116,35.7865589999999969,0
+              -118.4240299999999877,35.7159989999999965,0
+              -118.3487599999999986,35.7536309999999986,0
+              -118.3628699999999867,35.8665269999999978,0
+              -118.3910999999999660,35.9794240000000016,0
+              -118.4099099999999822,36.1158399999999986,0
+              -118.4052099999999967,36.1863999999999990,0
+              -118.4428400000000181,36.2992959999999982,0
+              -118.5980799999999959,36.3698570000000032,0
+              -118.6027799999999957,36.3886729999999972,0
+              -118.5886699999999792,36.4686409999999981,0
+              -118.6404100000000170,36.5109769999999969,0
+              -118.6592300000000080,36.5062730000000002,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1545
+          End Time: 2018318 1700
+          Density: 5
+          Satellite: GOES-WEST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -119.0684799999999939,34.1512019999999978,0
+              -119.4024600000000049,34.0194890000000001,0
+              -119.5765100000000132,33.8689609999999988,0
+              -119.8070100000000053,33.7701769999999968,0
+              -120.0986500000000206,33.7607689999999963,0
+              -120.2680000000000007,33.7231370000000013,0
+              -120.5549400000000020,33.7231370000000013,0
+              -120.7619200000000035,33.7231370000000013,0
+              -121.0473899999999787,33.7640450000000030,0
+              -121.3036899999999889,33.8236500000000007,0
+              -121.4825100000000049,33.7759659999999968,0
+              -121.8062100000000072,33.4503039999999956,0
+              -121.8438400000000001,33.2621439999999993,0
+              -121.7779900000000026,33.1868789999999976,0
+              -121.6650900000000064,33.1398390000000020,0
+              -121.4581100000000049,33.1304310000000015,0
+              -121.2229099999999704,33.1821749999999938,0
+              -121.0629799999999818,33.2292150000000035,0
+              -120.7760299999999631,33.2480319999999949,0
+              -120.5408299999999997,33.2339190000000002,0
+              -120.2209600000000052,33.2151029999999992,0
+              -120.0045699999999727,33.2103989999999953,0
+              -119.7505599999999788,33.2480319999999949,0
+              -119.6188499999999948,33.2950719999999976,0
+              -119.4306899999999843,33.3891520000000028,0
+              -119.2801600000000235,33.5208639999999960,0
+              -119.1719599999999986,33.7090249999999969,0
+              -119.0967000000000269,33.8595529999999911,0
+              -119.0073199999999929,34.0053769999999957,0
+              -118.9555800000000119,34.0618249999999918,0
+              -118.9085400000000021,34.1088659999999990,0
+              -118.9273599999999931,34.1700179999999918,0
+              -118.9320600000000070,34.1747220000000027,0
+              -119.0684799999999939,34.1512019999999978,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1600
+          End Time: 2018318 1800
+          Density: 5
+          Satellite: GOES-WEST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -120.2595600000000076,39.1729290000000105,0
+              -120.1431500000000483,38.5763010000000079,0
+              -120.2595599999999934,38.0524320000000031,0
+              -120.4341900000000152,37.6304259999999928,0
+              -120.6233600000000052,37.3393879999999925,0
+              -121.0599200000000195,37.3248359999999906,0
+              -121.4673700000000025,37.3830430000000007,0
+              -121.7293099999999981,37.2957320000000010,0
+              -121.9330299999999880,37.0192449999999980,0
+              -122.2240699999999833,36.4371689999999973,0
+              -122.3986900000000020,36.1897859999999980,0
+              -122.6460799999999978,35.5786060000000006,0
+              -123.0244299999999953,35.3021189999999976,0
+              -123.6210600000000142,34.9383210000000020,0
+              -124.5232699999999966,34.5599709999999973,0
+              -125.0180399999999707,34.1379659999999987,0
+              -125.4545999999999992,33.6286490000000029,0
+              -126.0512300000000181,32.9738129999999998,0
+              -126.6187499999999773,32.4644949999999923,0
+              -127.5355200000000053,32.0279379999999989,0
+              -128.3795299999999884,31.9406260000000053,0
+              -128.9907100000000071,32.3480800000000031,0
+              -129.2089900000000000,32.9738129999999998,0
+              -128.9470599999999934,34.2980370000000008,0
+              -127.9720800000000054,36.2188900000000018,0
+              -127.1135200000000083,37.9796720000000008,0
+              -126.1676399999999916,39.6531420000000026,0
+              -125.9784699999999731,40.3952900000000028,0
+              -125.4836999999999847,40.9337109999999953,0
+              -124.6687899999999729,41.1228860000000012,0
+              -124.0721599999999540,40.5117049999999921,0
+              -123.5337399999999519,39.9441809999999933,0
+              -123.5773999999999972,39.3038960000000017,0
+              -123.0680800000000374,38.9255470000000088,0
+              -122.7188399999999717,39.0128580000000014,0
+              -122.6751799999999974,39.4348639999999975,0
+              -122.8789099999999763,40.1188039999999901,0
+              -122.9807699999999926,40.4826019999999929,0
+              -122.8643600000000049,40.6572249999999968,0
+              -122.6024199999999809,41.1228860000000012,0
+              -122.2240699999999833,41.3993719999999925,0
+              -121.8457200000000000,41.4139240000000015,0
+              -121.5837899999999934,41.1956459999999964,0
+              -121.6419899999999927,40.8318480000000008,0
+              -121.5692399999999651,40.3661859999999919,0
+              -121.4673700000000025,40.0896999999999935,0
+              -120.9434999999999718,39.7259019999999978,0
+              -120.4487399999999866,39.3766559999999970,0
+              -120.2595600000000076,39.1729290000000105,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -108.7204499999999996,26.2923329999999993,0
+              -108.6923199999999952,26.2392080000000014,0
+              -108.6829500000000053,26.1876449999999998,0
+              -108.7126300000000185,26.1423329999999972,0
+              -108.7595100000000059,26.1392079999999964,0
+              -108.8032599999999945,26.1532699999999991,0
+              -108.8079500000000053,26.1860830000000000,0
+              -108.7860700000000094,26.2235830000000014,0
+              -108.7563799999999929,26.2610829999999993,0
+              -108.7391999999999967,26.2892079999999986,0
+              -108.7204499999999996,26.2923329999999993,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -107.6704499999999882,24.6017079999999986,0
+              -107.6985700000000037,24.5735829999999993,0
+              -107.7548199999999952,24.5454580000000000,0
+              -107.7845099999999974,24.5438949999999991,0
+              -107.8110699999999866,24.5485829999999972,0
+              -107.8016999999999967,24.5829579999999979,0
+              -107.7673199999999980,24.5954580000000007,0
+              -107.7079500000000110,24.6095199999999998,0
+              -107.6860700000000008,24.6110829999999972,0
+              -107.6704499999999882,24.6017079999999986,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -106.6251299999999986,23.8548329999999993,0
+              -106.6392000000000024,23.8657700000000013,0
+              -106.6345100000000059,23.8938950000000006,0
+              -106.6188800000000043,23.8907699999999998,0
+              -106.5970099999999974,23.8829579999999950,0
+              -106.6079500000000024,23.8767079999999972,0
+              -106.6251299999999986,23.8548329999999993,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -105.7548199999999952,23.0267079999999993,0
+              -105.7516999999999996,23.0517080000000014,0
+              -105.7345100000000002,23.0767080000000000,0
+              -105.7157599999999888,23.0720199999999984,0
+              -105.6970100000000059,23.0532700000000013,0
+              -105.7032600000000144,23.0360829999999979,0
+              -105.7376300000000100,23.0282699999999991,0
+              -105.7548199999999952,23.0267079999999993,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -108.9432599999999951,26.1959179999999954,0
+              -108.9207600000000298,26.1771679999999982,0
+              -108.9182600000000036,26.1384180000000015,0
+              -108.9307600000000207,26.1246679999999962,0
+              -108.9432599999999951,26.1209179999999961,0
+              -108.9682600000000008,26.1246679999999962,0
+              -108.9820099999999883,26.1359179999999967,0
+              -108.9795099999999906,26.1596679999999999,0
+              -108.9582599999999815,26.1871679999999962,0
+              -108.9432599999999951,26.1959179999999954,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -109.8107599999999877,27.2746679999999948,0
+              -109.8357599999999934,27.2334179999999968,0
+              -109.8845100000000201,27.2134179999999972,0
+              -109.9282599999999945,27.2059179999999969,0
+              -109.9582599999999957,27.2096679999999971,0
+              -109.9707600000000127,27.2346679999999957,0
+              -109.9482600000000190,27.2584179999999989,0
+              -109.9070100000000139,27.2659179999999992,0
+              -109.8282600000000144,27.2809179999999998,0
+              -109.8107599999999877,27.2746679999999948,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -108.5359900000000124,29.5877869999999952,0
+              -108.5859900000000096,29.5768489999999993,0
+              -108.6438100000000020,29.5784119999999966,0
+              -108.6453699999999998,29.5877869999999952,0
+              -108.6234900000000039,29.5987240000000007,0
+              -108.5547399999999953,29.5955990000000000,0
+              -108.5359900000000124,29.5877869999999952,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -98.0673160000000053,16.5200449999999996,0
+              -98.0698160000000030,16.5312950000000001,0
+              -98.0560659999999871,16.5350450000000002,0
+              -98.0235659999999882,16.5450449999999982,0
+              -97.9823159999999973,16.5387950000000004,0
+              -97.9610660000000024,16.5300450000000012,0
+              -97.9573160000000058,16.5087949999999992,0
+              -97.9785660000000007,16.4975449999999988,0
+              -98.0098160000000007,16.4975449999999988,0
+              -98.0398160000000018,16.5112950000000005,0
+              -98.0673160000000053,16.5200449999999996,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -85.8863390000000066,12.1417669999999980,0
+              -86.0725889999999936,11.9892669999999999,0
+              -86.2763389999999930,11.8330169999999981,0
+              -86.3963390000000118,11.7442669999999989,0
+              -86.5588390000000203,11.6455169999999981,0
+              -86.7225889999999850,11.5642669999999992,0
+              -86.8888389999999902,11.4667670000000008,0
+              -86.9438389999999970,11.5317669999999985,0
+              -86.8975889999999964,11.6030169999999995,0
+              -86.6463389999999976,11.7517669999999974,0
+              -86.2075889999999987,12.0142670000000003,0
+              -85.9725889999999993,12.1405169999999973,0
+              -85.9200890000000186,12.1642670000000006,0
+              -85.8938389999999998,12.1530170000000002,0
+              -85.8863390000000066,12.1417669999999980,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -82.0046839999999975,22.7285249999999976,0
+              -82.0709339999999941,22.7197749999999985,0
+              -82.1134339999999980,22.7272749999999988,0
+              -82.1234340000000032,22.7535249999999962,0
+              -82.1084339999999884,22.7697749999999957,0
+              -82.0371839999999963,22.7597750000000012,0
+              -82.0184339999999992,22.7435249999999982,0
+              -82.0046839999999975,22.7285249999999976,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -80.8066369999999949,26.6607759999999985,0
+              -80.8853869999999944,26.6645259999999986,0
+              -81.0066369999999978,26.7232759999999985,0
+              -81.0441370000000063,26.7707760000000015,0
+              -81.0791370000000029,26.8345259999999968,0
+              -81.1153869999999984,26.9145259999999986,0
+              -81.1366369999999932,27.0020259999999972,0
+              -81.1091370000000040,27.0932759999999995,0
+              -81.0728869999999802,27.1482759999999992,0
+              -80.9891369999999853,27.1857759999999971,0
+              -80.9328869999999796,27.1795259999999956,0
+              -80.8653869999999841,27.1432760000000002,0
+              -80.8016369999999995,27.1295259999999985,0
+              -80.6941369999999978,27.0345259999999996,0
+              -80.5991370000000131,26.9470259999999975,0
+              -80.5578869999999938,26.8720260000000017,0
+              -80.5428869999999932,26.7932759999999988,0
+              -80.5466370000000040,26.7345259999999989,0
+              -80.5728869999999944,26.7107759999999992,0
+              -80.6341370000000097,26.6882759999999948,0
+              -80.8066369999999949,26.6607759999999985,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -80.5716370000000097,27.6720259999999989,0
+              -80.7053869999999876,27.6545259999999971,0
+              -80.7603869999999802,27.6620259999999973,0
+              -80.7803870000000046,27.6832759999999958,0
+              -80.7778870000000211,27.7182759999999959,0
+              -80.7541370000000001,27.7470260000000017,0
+              -80.6991370000000074,27.7520260000000007,0
+              -80.6628869999999978,27.7470260000000017,0
+              -80.5903869999999927,27.7057759999999966,0
+              -80.5716370000000097,27.6720259999999989,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -90.4311239999999827,42.3569960000000023,0
+              -90.4487020000000115,42.3804329999999894,0
+              -90.4428419999999988,42.4058240000000026,0
+              -90.4252639999999843,42.4273079999999894,0
+              -90.4154989999999970,42.4077769999999958,0
+              -90.4174519999999831,42.3862929999999949,0
+              -90.4311239999999827,42.3569960000000023,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -90.7475299999999976,44.1948859999999897,0
+              -90.7475299999999976,44.3999649999999946,0
+              -90.7436239999999543,44.4995739999999884,0
+              -90.7221389999999985,44.5757460000000023,0
+              -90.6694049999999976,44.6050429999999949,0
+              -90.6342489999999970,44.5952769999999958,0
+              -90.6108109999999840,44.5444960000000023,0
+              -90.6420609999999982,44.3589490000000026,0
+              -90.6889359999999840,44.2476209999999952,0
+              -90.7416709999999966,44.1812150000000017,0
+              -90.7475299999999976,44.1948859999999897,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -100.1532400000000109,37.5223589999999945,0
+              -100.1344899999999996,37.5473590000000002,0
+              -100.0982400000000325,37.5648589999999842,0
+              -100.0769900000000092,37.5661089999999973,0
+              -100.0907399999999967,37.5436089999999894,0
+              -100.1194899999999848,37.5298589999999948,0
+              -100.1419900000000069,37.5223589999999945,0
+              -100.1532400000000109,37.5223589999999945,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -94.1686289999999957,29.7098679999999966,0
+              -94.1126289999999983,29.6498679999999979,0
+              -94.0822290000000123,29.5658679999999912,0
+              -94.0790290000000056,29.5114680000000007,0
+              -94.0926290000000023,29.5058679999999924,0
+              -94.1142289999999946,29.5218680000000013,0
+              -94.1590289999999897,29.6218679999999956,0
+              -94.1774290000000036,29.6730679999999936,0
+              -94.1774290000000036,29.7002680000000012,0
+              -94.1774290000000036,29.7066680000000005,0
+              -94.1686289999999957,29.7098679999999966,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -96.0430289999999900,28.6861619999999995,0
+              -95.9410289999999861,28.5611619999999959,0
+              -95.8060289999999810,28.3371619999999993,0
+              -95.7490289999999931,28.1831619999999994,0
+              -95.6800290000000047,27.9521620000000013,0
+              -95.6930290000000099,27.9231619999999978,0
+              -95.7430290000000213,27.9591619999999992,0
+              -95.8960289999999986,28.1911619999999985,0
+              -96.0130290000000031,28.5231619999999992,0
+              -96.0500290000000092,28.6611620000000009,0
+              -96.0460289999999901,28.6811619999999969,0
+              -96.0430289999999900,28.6861619999999995,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -95.2460289999999929,29.0671619999999962,0
+              -95.1470290000000034,28.9461620000000011,0
+              -95.0640290000000050,28.8221619999999987,0
+              -95.0320289999999801,28.6991620000000012,0
+              -95.0330289999999849,28.6461620000000003,0
+              -95.0600290000000143,28.6521619999999970,0
+              -95.1370290000000125,28.7681620000000002,0
+              -95.2340290000000067,28.9851619999999954,0
+              -95.2450289999999882,29.0441619999999929,0
+              -95.2540290000000027,29.0621619999999972,0
+              -95.2460289999999929,29.0671619999999962,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -97.9650290000000012,26.2891620000000010,0
+              -97.8740289999999789,26.2351619999999990,0
+              -97.8390289999999681,26.1681619999999988,0
+              -97.8090289999999953,26.0981619999999950,0
+              -97.8120289999999812,26.0421619999999976,0
+              -97.8420289999999824,26.0161619999999978,0
+              -97.8690289999999834,26.0201619999999991,0
+              -97.9490289999999959,26.1391619999999953,0
+              -97.9730289999999968,26.2601620000000011,0
+              -97.9650290000000012,26.2891620000000010,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -97.8380290000000059,26.5181619999999967,0
+              -97.7650289999999984,26.4551619999999978,0
+              -97.6340289999999982,26.2561620000000033,0
+              -97.5190290000000033,26.0911620000000006,0
+              -97.4700289999999825,25.9871620000000050,0
+              -97.4910289999999975,25.9671619999999983,0
+              -97.5270290000000131,25.9711619999999961,0
+              -97.6590290000000181,26.1611620000000009,0
+              -97.8190290000000005,26.4111620000000009,0
+              -97.8450289999999967,26.5011620000000008,0
+              -97.8410289999999918,26.5131620000000012,0
+              -97.8380290000000059,26.5181619999999967,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -97.6810289999999952,26.1331619999999987,0
+              -97.5960290000000157,26.0441619999999965,0
+              -97.5260289999999941,25.9141619999999975,0
+              -97.4960289999999787,25.8181620000000009,0
+              -97.5060290000000123,25.7691620000000015,0
+              -97.5270289999999989,25.7571619999999974,0
+              -97.5730290000000053,25.7911619999999999,0
+              -97.6610289999999850,25.9291620000000016,0
+              -97.7080290000000105,26.0311619999999984,0
+              -97.7200289999999967,26.0871619999999957,0
+              -97.7200289999999967,26.0981619999999950,0
+              -97.6980289999999911,26.0891619999999982,0
+              -97.6820290000000000,26.0561620000000005,0
+              -97.6870289999999954,26.0991619999999998,0
+              -97.6810289999999952,26.1331619999999987,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -98.3080289999999906,24.3241620000000012,0
+              -98.2860290000000134,24.2591619999999999,0
+              -98.2810289999999895,24.2091619999999956,0
+              -98.2940289999999948,24.1891619999999996,0
+              -98.3020290000000045,24.1931619999999974,0
+              -98.3240289999999959,24.2621620000000000,0
+              -98.3220290000000148,24.3071619999999982,0
+              -98.3190290000000005,24.3241620000000012,0
+              -98.3080289999999906,24.3241620000000012,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -99.7707790000000045,29.3984150000000000,0
+              -99.6945290000000028,29.3471649999999968,0
+              -99.6432789999999784,29.2884150000000005,0
+              -99.6707789999999960,29.2446649999999977,0
+              -99.6957790000000159,29.2634149999999984,0
+              -99.7407789999999892,29.3284149999999997,0
+              -99.7782790000000119,29.3759149999999956,0
+              -99.7820289999999801,29.3896650000000008,0
+              -99.7707790000000045,29.3984150000000000,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -98.6070290000000114,31.0658999999999956,0
+              -98.5648409999999870,31.0502750000000027,0
+              -98.5523410000000126,31.0143370000000047,0
+              -98.5695289999999744,30.9940249999999935,0
+              -98.5851540000000028,31.0112120000000004,0
+              -98.6164040000000170,31.0424619999999969,0
+              -98.6148409999999842,31.0565250000000006,0
+              -98.6070290000000114,31.0658999999999956,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -112.2408200000000136,36.7293039999999991,0
+              -112.2916000000000167,36.6980539999999991,0
+              -112.4107400000000041,36.7039129999999929,0
+              -112.5650399999999678,36.7195380000000000,0
+              -112.6705099999999931,36.7175849999999997,0
+              -112.7291000000000025,36.7293039999999991,0
+              -112.7388700000000057,36.7683660000000003,0
+              -112.6998000000000104,36.8074289999999991,0
+              -112.5259800000000041,36.8171949999999981,0
+              -112.3619099999999946,36.8171949999999981,0
+              -112.2955099999999931,36.8015699999999981,0
+              -112.2466800000000120,36.7644599999999926,0
+              -112.2408200000000136,36.7293039999999991,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -112.0083999999999946,35.0886789999999991,0
+              -112.1880800000000136,35.0789129999999929,0
+              -112.3951200000000057,35.0769599999999997,0
+              -112.4771499999999946,35.0789129999999929,0
+              -112.6041000000000167,35.0984440000000006,0
+              -112.6451199999999915,35.1453190000000006,0
+              -112.6333999999999946,35.1804759999999987,0
+              -112.5240199999999930,35.1961009999999987,0
+              -112.2310500000000104,35.1746160000000003,0
+              -112.1158199999999994,35.1531319999999994,0
+              -112.0181599999999946,35.1238349999999997,0
+              -112.0083999999999946,35.0886789999999991,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -118.9965700000000197,34.0848849999999999,0
+              -119.1381700000000023,33.8651589999999985,0
+              -119.6337700000000126,33.3060770000000019,0
+              -119.8461800000000039,33.1083229999999986,0
+              -120.3686400000000134,32.6932839999999985,0
+              -120.5273300000000063,32.6615449999999967,0
+              -120.7006699999999739,32.7347880000000018,0
+              -121.0033999999999850,32.9032449999999983,0
+              -121.4135600000000039,32.9423069999999996,0
+              -121.9384599999999921,33.0033420000000035,0
+              -122.2680499999999739,33.3036349999999999,0
+              -122.1777199999999937,33.5551000000000030,0
+              -122.0947100000000063,33.8529520000000019,0
+              -121.8285999999999945,34.1410380000000018,0
+              -121.5624899999999684,34.2142800000000022,0
+              -121.3232300000000095,34.0629130000000018,0
+              -121.0644400000000047,33.8505099999999999,0
+              -120.8080900000000213,33.7284399999999991,0
+              -120.6103399999999937,33.5795139999999961,0
+              -120.2368000000000166,33.4525610000000029,0
+              -120.0317200000000497,33.4183809999999895,0
+              -119.7143400000000213,33.5551000000000030,0
+              -119.3530099999999976,33.8505099999999999,0
+              -119.0893399999999502,34.0677959999999942,0
+              -118.9990099999999984,34.1092989999999929,0
+              -118.9867999999999881,34.1092989999999929,0
+              -118.9965700000000197,34.0848849999999999,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -108.2170500000000146,37.6464289999999906,0
+              -108.2245500000000362,37.6626790000000042,0
+              -108.2245500000000078,37.6701789999999974,0
+              -108.1957999999999913,37.6701789999999974,0
+              -108.1145499999999942,37.6526789999999920,0
+              -108.1107999999999976,37.6401790000000105,0
+              -108.1220499999999731,37.6289289999999923,0
+              -108.1670499999999890,37.6264290000000017,0
+              -108.2170500000000146,37.6464289999999906,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -119.1768199999999780,44.2468330000000023,0
+              -119.2217399999999969,44.2468330000000023,0
+              -119.2822900000000033,44.2702709999999939,0
+              -119.2803400000000238,44.2761299999999949,0
+              -119.2608100000000064,44.2839430000000007,0
+              -119.2217399999999969,44.2839430000000007,0
+              -119.1846300000000269,44.2702709999999939,0
+              -119.1768199999999780,44.2468330000000023,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -118.5576799999999906,44.5202709999999939,0
+              -118.5811199999999985,44.5378489999999942,0
+              -118.6025999999999954,44.5710520000000017,0
+              -118.5596299999999843,44.6042550000000020,0
+              -118.4444000000000017,44.6276929999999936,0
+              -118.3623699999999985,44.6335519999999946,0
+              -118.2022099999999654,44.6530830000000023,0
+              -118.0850199999999859,44.6433180000000007,0
+              -118.0694000000000017,44.6355049999999949,0
+              -118.0928399999999954,44.6023020000000017,0
+              -118.2100199999999717,44.5593329999999952,0
+              -118.3213499999999385,44.5437079999999952,0
+              -118.4834599999999938,44.5300359999999955,0
+              -118.5283799999999843,44.5261299999999949,0
+              -118.5576799999999906,44.5202709999999939,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -118.5811200000000269,44.5925360000000026,0
+              -118.6748699999999701,44.6140209999999939,0
+              -118.8428399999999954,44.6940989999999942,0
+              -118.8682299999999827,44.7292550000000020,0
+              -118.8682300000000112,44.7605050000000020,0
+              -118.8408799999999559,44.7878489999999942,0
+              -118.7900999999999812,44.7644109999999955,0
+              -118.6729100000000017,44.7019110000000026,0
+              -118.6240899999999812,44.6589430000000007,0
+              -118.5713499999999954,44.6062079999999952,0
+              -118.5811200000000269,44.5925360000000026,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -94.6237330000000156,42.7074819999999988,0
+              -94.6725619999999708,43.1786729999999892,0
+              -94.6188509999999923,43.3935170000000099,0
+              -94.5187530000000038,43.5424429999999916,0
+              -94.4430689999999942,43.5937129999999939,0
+              -94.3600620000000134,43.5473259999999911,0
+              -94.3429719999999890,43.4643179999999987,0
+              -94.3625030000000038,43.2983019999999925,0
+              -94.4088899999999995,43.0297479999999908,0
+              -94.4918969999999945,42.6855090000000033,0
+              -94.5358429999999856,42.6073840000000033,0
+              -94.5919950000000114,42.5927359999999950,0
+              -94.6237330000000156,42.7074819999999988,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2230
+          End Time: 2018318 2230
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -94.9122770000000031,34.4461889999999897,0
+              -94.8024139999999704,34.3070279999999954,0
+              -94.7071990000000170,34.1825169999999972,0
+              -94.6656949999999568,34.0555629999999923,0
+              -94.6681370000000015,33.9408170000000027,0
+              -94.7706759999999946,33.9115199999999959,0
+              -94.8634489999999602,33.9579069999999916,0
+              -94.9488980000000140,34.2044890000000024,0
+              -94.9537810000000064,34.4046850000000006,0
+              -94.9342500000000058,34.4583960000000005,0
+              -94.9122770000000031,34.4461889999999897,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -95.7863009999999804,28.4525349999999975,0
+              -95.6764380000000045,28.2474570000000007,0
+              -95.5348359999999985,27.9715779999999974,0
+              -95.4567109999999985,27.6248979999999982,0
+              -95.4445039999999949,27.4710889999999992,0
+              -95.4786840000000012,27.3758739999999996,0
+              -95.5690159999999906,27.3880809999999961,0
+              -95.7252659999999906,27.8519490000000012,0
+              -95.8155979999999801,28.1571239999999960,0
+              -95.8424529999999919,28.3426709999999993,0
+              -95.8668669999999992,28.4769490000000012,0
+              -95.7863009999999804,28.4525349999999975,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -95.2003629999999816,29.0360309999999977,0
+              -95.0099340000000012,28.8309530000000009,0
+              -94.9025120000000300,28.6966749999999919,0
+              -94.8536840000000012,28.5916950000000014,0
+              -94.8170620000000213,28.5062459999999973,0
+              -94.8341519999999889,28.4012649999999987,0
+              -94.8805389999999989,28.3792930000000005,0
+              -94.9879609999999843,28.5160109999999989,0
+              -95.0831759999999946,28.7357380000000049,0
+              -95.1808319999999952,28.9383750000000006,0
+              -95.2125699999999995,29.0165000000000042,0
+              -95.2003629999999816,29.0360309999999977,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -97.8712620000000157,26.4774369999999948,0
+              -97.7198949999999940,26.4090769999999999,0
+              -97.5563209999999827,26.2894480000000001,0
+              -97.5294650000000019,26.2113230000000001,0
+              -97.5636449999999655,26.1869090000000000,0
+              -97.7784889999999933,26.2967720000000007,0
+              -97.8761449999999940,26.4359329999999986,0
+              -97.8859109999999930,26.4554639999999992,0
+              -97.8712620000000157,26.4774369999999948,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -97.9786839999999870,26.4090769999999999,0
+              -97.9078830000000124,26.3675729999999966,0
+              -97.8639380000000045,26.3089790000000008,0
+              -97.8785869999999960,26.2821239999999996,0
+              -97.9347389999999933,26.2992139999999957,0
+              -97.9713599999999900,26.3358349999999994,0
+              -97.9835669999999794,26.3626900000000006,0
+              -97.9786839999999870,26.4090769999999999,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -97.7931370000000015,26.1429639999999992,0
+              -97.6661840000000012,26.0770459999999957,0
+              -97.5782940000000139,25.9476510000000005,0
+              -97.5319070000000039,25.8646430000000009,0
+              -97.5148169999999794,25.7743109999999973,0
+              -97.5636450000000082,25.7279249999999955,0
+              -97.6710669999999936,25.7523389999999992,0
+              -97.7565160000000049,25.8768499999999975,0
+              -97.8077859999999788,26.0599559999999997,0
+              -97.7931370000000015,26.1429639999999992,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -98.7921609999999930,26.3030960000000000,0
+              -98.7062239999999775,26.2210649999999958,0
+              -98.7023170000000079,26.1546580000000013,0
+              -98.7277079999999927,26.1487990000000003,0
+              -98.7687240000000060,26.2073929999999997,0
+              -98.7941140000000075,26.2659869999999991,0
+              -98.7921609999999788,26.2894240000000003,0
+              -98.7921609999999930,26.3030960000000000,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -99.1613020000000205,26.8890339999999952,0
+              -99.0577859999999930,26.8304399999999994,0
+              -99.0538800000000066,26.7894239999999968,0
+              -99.0851299999999924,26.7816119999999991,0
+              -99.1456770000000063,26.8304399999999994,0
+              -99.1652079999999927,26.8636429999999997,0
+              -99.1710669999999936,26.8870799999999974,0
+              -99.1613020000000205,26.8890339999999952,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -105.3472199999999930,40.0941789999999969,0
+              -105.0664500000000032,40.1185929999999971,0
+              -104.8638199999999898,40.1137099999999975,0
+              -104.6343299999999914,40.0282609999999934,0
+              -104.6099100000000135,39.9208390000000009,0
+              -104.6318799999999811,39.8158589999999961,0
+              -104.7173300000000040,39.7230849999999975,0
+              -104.7978999999999985,39.6913470000000075,0
+              -105.0005400000000009,39.7841200000000015,0
+              -105.1860800000000182,39.9281629999999979,0
+              -105.3057100000000190,40.0038470000000004,0
+              -105.3472199999999930,40.0941789999999969,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -125.1095300000000208,52.1921439999999919,0
+              -125.1632399999999876,52.2165589999999895,0
+              -125.1778900000000050,52.2531800000000004,0
+              -125.1363799999999600,52.3142149999999901,0
+              -124.9483999999999497,52.3776909999999774,0
+              -124.8214399999999955,52.3874569999999906,0
+              -124.7628499999999718,52.3508359999999939,0
+              -124.7994700000000137,52.3068910000000002,0
+              -124.8531799999999663,52.2775939999999935,0
+              -124.9313099999999963,52.2458549999999988,0
+              -125.0143100000000089,52.2287660000000002,0
+              -125.0533800000000184,52.2019099999999980,0
+              -125.0558199999999687,52.1994689999999935,0
+              -125.1095300000000208,52.1921439999999919,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -124.0488600000000190,47.1215279999999979,0
+              -123.9199500000000285,47.0961380000000034,0
+              -123.8555000000000206,47.0629339999999985,0
+              -123.8594099999999827,47.0453559999999982,0
+              -123.9082300000000032,47.0414499999999975,0
+              -124.0176100000000048,47.0863719999999901,0
+              -124.0488600000000190,47.1078559999999911,0
+              -124.0488600000000190,47.1215279999999979,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -117.0586200000000048,43.9972019999999944,0
+              -117.0820599999999700,43.9561859999999953,0
+              -117.1230800000000301,43.9425140000000027,0
+              -117.1445599999999985,43.9444670000000031,0
+              -117.1562799999999811,43.9796229999999966,0
+              -117.1640900000000016,44.0518889999999956,0
+              -117.1484699999999464,44.0850920000000031,0
+              -117.1386999999999858,44.1124360000000024,0
+              -117.1055000000000632,44.1339200000000105,0
+              -117.0703399999999874,44.0987640000000027,0
+              -117.0625299999999953,44.0304049999999947,0
+              -117.0586200000000048,43.9972019999999944,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -117.0215099999999637,44.1085299999999947,0
+              -117.1367499999999922,44.2393890000000027,0
+              -117.2773700000000190,44.3546239999999941,0
+              -117.2676099999999764,44.3956389999999956,0
+              -117.2402600000000206,44.4132170000000031,0
+              -117.1621400000000079,44.3761079999999950,0
+              -117.0937799999999811,44.3253270000000015,0
+              -117.0410399999999811,44.2628269999999944,0
+              -116.9941699999999685,44.1827479999999966,0
+              -117.0039400000000001,44.1222019999999944,0
+              -117.0215099999999637,44.1085299999999947,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -117.0273700000000048,43.6729829999999950,0
+              -117.0195599999999843,43.6124359999999953,0
+              -117.0176099999999906,43.5636079999999950,0
+              -117.0410399999999527,43.5323579999999950,0
+              -117.0742499999999779,43.5284509999999898,0
+              -117.0840099999999495,43.5675139999999885,0
+              -117.0801099999999764,43.6085299999999947,0
+              -117.0722899999999953,43.6671229999999966,0
+              -117.0410399999999811,43.6788420000000031,0
+              -117.0273700000000048,43.6729829999999950,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -116.0195599999999985,43.8448580000000021,0
+              -116.0371399999999653,43.8526700000000034,0
+              -116.0332300000000316,43.8819670000000031,0
+              -116.0176099999999906,43.9073580000000021,0
+              -115.9883099999999700,43.9327479999999966,0
+              -115.9570599999999843,43.9307950000000034,0
+              -115.9590100000000206,43.9014979999999895,0
+              -115.9726900000000143,43.8819670000000031,0
+              -116.0195599999999985,43.8448580000000021,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -113.0429999999999922,42.9151699999999963,0
+              -112.9863599999999764,42.9932950000000034,0
+              -112.9238600000000190,43.0186860000000024,0
+              -112.8926100000000048,42.9913419999999888,0
+              -112.9004199999999969,42.9639980000000037,0
+              -112.9746399999999937,42.9210289999999972,0
+              -113.0312799999999811,42.9014979999999966,0
+              -113.0429999999999922,42.9151699999999963,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -121.3491500000000087,42.6761429999999962,0
+              -121.2490499999999685,42.7176469999999995,0
+              -121.1514000000000095,42.7811230000000009,0
+              -121.0439800000000190,42.8104200000000006,0
+              -120.9609700000000032,42.8030959999999965,0
+              -120.9316699999999969,42.7396189999999976,0
+              -120.9414399999999716,42.6712599999999966,0
+              -120.9536400000000214,42.6419629999999898,0
+              -120.8852799999999661,42.5711620000000011,0
+              -120.8511000000000166,42.4832719999999995,0
+              -120.9341100000000182,42.4027049999999974,0
+              -121.0219999999999914,42.3904980000000009,0
+              -121.1660499999999985,42.4222360000000052,0
+              -121.2246399999999653,42.5003609999999910,0
+              -121.3296200000000056,42.5760450000000006,0
+              -121.3564800000000332,42.6297560000000075,0
+              -121.3564800000000332,42.6688180000000017,0
+              -121.3491500000000087,42.6761429999999962,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -121.8008099999999985,42.0316109999999981,0
+              -121.7983699999999914,42.0462599999999966,0
+              -121.7348899999999787,42.0487010000000012,0
+              -121.6762999999999835,42.0242869999999940,0
+              -121.6372400000000198,41.9583689999999976,0
+              -121.6518900000000087,41.9388379999999898,0
+              -121.6860699999999724,41.9437209999999894,0
+              -121.7495400000000245,41.9852240000000023,0
+              -121.7837200000000024,42.0218460000000036,0
+              -121.8008099999999985,42.0316109999999981,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -120.7436799999999835,42.4051460000000020,0
+              -120.6948500000000166,42.4564159999999973,0
+              -120.6411400000000071,42.4905959999999965,0
+              -120.5727799999999803,42.5076859999999925,0
+              -120.5654599999999448,42.4930369999999940,0
+              -120.5752299999999906,42.4271189999999976,0
+              -120.6313799999999929,42.4002640000000000,0
+              -120.7095000000000056,42.3929389999999984,0
+              -120.7436799999999835,42.4051460000000020,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -119.6694600000000150,43.6453810000000004,0
+              -119.6987599999999929,43.6551469999999995,0
+              -119.6938799999999787,43.7137409999999917,0
+              -119.6841100000000040,43.7552450000000022,0
+              -119.6401699999999977,43.7943070000000034,0
+              -119.5888999999999953,43.7918659999999988,0
+              -119.5132100000000150,43.7210649999999958,0
+              -119.5010099999999937,43.6868849999999895,0
+              -119.5181000000000182,43.6624709999999965,0
+              -119.6084299999999843,43.6600299999999919,0
+              -119.6108700000000198,43.6600299999999919,0
+              -119.6694600000000150,43.6453810000000004,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -105.3886300000000062,21.7047139999999956,0
+              -105.3980100000000277,21.6937769999999972,0
+              -105.4261299999999864,21.6859639999999985,0
+              -105.4683199999999914,21.6765889999999963,0
+              -105.5073799999999977,21.6781520000000008,0
+              -105.5183200000000170,21.6844019999999986,0
+              -105.5152000000000072,21.7109640000000006,0
+              -105.4730100000000022,21.7203389999999992,0
+              -105.4261300000000006,21.7234639999999963,0
+              -105.4042599999999936,21.7187769999999993,0
+              -105.3886300000000062,21.7047139999999956,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -105.2151999999999816,21.7672139999999956,0
+              -105.3152000000000044,21.7703389999999999,0
+              -105.4370700000000056,21.7656519999999958,0
+              -105.5870700000000113,21.7625269999999986,0
+              -105.6339499999999845,21.7687770000000000,0
+              -105.6386399999999952,21.7906519999999979,0
+              -105.5698799999999693,21.8297149999999966,0
+              -105.4214500000000072,21.8406520000000022,0
+              -105.2870699999999999,21.8140900000000002,0
+              -105.2198800000000034,21.7922139999999978,0
+              -105.2151999999999816,21.7672139999999956,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -105.4292600000000135,22.3984649999999981,0
+              -105.4214499999999930,22.3656519999999972,0
+              -105.4370700000000056,22.3328400000000009,0
+              -105.4776999999999987,22.3015899999999974,0
+              -105.5245699999999971,22.2953399999999959,0
+              -105.5761299999999920,22.2906520000000015,0
+              -105.6136299999999864,22.3031519999999972,0
+              -105.6120700000000028,22.3187770000000008,0
+              -105.5823800000000006,22.3406519999999951,0
+              -105.5401999999999987,22.3609650000000002,0
+              -105.4823800000000205,22.3812770000000008,0
+              -105.4558200000000028,22.3922149999999966,0
+              -105.4292600000000135,22.3984649999999981,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -105.7620700000000085,23.0406520000000015,0
+              -105.7323899999999952,23.0812769999999965,0
+              -105.6448900000000037,23.1015900000000016,0
+              -105.6011299999999835,23.0984649999999974,0
+              -105.5292599999999794,23.0734649999999881,0
+              -105.4777000000000129,23.0234650000000052,0
+              -105.4761299999999977,22.9828399999999959,0
+              -105.5323800000000034,22.9328399999999988,0
+              -105.6198799999999807,22.9250269999999965,0
+              -105.7011399999999952,22.9562770000000000,0
+              -105.7480100000000078,23.0031519999999965,0
+              -105.7620699999999943,23.0328400000000002,0
+              -105.7620700000000085,23.0406520000000015,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -105.1651999999999987,22.8828400000000016,0
+              -105.2464500000000100,22.9109649999999974,0
+              -105.3167599999999879,22.9578399999999974,0
+              -105.3292600000000192,22.9937769999999979,0
+              -105.2886299999999977,23.0015899999999966,0
+              -105.2276999999999987,22.9672149999999959,0
+              -105.1761300000000006,22.9015899999999988,0
+              -105.1651999999999987,22.8828400000000016,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -106.1370699999999943,24.9812779999999997,0
+              -106.1527000000000100,24.9687779999999968,0
+              -106.1870699999999914,24.9672149999999995,0
+              -106.2214500000000044,24.9719029999999975,0
+              -106.2417599999999993,24.9875279999999975,0
+              -106.2558199999999999,25.0094029999999954,0
+              -106.2527000000000044,25.0156530000000004,0
+              -106.2167599999999936,25.0047149999999974,0
+              -106.1823899999999981,25.0031529999999975,0
+              -106.1448900000000179,24.9922150000000016,0
+              -106.1370699999999943,24.9812779999999997,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -107.6558200000000056,24.9734649999999974,0
+              -107.5792600000000050,24.9875279999999975,0
+              -107.4605099999999993,24.9750279999999947,0
+              -107.4183200000000085,24.9531529999999968,0
+              -107.3901999999999930,24.9187779999999997,0
+              -107.4105099999999879,24.8844029999999954,0
+              -107.4776999999999987,24.8750280000000004,0
+              -107.5980100000000022,24.9015899999999952,0
+              -107.6480099999999851,24.9469029999999989,0
+              -107.6558200000000056,24.9734649999999974,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -107.6683199999999943,24.8594030000000004,0
+              -107.5558199999999971,24.8765900000000002,0
+              -107.4902000000000157,24.8797150000000009,0
+              -107.4292599999999993,24.8687779999999954,0
+              -107.3933200000000028,24.8219029999999954,0
+              -107.3745700000000056,24.7828400000000002,0
+              -107.3698900000000123,24.7515900000000002,0
+              -107.2964499999999930,24.7031529999999968,0
+              -107.2980100000000050,24.6359649999999952,0
+              -107.3292599999999908,24.5984649999999974,0
+              -107.3839500000000129,24.5781530000000004,0
+              -107.4308199999999971,24.5515900000000009,0
+              -107.5042600000000022,24.4890900000000009,0
+              -107.5870700000000113,24.3859649999999988,0
+              -107.6480099999999993,24.3547149999999952,0
+              -107.6636400000000151,24.3672150000000016,0
+              -107.6808200000000113,24.4062779999999968,0
+              -107.6730100000000050,24.4797149999999952,0
+              -107.6558200000000198,24.5734649999999952,0
+              -107.6683200000000085,24.6156529999999982,0
+              -107.6777000000000015,24.6719029999999968,0
+              -107.7230100000000022,24.7281529999999989,0
+              -107.7386399999999895,24.7797149999999959,0
+              -107.6683199999999943,24.8594030000000004,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -108.7011399999999952,26.2515910000000012,0
+              -108.6651999999999987,26.1359659999999963,0
+              -108.6792599999999993,26.0515909999999948,0
+              -108.7105100000000135,25.9937779999999989,0
+              -108.7620699999999943,25.9656529999999997,0
+              -108.8183199999999857,25.9953409999999998,0
+              -108.8464499999999902,26.0687779999999947,0
+              -108.8308200000000170,26.1484659999999991,0
+              -108.7573900000000009,26.2390909999999984,0
+              -108.7527000000000186,26.2406529999999982,0
+              -108.7011399999999952,26.2515910000000012,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -102.4303299999999979,18.0032730000000001,0
+              -102.5178300000000036,17.9485850000000013,0
+              -102.6006500000000017,17.8970230000000008,0
+              -102.6709599999999796,17.9001479999999979,0
+              -102.7037700000000058,17.9173350000000013,0
+              -102.6990800000000092,17.9563979999999965,0
+              -102.5819000000000045,18.0360849999999999,0
+              -102.4147099999999853,18.0782729999999994,0
+              -102.4053300000000064,18.0563980000000015,0
+              -102.4115800000000007,18.0454599999999949,0
+              -102.4303299999999979,18.0032730000000001,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -112.1903899999999794,35.9214219999999926,0
+              -112.5565999999999889,35.7802780000000027,0
+              -112.8465099999999808,35.6887249999999980,0
+              -113.1211699999999922,35.6429490000000015,0
+              -113.2928299999999808,35.6887249999999980,0
+              -113.3348000000000155,35.7688339999999982,0
+              -113.2775699999999972,35.8565719999999999,0
+              -113.1135400000000004,35.9099780000000024,0
+              -112.6672200000000004,35.9824569999999966,0
+              -112.3696800000000167,35.9824569999999966,0
+              -112.1865700000000032,35.9671980000000033,0
+              -112.1903899999999794,35.9214219999999926,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -112.2361599999999981,36.6996210000000005,0
+              -112.3162700000000029,36.5661059999999978,0
+              -112.3658600000000121,36.3257800000000017,0
+              -112.4230799999999988,36.2113390000000024,0
+              -112.6099999999999994,36.1274159999999966,0
+              -112.9380699999999820,36.1197859999999977,0
+              -113.1860200000000134,36.2952629999999914,0
+              -113.2584999999999980,36.5661059999999978,0
+              -113.1898400000000038,36.7263230000000007,0
+              -113.0334300000000098,36.8483939999999990,0
+              -112.6634100000000274,36.8674669999999907,0
+              -112.3582300000000203,36.8407640000000001,0
+              -112.2094599999999787,36.7682849999999988,0
+              -112.2361599999999981,36.6996210000000005,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -111.9996500000000168,35.0790989999999994,0
+              -112.2132699999999659,35.0394259999999917,0
+              -112.3902800000000042,34.9936500000000024,0
+              -112.7015600000000006,34.9753389999999982,0
+              -112.8205699999999609,35.0394259999999917,0
+              -112.8571900000000028,35.1035129999999995,0
+              -112.8510899999999992,35.1584450000000004,0
+              -112.7107100000000202,35.2133759999999967,0
+              -112.5550699999999864,35.2225320000000011,0
+              -112.3048299999999955,35.1950659999999971,0
+              -112.0942599999999914,35.1584450000000004,0
+              -112.0027000000000044,35.1218229999999991,0
+              -111.9996500000000168,35.0790989999999994,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -111.3325399999999945,34.3817549999999983,0
+              -111.4301899999999961,34.4037280000000010,0
+              -111.5278500000000150,34.3915209999999973,0
+              -111.5693499999999858,34.4012859999999989,0
+              -111.5840000000000032,34.4574390000000008,0
+              -111.5180800000000119,34.4842939999999984,0
+              -111.3838099999999969,34.4598799999999912,0
+              -111.3056799999999953,34.4159349999999904,0
+              -111.2934699999999992,34.3915209999999973,0
+              -111.3325399999999945,34.3817549999999983,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -110.3169099999999929,34.3280439999999984,0
+              -110.3901500000000198,34.1864419999999996,0
+              -110.5610500000000087,34.0179850000000030,0
+              -110.6416200000000032,33.9740399999999951,0
+              -110.6513800000000032,33.9935710000000029,0
+              -110.6416200000000174,34.0716959999999958,0
+              -110.4707199999999858,34.2792159999999981,0
+              -110.4194499999999834,34.3231609999999918,0
+              -110.3242400000000174,34.3622239999999906,0
+              -110.3169099999999929,34.3280439999999984,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2330
+          End Time: 2018319 0130
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -116.8947900000000146,32.4014749999999978,0
+              -117.3372999999999848,32.0840919999999983,0
+              -117.5509200000000192,31.9986430000000048,0
+              -117.8255800000000022,31.9192970000000003,0
+              -118.2253599999999949,31.9376079999999973,0
+              -118.2253599999999949,31.9803330000000017,0
+              -118.1795800000000156,32.0627299999999948,0
+              -117.9385000000000190,32.1664899999999960,0
+              -117.5020900000000097,32.2885599999999968,0
+              -117.0290700000000044,32.4014749999999978,0
+              -116.8978499999999769,32.4228379999999987,0
+              -116.8947900000000146,32.4014749999999978,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2330
+          End Time: 2018319 0130
+          Density: 5
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Light_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>0</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -121.6303099999999944,41.0506140000000030,0
+              -121.4440399999999727,40.5151040000000009,0
+              -121.3159799999999962,40.1309330000000060,0
+              -121.0831500000000176,39.9795930000000084,0
+              -120.6757000000000204,39.7001959999999983,0
+              -120.2915299999999945,39.2228929999999991,0
+              -120.1052600000000439,38.8852890000000073,0
+              -119.8724299999999943,38.3148529999999994,0
+              -119.4533399999999972,37.9423239999999993,0
+              -118.8130500000000040,37.2089070000000035,0
+              -118.5685799999999830,37.0692090000000007,0
+              -118.4521699999999953,36.5220569999999967,0
+              -118.5103699999999947,35.8934139999999999,0
+              -118.5452999999999975,35.1250720000000030,0
+              -118.7897699999999901,34.6012029999999982,0
+              -119.0575299999999999,34.1471829999999983,0
+              -119.4184099999999944,33.4254079999999973,0
+              -119.9190000000000111,32.7152740000000009,0
+              -120.3059599999999989,32.3830909999999932,0
+              -120.9392600000000044,31.8689999999999962,0
+              -121.8705900000000213,31.5188230000000011,0
+              -122.8764200000000244,31.5635269999999970,0
+              -124.4708400000000097,31.6752849999999953,0
+              -125.9493199999999860,31.9934989999999999,0
+              -128.2408399999999631,31.7348900000000000,0
+              -129.1870600000000024,32.3234860000000026,0
+              -129.3286200000000008,33.6273380000000017,0
+              -128.3125499999999874,36.0680369999999968,0
+              -127.2531700000000114,37.8724750000000014,0
+              -125.8794699999999978,40.3288390000000021,0
+              -125.2624600000000044,40.8759909999999991,0
+              -124.9714299999999838,40.8992739999999984,0
+              -124.6803900000000169,40.8759909999999991,0
+              -123.7839900000000029,40.4336130000000011,0
+              -123.3066900000000032,40.5616699999999994,0
+              -122.8992299999999886,41.0040479999999974,0
+              -122.4801400000000058,41.2135960000000026,0
+              -122.1425299999999936,41.3416530000000009,0
+              -121.8165699999999987,41.2834450000000004,0
+              -121.6303099999999944,41.0506140000000030,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Folder>
+  <Folder>
+    <name>Smoke (Medium)</name>
+    <open>0</open>
+    <Style>
+      <ListStyle>
+      <listItemType>check</listItemType>
+      <bgColor>00ffffff</bgColor>
+      <maxSnippetLines>2</maxSnippetLines>
+    </ListStyle>
+    </Style>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1545
+          End Time: 2018318 1700
+          Density: 16
+          Satellite: GOES-WEST
+      </description>
+      <styleUrl>#Smoke_Medium_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>1</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -121.4611299999999829,39.9259380000000021,0
+              -121.5375700000000023,40.0552980000000005,0
+              -121.5728499999999883,40.1964189999999988,0
+              -121.6022500000000122,40.3786989999999975,0
+              -121.6257700000000028,40.4962990000000005,0
+              -121.6845699999999653,40.6021399999999915,0
+              -121.8021700000000322,40.6962200000000038,0
+              -121.8080500000000086,40.8491000000000000,0
+              -121.8080500000000086,40.9961009999999959,0
+              -121.9432900000000046,41.1137009999999989,0
+              -122.0667700000000195,41.0313810000000032,0
+              -122.1490899999999442,40.8549799999999905,0
+              -122.2078900000000061,40.7079800000000063,0
+              -122.2666899999999970,40.5903799999999961,0
+              -122.2960899999999782,40.4786590000000004,0
+              -122.3666500000000070,40.4080990000000000,0
+              -122.4313300000000027,40.4080990000000000,0
+              -122.4607299999999981,40.4080990000000000,0
+              -122.5900900000000036,40.4551389999999955,0
+              -122.7253299999999996,40.3904590000000070,0
+              -122.7723699999999951,40.2728589999999969,0
+              -122.7253299999999996,40.0670580000000029,0
+              -122.6547700000000134,39.8553780000000017,0
+              -122.5665699999999845,39.6260570000000030,0
+              -122.5312899999999985,39.4202569999999994,0
+              -122.4136900000000026,39.2203359999999961,0
+              -122.3078500000000020,39.0733359999999976,0
+              -122.2196499999999872,38.9263359999999992,0
+              -122.0667700000000195,38.6205750000000023,0
+              -122.0256100000000146,38.4618139999999968,0
+              -122.0256100000000288,38.3265739999999937,0
+              -121.9550499999999857,38.1795739999999952,0
+              -121.8550900000000041,38.0678529999999995,0
+              -121.7198499999999797,37.9678929999999966,0
+              -121.4964099999999974,37.8855730000000008,0
+              -121.3905699999999968,37.8150130000000004,0
+              -121.2318099999999959,37.6856530000000021,0
+              -121.0554099999999949,37.6503719999999973,0
+              -120.9378099999999989,37.7562130000000025,0
+              -120.9260500000000178,37.9267329999999987,0
+              -120.9730900000000133,38.1442939999999950,0
+              -121.0083699999999993,38.3442140000000009,0
+              -120.9672099999999944,38.6146949999999975,0
+              -120.8613699999999511,38.7558149999999983,0
+              -120.7437699999999836,38.8498949999999965,0
+              -120.6732100000000258,38.8734150000000014,0
+              -120.5850099999999969,39.0674559999999929,0
+              -120.5556099999999731,39.2614960000000011,0
+              -120.6967299999999881,39.4496570000000020,0
+              -120.8202100000000030,39.5790170000000003,0
+              -120.9201699999999988,39.6554569999999984,0
+              -121.0201300000000089,39.6966170000000034,0
+              -121.2082899999999910,39.7789379999999895,0
+              -121.2612100000000197,39.8318579999999969,0
+              -121.3788099999999872,39.9082979999999949,0
+              -121.4611299999999829,39.9259380000000021,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1600
+          End Time: 2018318 1800
+          Density: 16
+          Satellite: GOES-WEST
+      </description>
+      <styleUrl>#Smoke_Medium_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>1</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -118.5871700000000004,36.2269160000000028,0
+              -118.6164699999999783,36.2249630000000025,0
+              -118.6360000000000099,36.1937130000000025,0
+              -118.6867800000000130,36.1780880000000025,0
+              -118.6965400000000272,36.1937130000000025,0
+              -118.6906900000000036,36.2151979999999938,0
+              -118.6887300000000067,36.2347290000000015,0
+              -118.6984999999999673,36.2464479999999938,0
+              -118.7336499999999972,36.2659790000000015,0
+              -118.7531899999999894,36.2776980000000009,0
+              -118.7551400000000399,36.2952760000000012,0
+              -118.7356099999999799,36.3187130000000025,0
+              -118.6965399999999988,36.3226199999999935,0
+              -118.6399000000000115,36.2991820000000018,0
+              -118.5988899999999830,36.2698850000000022,0
+              -118.5637300000000209,36.2698850000000022,0
+              -118.5441999999999751,36.2444950000000006,0
+              -118.5871700000000004,36.2269160000000028,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1600
+          End Time: 2018318 1800
+          Density: 16
+          Satellite: GOES-WEST
+      </description>
+      <styleUrl>#Smoke_Medium_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>1</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -118.7141199999999941,36.3577760000000012,0
+              -118.7512300000000209,36.3480100000000022,0
+              -118.7883400000000194,36.3480100000000022,0
+              -118.8059200000000430,36.3558230000000009,0
+              -118.8176399999999973,36.3714480000000009,0
+              -118.8156899999999894,36.3812130000000025,0
+              -118.7981099999999941,36.4066040000000015,0
+              -118.7668600000000225,36.4241820000000018,0
+              -118.7102199999999925,36.4554320000000018,0
+              -118.6887300000000067,36.4730100000000022,0
+              -118.6750600000000020,36.4671510000000012,0
+              -118.6750600000000020,36.4456660000000028,0
+              -118.6867800000000130,36.4183230000000009,0
+              -118.7023999999999972,36.3890260000000012,0
+              -118.7141199999999941,36.3577760000000012,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 16
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Medium_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>1</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -121.3198499999999740,42.6541699999999935,0
+              -121.2685900000000032,42.6566109999999981,0
+              -121.1709300000000127,42.6321969999999979,0
+              -121.1074499999999858,42.5613969999999995,0
+              -121.1245400000000387,42.5345409999999973,0
+              -121.1831399999999945,42.5443070000000034,0
+              -121.2783500000000032,42.5711620000000011,0
+              -121.3418299999999874,42.6199900000000085,0
+              -121.3564800000000332,42.6370800000000045,0
+              -121.3198499999999740,42.6541699999999935,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 16
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Medium_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>1</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -112.0234499999999827,35.0970870000000019,0
+              -112.1040200000000056,35.0873220000000003,0
+              -112.1821500000000071,35.0775560000000013,0
+              -112.3115399999999937,35.0799969999999988,0
+              -112.3432799999999929,35.1068530000000010,0
+              -112.3335100000000182,35.1483569999999972,0
+              -112.2895699999999977,35.1556810000000013,0
+              -112.1650599999999969,35.1532399999999896,0
+              -112.0332200000000000,35.1263840000000016,0
+              -112.0210100000000182,35.1117360000000005,0
+              -112.0234499999999827,35.0970870000000019,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 16
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Medium_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>1</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -112.2480600000000095,36.7255060000000029,0
+              -112.3676899999999961,36.6888849999999991,0
+              -112.4604700000000008,36.6302909999999997,0
+              -112.5312700000000206,36.5839039999999969,0
+              -112.5605600000000095,36.5301929999999970,0
+              -112.5971899999999977,36.5228690000000000,0
+              -112.7485499999999945,36.6009940000000000,0
+              -112.7412300000000016,36.6766780000000026,0
+              -112.6557800000000071,36.7816580000000002,0
+              -112.5141799999999961,36.8133959999999973,0
+              -112.4360500000000087,36.8085140000000024,0
+              -112.2895699999999835,36.7840989999999906,0
+              -112.2480600000000095,36.7670099999999991,0
+              -112.2382999999999953,36.7548030000000026,0
+              -112.2480600000000095,36.7255060000000029,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 16
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Medium_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>1</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -110.3388800000000174,34.3353680000000026,0
+              -110.3974800000000158,34.2377120000000019,0
+              -110.5000200000000206,34.1131999999999991,0
+              -110.5683799999999906,34.0668130000000033,0
+              -110.5708199999999977,34.0985519999999980,0
+              -110.4707200000000000,34.2499189999999984,0
+              -110.3608600000000024,34.3280439999999984,0
+              -110.3388800000000174,34.3353680000000026,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2300
+          End Time: 2018319 0100
+          Density: 16
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Medium_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>1</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -118.5846200000000010,36.2281690000000012,0
+              -118.6265800000000183,36.1175429999999977,0
+              -118.6876100000000065,36.0870249999999970,0
+              -118.7829800000000091,36.0832109999999986,0
+              -118.8974200000000110,36.1060990000000004,0
+              -118.9508300000000247,36.1442460000000025,0
+              -119.0080499999999972,36.2357990000000001,0
+              -119.0538200000000160,36.3349809999999920,0
+              -119.0767100000000198,36.4074600000000004,0
+              -119.1491899999999902,36.4913829999999919,0
+              -119.1911499999999791,36.5409739999999985,0
+              -119.2292999999999950,36.6516009999999994,0
+              -119.2102300000000099,36.7507829999999984,0
+              -119.1415599999999984,36.7889300000000006,0
+              -119.0194899999999905,36.7698559999999972,0
+              -118.9432000000000045,36.6859329999999915,0
+              -118.7791699999999935,36.6325270000000032,0
+              -118.6990599999999887,36.6248980000000017,0
+              -118.6075100000000049,36.6096390000000014,0
+              -118.5884300000000025,36.5791210000000007,0
+              -118.5998800000000131,36.5180859999999967,0
+              -118.6075099999999765,36.4532359999999969,0
+              -118.6456500000000034,36.4189039999999977,0
+              -118.6647299999999916,36.4112750000000034,0
+              -118.6342100000000102,36.3616839999999968,0
+              -118.5426599999999837,36.3387949999999975,0
+              -118.5350299999999635,36.2968339999999969,0
+              -118.5846200000000010,36.2281690000000012,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2300
+          End Time: 2018319 0100
+          Density: 16
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Medium_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>1</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -121.9522300000000286,40.9682380000000066,0
+              -121.8873799999999932,40.8614260000000016,0
+              -121.8377899999999840,40.7965760000000017,0
+              -121.7500499999999732,40.7736879999999928,0
+              -121.6813899999999933,40.7622440000000026,0
+              -121.6127200000000101,40.6745059999999938,0
+              -121.5593199999999996,40.5829529999999963,0
+              -121.5783899999999846,40.5142889999999909,0
+              -121.6241699999999923,40.4112919999999960,0
+              -121.6203499999999735,40.3082950000000011,0
+              -121.5135400000000061,40.1328189999999978,0
+              -121.4181800000000067,40.0603399999999965,0
+              -121.3342500000000257,39.9878600000000048,0
+              -121.2808500000000151,39.9306399999999968,0
+              -121.2274400000000441,39.8429020000000094,0
+              -121.2045499999999976,39.7551640000000077,0
+              -121.1244399999999928,39.7475340000000017,0
+              -121.0100000000000051,39.7704230000000010,0
+              -120.8230800000000045,39.7170169999999985,0
+              -120.6132699999999858,39.5148379999999975,0
+              -120.4683200000000056,39.2554379999999981,0
+              -120.3309899999999857,39.0799620000000019,0
+              -120.2699500000000086,38.7442690000000027,0
+              -120.2928399999999982,38.4009459999999976,0
+              -120.3691299999999842,38.1301020000000008,0
+              -120.3996500000000083,37.8745169999999973,0
+              -120.3576899999999910,37.6494500000000016,0
+              -120.3424300000000073,37.4014949999999970,0
+              -120.3843899999999962,37.3595329999999990,0
+              -120.5827600000000075,37.3366449999999972,0
+              -120.7429700000000281,37.4014949999999970,0
+              -120.9298900000000003,37.5273800000000008,0
+              -121.1206299999999914,37.5693419999999989,0
+              -121.3380699999999877,37.5846000000000018,0
+              -121.5898399999999953,37.6914119999999997,0
+              -121.7386099999999516,37.8096680000000021,0
+              -121.8072700000000168,37.9508110000000087,0
+              -121.9026400000000052,38.1644349999999974,0
+              -121.9674899999999980,38.4657960000000045,0
+              -122.1963700000000017,38.9998529999999946,0
+              -122.4748499999999751,39.3088439999999935,0
+              -122.6617700000000042,39.8543459999999925,0
+              -122.7685799999999716,40.2625190000000046,0
+              -122.7838399999999837,40.4799569999999989,0
+              -122.6961000000000013,40.6020269999999996,0
+              -122.5740299999999650,40.6897650000000013,0
+              -122.5206199999999654,40.7965760000000017,0
+              -122.3909200000000226,40.9834969999999927,0
+              -122.2154499999999757,41.0521609999999981,0
+              -122.0132699999999915,41.0559760000000011,0
+              -121.9522300000000286,40.9682380000000066,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Folder>
+  <Folder>
+    <name>Smoke (Heavy)</name>
+    <open>0</open>
+    <Style>
+      <ListStyle>
+      <listItemType>check</listItemType>
+      <bgColor>00ffffff</bgColor>
+      <maxSnippetLines>2</maxSnippetLines>
+    </ListStyle>
+    </Style>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1600
+          End Time: 2018318 1800
+          Density: 27
+          Satellite: GOES-WEST
+      </description>
+      <styleUrl>#Smoke_Heavy_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>2</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -121.3467500000000001,39.8450919999999940,0
+              -121.2735100000000017,39.7864989999999992,0
+              -121.2588600000000127,39.7327879999999993,0
+              -121.1880600000000072,39.6644280000000009,0
+              -121.1123799999999449,39.6302489999999921,0
+              -121.0489000000000033,39.5740959999999902,0
+              -121.0391300000000001,39.4910889999999952,0
+              -121.0879599999999954,39.4447019999999995,0
+              -121.1514399999999938,39.4154050000000069,0
+              -121.2051500000000033,39.3763419999999940,0
+              -121.1978299999999820,39.3104239999999905,0
+              -121.1416700000000048,39.3055420000000026,0
+              -121.1001700000000056,39.2322989999999976,0
+              -121.1294699999999835,39.1541739999999976,0
+              -121.2051500000000033,39.0614009999999965,0
+              -121.2417699999999883,39.0467529999999954,0
+              -121.3052500000000009,39.0516349999999974,0
+              -121.3809300000000206,39.0858149999999895,0
+              -121.5274200000000207,39.1785879999999906,0
+              -121.6128699999999867,39.3006590000000031,0
+              -121.6983099999999922,39.5057370000000034,0
+              -121.7178499999999559,39.6180419999999955,0
+              -121.7251699999999914,39.6986079999999930,0
+              -121.6885499999999780,39.7620849999999919,0
+              -121.6592500000000001,39.8109129999999922,0
+              -121.6299600000000112,39.8402099999999919,0
+              -121.5738000000000056,39.8768309999999957,0
+              -121.5078800000000143,39.8890379999999993,0
+              -121.4028999999999883,39.8572989999999976,0
+              -121.3467500000000001,39.8450919999999940,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 27
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Heavy_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>2</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -112.2662100000000009,36.7293039999999991,0
+              -112.3521500000000088,36.7351630000000000,0
+              -112.4283199999999852,36.7429759999999916,0
+              -112.4556599999999946,36.7625069999999994,0
+              -112.3931599999999804,36.7800849999999926,0
+              -112.3345699999999994,36.7859449999999981,0
+              -112.2740199999999788,36.7761789999999991,0
+              -112.2408199999999994,36.7429759999999916,0
+              -112.2662100000000009,36.7293039999999991,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 1800
+          End Time: 2018318 2100
+          Density: 27
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Heavy_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>2</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -112.0455099999999931,35.1003979999999984,0
+              -112.1665999999999883,35.1003979999999984,0
+              -112.2095699999999852,35.1101630000000000,0
+              -112.2115200000000073,35.1277410000000003,0
+              -112.1900399999999962,35.1433660000000003,0
+              -112.1060499999999820,35.1375069999999994,0
+              -112.0318300000000136,35.1121160000000003,0
+              -112.0455099999999931,35.1003979999999984,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2100
+          End Time: 2018319 0000
+          Density: 27
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Heavy_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>2</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -121.3174099999999953,42.6468459999999965,0
+              -121.2612600000000072,42.6370800000000045,0
+              -121.2148700000000048,42.6175489999999968,0
+              -121.1733700000000056,42.5906930000000017,0
+              -121.1855800000000016,42.5638379999999970,0
+              -121.2222000000000151,42.5736039999999960,0
+              -121.3003199999999708,42.6102249999999927,0
+              -121.3296199999999772,42.6346390000000071,0
+              -121.3174099999999953,42.6468459999999965,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2300
+          End Time: 2018319 0100
+          Density: 27
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Heavy_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>2</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -118.6776999999999873,36.2510199999999969,0
+              -118.7143200000000007,36.1808289999999957,0
+              -118.7539899999999875,36.1472600000000028,0
+              -118.7662000000000262,36.1472600000000028,0
+              -118.7814599999999814,36.1808289999999957,0
+              -118.7570400000000177,36.2174499999999924,0
+              -118.7173700000000025,36.2601749999999896,0
+              -118.6838000000000051,36.2662779999999998,0
+              -118.6776999999999873,36.2510199999999969,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <description>
+        Smoke Attributes:
+          Start Time: 2018318 2300
+          End Time: 2018319 0100
+          Density: 27
+          Satellite: GOES-EAST
+      </description>
+      <styleUrl>#Smoke_Heavy_style</styleUrl>
+      <Polygon>
+        <tessellate>1</tessellate>
+        <gx:drawOrder>2</gx:drawOrder>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              -121.3075500000000346,39.8581609999999955,0
+              -121.2655900000000315,39.8429020000000094,0
+              -121.2388799999999804,39.7513489999999976,0
+              -121.2388800000000373,39.6941290000000038,0
+              -121.2007399999999961,39.6025759999999991,0
+              -121.1549599999999884,39.4385439999999932,0
+              -121.1740300000000303,39.2592530000000082,0
+              -121.1931100000000043,39.1448120000000017,0
+              -121.1931100000000185,39.0723330000000004,0
+              -121.3456999999999795,38.9998529999999946,0
+              -121.5402499999999861,38.9960390000000032,0
+              -121.6127200000000101,39.0685179999999903,0
+              -121.7462400000000002,39.2401789999999906,0
+              -121.7767599999999959,39.6102050000000006,0
+              -121.8110899999999930,39.8009399999999971,0
+              -121.8339799999999684,39.9420840000000013,0
+              -121.7958300000000094,39.9878600000000048,0
+              -121.7080899999999843,40.0107489999999970,0
+              -121.6661299999999954,40.0679689999999979,0
+              -121.6127200000000101,40.0717839999999939,0
+              -121.5783899999999846,40.0527100000000047,0
+              -121.4906500000000023,40.0107489999999970,0
+              -121.4143599999999594,39.9764159999999933,0
+              -121.3800299999999908,39.9458989999999972,0
+              -121.3075500000000346,39.8581609999999955,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Folder>
+</Document>
+</kml>
