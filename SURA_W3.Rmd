@@ -15,17 +15,24 @@ library(sf)
 library(mapview)
 library(rgdal)
 library(shiny)
+library(ggplot2)
+library(rvest)
+library(RColorBrewer)
+library(leafpop)
 ```
 
+## Fire Data: Preprocessing
+
+### Restrict to California
 ```{r}
-# Read the text file
-nov8 <- st_read("data/fire/hms20181107.txt")
+# Read the kml file
+fire <- st_read("data/fire/fire20181107.kml")
 ```
 
 ```{r}
 cal_bound <- st_read("ca-state-boundary/CA_State_TIGER2016.shp")
 
-# Convert to the same coordinate system as HMS
+# Convert to the same coordinate system as HMS (4326)
 cal_bound <- cal_bound %>%
   st_set_crs(3857) %>% 
   st_transform(4326)
@@ -42,40 +49,66 @@ in_bound <- lengths(st_intersects(nov8, cal_bound))>0
 in_cali <- nov8[in_bound,]
 ```
 
-# Figure out the smoke layer thing
-
+### Cleaning
 ```{r}
-library(sf)
-library(xml2)
-library(tidyverse)
+in_cali <- as.data.frame(in_cali) %>%
+  dplyr::select(-Name) %>%
+  # Remove prefix
+  mutate(Description = gsub('Fire Attributes: YearDay: ', '', Description)) %>%
+  mutate(Description = gsub('[a-zA-Z]*: ', ',', Description)) %>%
+  separate(., col=Description, 
+           into = c('date', 'time', 'satellite','method_of_detect'),
+           sep = ',') 
 ```
 
+```{r}
+in_cali <- in_cali %>% 
+  mutate(satellite = (str_remove_all(satellite,"Method of"))) %>%
+  mutate( time = substr(as.POSIXct(sprintf("%04.0f", as.integer(time)), format='%H%M'), 12, 16),
+          start_time = as.POSIXct(paste(date, time),
+                            format = "%Y%j %H:%M")) %>%
+  dplyr::select(-date,-time)
+```
+
+```{r}
+in_cali <- st_as_sf(in_cali)
+```
+
+## Smoke Data: Preprocessing & Visualization
 
 ```{r}
 # Read light, medium, heavy separately
 smoke_light <- st_read("data/smoke/smoke20220501.kml", layer="Smoke (Light)")
-smoke_light <- as.data.frame(smoke_light)
+smoke_light <- as.data.frame(smoke_light) %>%
+  mutate(type="light")
 
 smoke_med <- st_read("data/smoke/smoke20220501.kml", layer="Smoke (Medium)")
-smoke_med <- as.data.frame(smoke_med)
+smoke_med <- as.data.frame(smoke_med) %>%
+  mutate(type="medium")
 
 smoke_heavy <- st_read("data/smoke/smoke20220501.kml", layer="Smoke (Heavy)")
-smoke_heavy <- as.data.frame(smoke_heavy)
+smoke_heavy <- as.data.frame(smoke_heavy) %>%
+  mutate(type="heavy")
+
+smoke <- list(smoke_light, smoke_med, smoke_heavy)
+
+smoke <- smoke %>%
+  reduce(full_join, by=c('Name', 'Description', 'type','geometry'))
 ```
 
 ```{r}
-smoke_light <- smoke_light %>%
+smoke <- smoke %>%
+  dplyr::select(-Name) %>%
   # Remove prefix
   mutate(Description = gsub('Smoke Attributes: Start Time: ', '', Description)) %>%
   mutate(Description = gsub('[a-zA-Z]*: ', ',', Description)) %>%
   separate(., col=Description, 
            into = c('start_time', 'end_time', 'density', 'satellite'),
            sep = ',') 
-  
 ```
 
 ```{r}
-smoke_light_mod <- smoke_light %>% 
+smoke <- smoke %>% 
   mutate(start_time = (str_remove_all(start_time,"[a-zA-Z]")),
          end_time = (str_remove_all(end_time,"[a-zA-Z]"))) %>%
   separate(., col=start_time, 
@@ -90,14 +123,39 @@ smoke_light_mod <- smoke_light %>%
                             format = "%m/%d/%Y %H:%M"),
          end_time = as.POSIXct(paste(end_date, et),
                             format = "%m/%d/%Y %H:%M")) %>%
-  rowid_to_column("index")%>%
-  select(-start_date, -end_date, -st, -et,-Name)
+  dplyr::select(-start_date, -end_date, -st, -et)
+```
+
+```{r}
+smoke <- st_as_sf(smoke)
+smoke$area <- st_area(smoke$geometry)
 ```
 
 
-
-
-
+```{r}
+# THANK YOU SAVIOR: https://bookdown.org/nicohahn/making_maps_with_r5/docs/mapview.html#using-mapview-to-create-maps
+mapview(smoke, zcol ="type", col.regions = brewer.pal(3, "RdYlGn"),
+        popup = popupTable(
+                smoke,
+                zcol = c(
+                  "start_time",
+                  "end_time",
+                  "density",
+                  "area"
+                  )
+                )        
+        ) + 
+  mapview(in_cali,
+          popup = popupTable(
+                in_cali,
+                zcol = c(
+                  "start_time",
+                  "method_of_detect",
+                  "satellite"
+                  )
+                )
+          )
+```
 
 
 

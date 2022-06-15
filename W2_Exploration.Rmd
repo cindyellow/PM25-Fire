@@ -21,7 +21,7 @@ library(shiny)
 ## HMS Fire Data: More Exploration
 
 ```{r}
-fire <- read.delim("hms20220501.txt", sep=",", strip.white=TRUE)
+fire <- read.delim("data/fire/hms20220501.txt", sep=",", strip.white=TRUE)
 ```
 
 ```{r}
@@ -59,10 +59,10 @@ fire <- fire %>%
 
 ```{r}
 # Combine data from different days
-filelist = list.files(path="./data/", pattern = "*.txt")
+filelist = list.files(path="./data/fire/", pattern = "*.txt")
 
 #assuming tab separated values with a header    
-datalist = lapply(filelist, function(x)read.delim(paste("./data/",x,sep=""), sep=",", strip.white=TRUE))
+datalist = lapply(filelist, function(x)read.delim(paste("./data/fire/",x,sep=""), sep=",", strip.white=TRUE))
 
 #assuming the same header/columns for all files
 califire <- do.call("rbind", datalist) 
@@ -148,7 +148,7 @@ califire %>%
 
 ### Ecosys
 
-The different types of ecosystems are listed in the [GLCC README file](https://www.usgs.gov/media/files/global-land-cover-characteristics-data-base-readme-version2) under Appendix 1. The ones we have in the dataset (during the Californian fire) are:
+The different types of ecosystems are listed in the [GLCC README file](https://www.usgs.gov/media/files/global-land-cover-characteristics-data-base-readme-version2) under Appendix 1 "Global Ecosystems Legend". These categories have been created based on " 1-km AVHRR (Advanced Very High Resolution Radiometer) 10-day NDVI (Normalized Difference Vegetation Index ) composites". The ones we have in the dataset (during the Californian fire) are:
 
 ```{r}
 califire %>%
@@ -160,6 +160,7 @@ califire %>%
   labs(title = "Bar Graph for Ecosystem Code") +
   theme(plot.title = element_text(size = 12, hjust = 0.5))
 ```
+
 From the bar chart, we can see that the following ecosystems are the most prominent during the Californian fire:
 
 - 22: Cool Conifer Forest 
@@ -319,7 +320,7 @@ shinyApp(ui = ui, server = server)
 
 ```{r}
 # https://stackoverflow.com/questions/50775357/how-to-read-in-kml-file-properly-in-r-or-separate-out-lumped-variables-into-col
-smoke <- read_sf("smoke20220501.kml")
+smoke <- st_read("data/smoke/smoke20220501.kml", layer="Folder")
 ```
 
 ```{r}
