@@ -1,0 +1,236 @@
+---
+title: "SURA_W3"
+author: "Shih-Ting (Cindy) Huang"
+date: '2022-06-11'
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE)
+
+library(tidyverse)
+library(dplyr)
+library(leaflet)
+library(sf)
+library(mapview)
+library(rgdal)
+library(shiny)
+library(ggplot2)
+library(rvest)
+library(RColorBrewer)
+library(leafpop)
+```
+
+## Fire Data: Preprocessing
+
+### Combining all California Campfire Data
+```{r}
+# Combine data from different days
+filelist = list.files(path="./data/fire/", pattern = "*.kml")
+
+#assuming tab separated values with a header    
+datalist = lapply(filelist, function(x)st_read(paste("./data/fire/", x, sep="")))
+
+#assuming the same header/columns for all files
+fire <- do.call("rbind", datalist) 
+```
+
+```{r}
+# Read the kml file
+fire <- st_read("data/fire/fire20181108.kml")
+```
+
+```{r}
+cal_bound <- st_read("ca-state-boundary/CA_State_TIGER2016.shp")
+
+# Convert to the same coordinate system as HMS (4326)
+cal_bound <- cal_bound %>%
+  st_set_crs(3857) %>% 
+  st_transform(4326)
+```
+
+```{r}
+# Get an array of whether each observation is in California
+in_bound <- lengths(st_intersects(fire, cal_bound))>0
+```
+
+```{r}
+# Get subset with indexing
+# https://gis.stackexchange.com/questions/394954/r-using-st-intersects-to-classify-points-inside-outside-and-within-a-buffer
+in_cali <- fire[in_bound,]
+```
+
+### Cleaning
+```{r}
+in_cali <- as.data.frame(in_cali) %>%
+  dplyr::select(-Name) %>%
+  # Remove prefix
+  mutate(Description = gsub('Fire Attributes: YearDay: ', '', Description)) %>%
+  # Replace column name strings with comma
+  mutate(Description = gsub('[a-zA-Z]*: ', ',', Description)) %>%
+  # Separate based on comma
+  separate(., col=Description, 
+           into = c('date', 'time', 'satellite','method_of_detect'),
+           sep = ',') 
+```
+
+```{r}
+in_cali <- in_cali %>% 
+  # Remove unnecessary substrings
+  mutate(satellite = (str_remove_all(satellite,"Method of"))) %>%
+  # Convert into correct datetime
+  mutate( time = substr(as.POSIXct(sprintf("%04.0f", as.integer(time)), format='%H%M'), 12, 16),
+          start_time = as.POSIXct(paste(date, time),
+                            format = "%Y%j %H:%M")) %>%
+  dplyr::select(-date,-time)
+```
+
+## Smoke Data: Preprocessing & Visualization
+
+```{r}
+filelist = list.files(path="./data/smoke/", pattern = "*.kml")
+
+smoke <- do.call(rbind, lapply(filelist, function(x) st_read(paste("./data/smoke/",x, sep=""), layer = c("Smoke (Light)", "Smoke (Medium)", "Smoke (Heavy)"))))
+```
+
+
+```{r}
+# Read light, medium, heavy separately
+# Combine data from different days
+filelist = list.files(path="data/smoke/", pattern = "*.kml")
+
+#assuming tab separated values with a header    
+datalist = lapply(filelist, function(x)st_read(paste("data/smoke/", x, sep=""), layer="Smoke (Medium)"))
+
+#assuming the same header/columns for all files
+smoke_light <- do.call("rbind", datalist) 
+
+# smoke_light <- st_read("data/smoke/smoke20181108.kml", layer="Smoke (Light)")
+smoke_light <- as.data.frame(smoke_light) %>%
+  mutate(type="light")
+```
+
+```{r}
+filelist = list.files(path="./data/smoke/", pattern = "*.kml")
+#assuming tab separated values with a header    
+datalist = lapply(filelist, function(x)st_read(paste("./data/smoke/", x, sep=""), layer="Smoke (Medium)"))
+smoke_med <- do.call("rbind", datalist) 
+# smoke_med <- st_read("data/smoke/smoke20181108.kml", layer="Smoke (Medium)")
+smoke_med <- as.data.frame(smoke_med) %>%
+  mutate(type="medium")
+```
+
+```{r}
+filelist = list.files(path="./data/smoke/", pattern = "*.kml")
+datalist = lapply(filelist, function(x)st_read(paste("./data/smoke/", x, sep=""), layer="Smoke (Heavy)"))
+smoke_heavy <- do.call("rbind", datalist) 
+# smoke_heavy <- st_read("data/smoke/smoke20181108.kml", layer="Smoke (Heavy)")
+smoke_heavy <- as.data.frame(smoke_heavy) %>%
+  mutate(type="heavy")
+
+smoke <- list(smoke_light, smoke_med, smoke_heavy)
+
+smoke <- smoke %>%
+  reduce(full_join, by=c('Name', 'Description', 'type','geometry'))
+```
+
+```{r}
+smoke <- smoke %>%
+  dplyr::select(-Name) %>%
+  mutate(Description = gsub('Smoke Attributes: Start Time: ', '', Description)) %>%
+  mutate(Description = gsub('[a-zA-Z]*: ', ',', Description)) %>%
+  separate(., col=Description, 
+           into = c('start_time', 'end_time', 'density', 'satellite'),
+           sep = ',') 
+```
+
+```{r}
+# Clean time and add smoke area
+smoke <- smoke %>% 
+  # Remove unnecessary substrings
+  mutate(start_time = (str_remove_all(start_time,"[a-zA-Z]")),
+         end_time = (str_remove_all(end_time,"[a-zA-Z]"))) %>%
+  # Separate date and time based on space
+  separate(., col=start_time, 
+           into=c('start_date', 'st'),
+           sep=' ') %>%
+  separate(., col=end_time, 
+           into=c('end_date','et'),
+           sep=' ') %>%
+  # Convert into datetime object
+  mutate( st = substr(as.POSIXct(sprintf("%04.0f", as.integer(st)), format='%H%M'), 12, 16),
+          et = substr(as.POSIXct(sprintf("%04.0f", as.integer(et)), format='%H%M'), 12, 16),
+          start_time = as.POSIXct(paste(start_date, st),
+                            format = "%Y%j %H:%M"),
+         end_time = as.POSIXct(paste(end_date, et),
+                            format = "%Y%j %H:%M"),
+         area = st_area(smoke$geometry)) %>%
+  dplyr::select(-start_date, -end_date, -st, -et)
+```
+
+## Mapping Data for the Week
+```{r}
+# Convert dataframes to sf objects for mapview
+smoke <- st_as_sf(smoke)
+in_cali <- st_as_sf(in_cali)
+```
+
+```{r}
+# THANK YOU SAVIOR: https://bookdown.org/nicohahn/making_maps_with_r5/docs/mapview.html#using-mapview-to-create-maps
+mapview(smoke, zcol ="type", label=FALSE, legend = TRUE, layer.name = 'Smoke Type',col.regions = brewer.pal(3, "RdYlGn"), col="transparent",
+        popup = popupTable(
+                smoke,
+                zcol = c(
+                  "start_time",
+                  "end_time",
+                  "density",
+                  "area"
+                  ),
+                feature.id = FALSE
+                )        
+        ) + 
+  mapview(in_cali, label=FALSE, legend=FALSE, 
+          popup = popupTable(
+                in_cali,
+                zcol = c(
+                  "start_time",
+                  "method_of_detect",
+                  "satellite"
+                  ),
+                feature.id = FALSE
+                )
+          )
+```
+
+## HDBSCAN 
+
+```{r}
+library("dbscan")
+
+plot(in_cali$geometry, pch=20)
+```
+
+```{r}
+coords <- as.tibble(st_coordinates(in_cali$geometry))
+
+plot(coords, pch=20)
+```
+
+```{r}
+cl <- hdbscan(coords, minPts = 50)
+cl
+```
+
+```{r}
+plot(coords, col=cl$cluster+1, pch=20)
+
+```
+
+```{r}
+  plot(coords, col=cl$cluster+1, pch=21)
+  colors <- mapply(function(col, i) adjustcolor(col, alpha.f = cl$membership_prob[i]), 
+                   palette()[cl$cluster+1], seq_along(cl$cluster))
+  points(coords, col=colors, pch=20)
+```
+
+
