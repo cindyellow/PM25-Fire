@@ -11,7 +11,7 @@ datalist = lapply(filelist, function(x)st_read(paste("./data/fire/", x, sep=""))
 fire <- do.call("rbind", datalist) 
 
 # Read in California's boundaries # 
-cal_bound <- st_read("ca-state-boundary/CA_State_TIGER2016.shp")
+cal_bound <- st_read("../ca-state-boundary/CA_State_TIGER2016.shp")
 
 # Convert to the same coordinate system as HMS (4326)
 cal_bound <- cal_bound %>%
