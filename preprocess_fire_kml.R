@@ -2,10 +2,10 @@
 # Combining all California Campfire Data #
 
 # Combine data from different days
-filelist = list.files(path="./data/fire/", pattern = "*.kml")
+filelist = list.files(path="../data/fire/", pattern = "*.kml")
 
 #assuming tab separated values with a header    
-datalist = lapply(filelist, function(x)st_read(paste("./data/fire/", x, sep="")))
+datalist = lapply(filelist, function(x)st_read(paste("../data/fire/", x, sep="")))
 
 #assuming the same header/columns for all files
 fire <- do.call("rbind", datalist) 
