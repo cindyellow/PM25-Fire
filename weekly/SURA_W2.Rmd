@@ -21,7 +21,7 @@ library(shiny)
 ## HMS Fire Data: More Exploration
 
 ```{r}
-fire <- read.delim("data/fire/hms20220501.txt", sep=",", strip.white=TRUE)
+fire <- read.delim("https://raw.githubusercontent.com/cindyellow/SURA-2022/main/data/fire/hms20220501.txt", sep=",", strip.white=TRUE)
 ```
 
 ```{r}
@@ -208,9 +208,11 @@ shinyApp(ui = ui, server = server)
 
 ## Relating Smoke & Fire
 
+The following approaches don't work. We have to figure out why all densities are the same and how to read in layers. 
+
 ```{r}
 # https://stackoverflow.com/questions/50775357/how-to-read-in-kml-file-properly-in-r-or-separate-out-lumped-variables-into-col
-smoke <- st_read("data/smoke/smoke20220501.kml", layer="Folder")
+smoke <- st_read("https://raw.githubusercontent.com/cindyellow/SURA-2022/main/data/smoke/smoke20220501.kml", layer="Folder")
 ```
 
 ```{r}
@@ -222,10 +224,6 @@ smoke$area <- st_area(smoke)
 smoke$density <- str_remove_all(str_extract(smoke$Description, "Density: [0-9]"),"[a-zA-Z]+: ")
 ```
 
-```{r}
-fire <- st_as_sf(fire, coords = c("longitude", "latitude"))
-st_crs(fire) <- "+init=epsg:4326 +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0" # assign CRS to points
-```
 
 
 

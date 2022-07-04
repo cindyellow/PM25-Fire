@@ -53,7 +53,7 @@ The steps I took were:
 
 ```{r}
 # Read the text file
-may1 <- read.delim("data/fire/hms20220501.txt", sep=",", strip.white=TRUE)
+may1 <- read.delim("https://raw.githubusercontent.com/cindyellow/SURA-2022/main/data/fire/hms20220501.txt", sep=",", strip.white=TRUE)
 ```
 
 ```{r, eval=FALSE}

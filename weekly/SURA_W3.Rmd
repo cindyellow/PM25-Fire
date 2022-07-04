@@ -31,7 +31,7 @@ fire <- st_read("data/fire/fire20181108.kml")
 ```
 
 ```{r}
-cal_bound <- st_read("ca-state-boundary/CA_State_TIGER2016.shp")
+cal_bound <- st_read("../ca-state-boundary/CA_State_TIGER2016.shp")
 
 # Convert to the same coordinate system as HMS (4326)
 cal_bound <- cal_bound %>%
@@ -79,15 +79,15 @@ in_cali <- in_cali %>%
 
 ```{r}
 # Read light, medium, heavy separately
-smoke_light <- st_read("data/smoke/smoke20181108.kml", layer="Smoke (Light)")
+smoke_light <- st_read("https://raw.githubusercontent.com/cindyellow/SURA-2022/main/data/smoke/smoke20181108.kml", layer="Smoke (Light)")
 smoke_light <- as.data.frame(smoke_light) %>%
   mutate(type="light")
 
-smoke_med <- st_read("data/smoke/smoke20181108.kml", layer="Smoke (Medium)")
+smoke_med <- st_read("https://raw.githubusercontent.com/cindyellow/SURA-2022/main/data/smoke/smoke20181108.kml", layer="Smoke (Medium)")
 smoke_med <- as.data.frame(smoke_med) %>%
   mutate(type="medium")
 
-smoke_heavy <- st_read("data/smoke/smoke20181108.kml", layer="Smoke (Heavy)")
+smoke_heavy <- st_read("https://raw.githubusercontent.com/cindyellow/SURA-2022/main/data/smoke/smoke20181108.kml", layer="Smoke (Heavy)")
 smoke_heavy <- as.data.frame(smoke_heavy) %>%
   mutate(type="heavy")
 
