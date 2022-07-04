@@ -1,0 +1,233 @@
+---
+title: "Week 2: Data Exploration"
+subtitle: "SURA 2022"
+author: "Shih-Ting (Cindy) Huang"
+date: '2022-06-08'
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE)
+
+library(tidyverse)
+library(dplyr)
+library(leaflet)
+library(sf)
+library(mapview)
+library(rgdal)
+library(shiny)
+```
+
+## HMS Fire Data: More Exploration
+
+```{r}
+fire <- read.delim("data/fire/hms20220501.txt", sep=",", strip.white=TRUE)
+```
+
+```{r}
+# Rename columns
+fire <- fire %>%
+  rename(
+    longitude = Lon,
+    latitude = Lat,
+    date = YearDay,
+    time = Time, 
+    satellite = Satellite,
+    method_of_detect = Method.of.Detect,
+    ecosys = Ecosys,
+    frp = Fire.RadPower
+  ) %>%
+  mutate(
+    date = as.Date(as.character(date),          
+                   format = "%Y%j"),
+    method_of_detect = as.factor(method_of_detect),
+    satellite = as.factor(satellite),
+    ecosys = as.factor(ecosys),
+    time = substr(as.POSIXct(sprintf("%04.0f", time), format='%H%M'), 12, 16)
+  )
+```
+
+```{r}
+# Add a new column for date and time
+fire <- fire %>%
+  mutate(
+    date_comp = as.POSIXct(paste(date, time), 
+                            format = "%Y-%m-%d %H:%M"),
+    frp = na_if(frp, -999.000)
+  )
+```
+
+```{r}
+# Combine data from different days
+filelist = list.files(path="./data/fire/", pattern = "*.txt")
+
+#assuming tab separated values with a header    
+datalist = lapply(filelist, function(x)read.delim(paste("./data/fire/",x,sep=""), sep=",", strip.white=TRUE))
+
+#assuming the same header/columns for all files
+califire <- do.call("rbind", datalist) 
+
+# Filter by California/West Coast
+califire <- califire %>%
+  filter(between(Lon,-125,-117) & between(Lat,32,44))
+
+# Preprocess them
+# Rename columns
+califire <- califire %>%
+  rename(
+    longitude = Lon,
+    latitude = Lat,
+    date = YearDay,
+    time = Time, 
+    satellite = Satellite,
+    method_of_detect = Method.of.Detect,
+    ecosys = Ecosys,
+    frp = Fire.RadPower
+  ) %>%
+  mutate(
+    date = as.Date(as.character(date),          
+                   format = "%Y%j"),
+    method_of_detect = as.factor(method_of_detect),
+    satellite = as.factor(satellite),
+    ecosys = as.factor(ecosys),
+    time = substr(as.POSIXct(sprintf("%04.0f", time), format='%H%M'), 12, 16)
+  )
+# Add a new column for date and time
+califire <- califire %>%
+  mutate(
+    date_comp = as.POSIXct(paste(date, time), 
+                            format = "%Y-%m-%d %H:%M"),
+    frp = na_if(frp, -999.000)
+  )
+```
+
+### Device 
+There is correspondence between method of detection and satellites:
+
+- VIIRs: SUOMI NPP, NOAA20
+- FDC: GOES-EAST
+- MODIS: MODIS-TERRA
+
+Plotting another date, we see that the satellites don't have a regular record time. 
+
+```{r, warning=FALSE}
+# Fire detection time by device
+fire %>%
+  ggplot(aes(x=date_comp, fill=satellite)) +
+  geom_histogram(bins=30) +
+  xlim(as.POSIXct("2022-05-01 00:00"), as.POSIXct("2022-05-01 23:59"))+
+  theme_minimal() +
+  xlab("Record Time") + 
+  ylab("Frequency") +
+  labs(title = "Histogram for Time") +
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
+
+fire %>%
+  ggplot(aes(x=date_comp, fill=method_of_detect)) +
+  geom_histogram(bins=30) +
+  xlim(as.POSIXct("2022-05-01 00:00"), as.POSIXct("2022-05-01 23:59"))+
+  theme_minimal() +
+  xlab("Record Time") + 
+  ylab("Frequency") +
+  labs(title = "Histogram for Time") +
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
+```
+```{r}
+califire %>%
+  filter(format(as.Date(date_comp,format="%Y-%m-%d %H:%M"), format = "%d") == "08") %>%
+  ggplot(aes(x=date_comp, fill=satellite)) +
+  geom_histogram(bins=30) +
+  xlim(as.POSIXct("2018-11-08 00:00"), as.POSIXct("2018-11-08 23:59"))+
+  theme_minimal() +
+  xlab("Record Time") + 
+  ylab("Frequency") +
+  labs(title = "Histogram for Time") +
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
+
+```
+
+### Ecosys
+
+The different types of ecosystems are listed in the [GLCC README file](https://www.usgs.gov/media/files/global-land-cover-characteristics-data-base-readme-version2) under Appendix 1 "Global Ecosystems Legend". These categories have been created based on " 1-km AVHRR (Advanced Very High Resolution Radiometer) 10-day NDVI (Normalized Difference Vegetation Index ) composites". The ones we have in the dataset (during the Californian fire) are:
+
+```{r}
+califire %>%
+  ggplot(aes(ecosys)) +
+  geom_bar()+
+  theme_minimal() +
+  xlab("Ecosystem") + 
+  ylab("Frequency") +
+  labs(title = "Bar Graph for Ecosystem Code") +
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
+```
+
+From the bar chart, we can see that the following ecosystems are the most prominent during the Californian fire:
+
+- 22: Cool Conifer Forest 
+- 46: Mediterranean Scrub 
+- 26: Deciduous Broadleaf Forest 
+- 24: Mixed Forest 
+- 91: Woody Savanna
+
+### Fire Detection Overtime (Weeks)
+
+```{r}
+# Plot histogram by date
+datelist <- unique(califire$date)
+
+draw_plot <- function(date_to_filter_by) {
+  filtered_cal <- califire %>%
+    filter(date == !!date_to_filter_by)
+  ggplot(filtered_cal, aes(x=date_comp, fill=satellite)) +
+    geom_histogram(bins=30) +
+    theme_minimal() +
+    xlab("Record Time") + 
+    ylab("Frequency") +
+    labs(title = "Histogram for Time") +
+    theme(plot.title = element_text(size = 12, hjust = 0.5))
+}
+
+ui <- fluidPage(
+  inputPanel(
+    selectInput(
+      "PlotDate",
+      label = "Select Date",
+      choices = datelist
+    )
+  ),
+  plotOutput('minplot')
+)
+
+server <- function(input, output) {
+  output$minplot <- renderPlot(draw_plot(input$PlotDate))
+}
+
+shinyApp(ui = ui, server = server)
+```
+
+
+## Relating Smoke & Fire
+
+```{r}
+# https://stackoverflow.com/questions/50775357/how-to-read-in-kml-file-properly-in-r-or-separate-out-lumped-variables-into-col
+smoke <- st_read("data/smoke/smoke20220501.kml", layer="Folder")
+```
+
+```{r}
+# Calculate area
+smoke$area <- st_area(smoke)
+
+# Extract density
+# TODO: figure out why all densities are the same, how to read in layers
+smoke$density <- str_remove_all(str_extract(smoke$Description, "Density: [0-9]"),"[a-zA-Z]+: ")
+```
+
+```{r}
+fire <- st_as_sf(fire, coords = c("longitude", "latitude"))
+st_crs(fire) <- "+init=epsg:4326 +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0" # assign CRS to points
+```
+
+
+
+
+

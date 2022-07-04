@@ -1,0 +1,42 @@
+---
+title: "Week 5-6: HDBSCAN Clustering" 
+subtitle: "SURA 2022"
+author: "Shih-Ting (Cindy) Huang"
+date: '2022-06-29'
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE)
+
+library(tidyverse)
+library(dplyr)
+library(leaflet)
+library(sf)
+library(mapview)
+library(rgdal)
+library(ggplot2)
+library(rvest)
+library(RColorBrewer)
+library(leafpop)
+```
+
+```{r load-data, echo=FALSE}
+fn <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_fire_kml.R"
+if (!file.exists("preprocess_fire_kml.R"))
+  download.file(fn, destfile = "preprocess_fire_kml.R")
+source("preprocess_fire_kml.R")
+```
+
+## HDBSCAN 
+
+```{r}
+# Try DBCV to evaluate model with best performance
+```
+
+
+## Cluster Visualization
+
+## Cluster FRP: Summary
+
+## Research on Fire Merging
