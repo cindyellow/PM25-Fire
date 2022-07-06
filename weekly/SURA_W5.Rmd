@@ -2,7 +2,7 @@
 title: "Week 5-6: HDBSCAN Clustering" 
 subtitle: "SURA 2022"
 author: "Shih-Ting (Cindy) Huang"
-date: '2022-06-29'
+date: '2022-07-06'
 output: html_document
 ---
 
@@ -21,7 +21,7 @@ library(leafpop)
 ```
 
 
-```{r load-data, echo=FALSE}
+```{r load-data, echo=FALSE, include=FALSE}
 # Run the script to preprocess fire datasets to include information on time, location, and FRP
 url <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_fire_kml.R"
 if (!file.exists("../preprocess_fire_kml.R"))
@@ -52,12 +52,6 @@ There are several metrics for evaluating the quality of clusters. The following 
   - CDbw index: relative validity index that takes into consideration all of the aforementioned metrics
 - DBCV: evaluates clusters by comparing the highest density between clusters and the lowest density in clusters
 
-Reference: 
-Moulavi, Davoud & A Jaskowiak, Pablo & Campello, Ricardo & Zimek, Arthur & Sander, Joerg. (2014). Density-Based Clustering Validation. 10.1137/1.9781611973440.96. 
-[URL](https://www.researchgate.net/publication/260333211_Density-Based_Clustering_Validation)
-
-[A density-based cluster validity approach using multi-representatives](https://www.sciencedirect.com/science/article/pii/S0167865508000020)
-
 Currently, CDbw is used to compare the clusters because there is a well-implemented package in R for it. 
 ```{r}
 library(fpc)
@@ -78,13 +72,12 @@ best_param <- minpts[which.max(scores)]
 cl <- hdbscan(coords, minPts = best_param)
 plot(coords, col=cl$cluster+1, pch=20)
 ```
-
+Based on comparing the CDbw indices for each model, the best minPts is `r best_param` that creates `r length(unique(cl$cluster))` clusters.
 
 
 ## Cluster Visualization
 
-In HDBSCAN, clusters are arbitrarily shape. Hence, we cannot obtain a cluster "centroid" effectively.
-
+In HDBSCAN, clusters are arbitrarily shape. Hence, we cannot obtain a cluster "centroid" effectively. Hence, we still display all the points colored by their clusters in the visualization.
 
 ```{r}
 # Add cluster assignments to the original dataset
@@ -95,9 +88,7 @@ one <- one %>%
 one <- st_as_sf(one)
 ```
 
-```{r}
-length(unique(one$cluster))
-```
+
 
 ```{r}
 mapview(one, zcol = "cluster", label=FALSE, legend=FALSE, layer.name = 'cluster', 
@@ -120,8 +111,8 @@ mapview(one, zcol = "cluster", label=FALSE, legend=FALSE, layer.name = 'cluster'
 # Group by cluster
 cluster_info <- as.tibble(one) %>%
   group_by(cluster) %>%
-  summarise(frp_avg = mean(frp, na.rm=TRUE),
-            frp_vars = var(frp, na.rm=TRUE)) 
+  summarise(frp_avg = round(mean(frp, na.rm=TRUE),4),
+            frp_vars = round(var(frp, na.rm=TRUE),4)) 
 # Assign them with average
 one <- as.tibble(one) %>%
   inner_join(cluster_info, by="cluster")
@@ -129,7 +120,21 @@ one <- as.tibble(one) %>%
 
 ```{r}
 # Display the average FRP for each cluster and the variance
-cluster_info
+tibble("Cluster" = cluster_info$cluster, "Average FRP" = cluster_info$frp_avg, "Variance" = cluster_info$frp_vars) %>%
+  knitr::kable(caption="A summary of clusters for 11/08/2018")
 ```
+
+## PostGIS
+
+- PostgreSQL but with spatial functionality
+- [Resource for setting up](https://towardsdatascience.com/spatial-data-science-with-postgresql-postgis-2f941c8c367a)
+
+## References: 
+
+| 1. Moulavi, Davoud & A Jaskowiak, Pablo & Campello, Ricardo & Zimek, Arthur & Sander, Joerg. (2014). Density-Based Clustering Validation. 10.1137/1.9781611973440.96. 
+
+|    [Access the paper here](https://www.researchgate.net/publication/260333211_Density-Based_Clustering_Validation)
+
+| 2. [A density-based cluster validity approach using multi-representatives](https://www.sciencedirect.com/science/article/pii/S0167865508000020)
 
 
