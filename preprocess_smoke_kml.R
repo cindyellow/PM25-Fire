@@ -1,13 +1,13 @@
 # Read light, medium, heavy separately
-smoke_light <- st_read("https://raw.githubusercontent.com/cindyellow/SURA-2022/main/data/smoke/smoke20181108.kml", layer="Smoke (Light)")
+smoke_light <- st_read("../data/smoke/smoke20181108.kml", layer="Smoke (Light)")
 smoke_light <- as.data.frame(smoke_light) %>%
   mutate(type="light")
 
-smoke_med <- st_read("https://raw.githubusercontent.com/cindyellow/SURA-2022/main/data/smoke/smoke20181108.kml", layer="Smoke (Medium)")
+smoke_med <- st_read("../data/smoke/smoke20181108.kml", layer="Smoke (Medium)")
 smoke_med <- as.data.frame(smoke_med) %>%
   mutate(type="medium")
 
-smoke_heavy <- st_read("https://raw.githubusercontent.com/cindyellow/SURA-2022/main/data/smoke/smoke20181108.kml", layer="Smoke (Heavy)")
+smoke_heavy <- st_read("../data/smoke/smoke20181108.kml", layer="Smoke (Heavy)")
 smoke_heavy <- as.data.frame(smoke_heavy) %>%
   mutate(type="heavy")
 
