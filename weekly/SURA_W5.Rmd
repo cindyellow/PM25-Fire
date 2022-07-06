@@ -23,10 +23,15 @@ library(leafpop)
 
 ```{r load-data, echo=FALSE, include=FALSE}
 # Run the script to preprocess fire datasets to include information on time, location, and FRP
-url <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_fire_kml.R"
+url1 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_fire_kml.R"
 if (!file.exists("../preprocess_fire_kml.R"))
-  download.file(url, destfile = "../preprocess_fire_kml.R")
+  download.file(url1, destfile = "../preprocess_fire_kml.R")
 source("../preprocess_fire_kml.R")
+
+url2 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_smoke_kml.R"
+if (!file.exists("../preprocess_smoke_kml.R"))
+  download.file(url2, destfile = "../preprocess_smoke_kml.R")
+source("../preprocess_smoke_kml.R")
 ```
 
 
@@ -53,6 +58,7 @@ There are several metrics for evaluating the quality of clusters. The following 
 - DBCV: evaluates clusters by comparing the highest density between clusters and the lowest density in clusters
 
 Currently, CDbw is used to compare the clusters because there is a well-implemented package in R for it. 
+
 ```{r}
 library(fpc)
 
@@ -86,11 +92,24 @@ one <- one %>%
   filter(cluster != 0) # Eliminates noise points
 
 one <- st_as_sf(one)
+smoke <- st_as_sf(smoke)
 ```
 
 
 
 ```{r}
+mapview(smoke, zcol ="type", label=FALSE, legend = TRUE, layer.name = 'Smoke Type',col.regions = brewer.pal(3, "RdYlGn"), col="transparent",
+        popup = popupTable(
+                smoke,
+                zcol = c(
+                  "start_time",
+                  "end_time",
+                  "density",
+                  "area"
+                  ),
+                feature.id = FALSE
+                )        
+        )+
 mapview(one, zcol = "cluster", label=FALSE, legend=FALSE, layer.name = 'cluster', 
         popup = popupTable(
               one,
@@ -123,6 +142,8 @@ one <- as.tibble(one) %>%
 tibble("Cluster" = cluster_info$cluster, "Average FRP" = cluster_info$frp_avg, "Variance" = cluster_info$frp_vars) %>%
   knitr::kable(caption="A summary of clusters for 11/08/2018")
 ```
+
+Based on the cluster summary above, we can see that the average FRP was the highest in clusters 19, 7, and 2. Note that we can't compare them in an absolute sense since the same FRP value could have different implications depending on the ecosystem.
 
 ## PostGIS
 
