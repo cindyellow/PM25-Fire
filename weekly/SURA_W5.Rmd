@@ -17,6 +17,7 @@ library(mapview)
 library(ggplot2)
 library(RColorBrewer)
 library(dbscan)
+library(leafpop)
 ```
 
 
@@ -37,43 +38,53 @@ one <- in_cali %>%
   filter(date == "2018-11-08")
 
 coords <- as.tibble(st_coordinates(one$geometry))
-
-# Create hdbscan object 
-cl <- hdbscan(coords, minPts = 100)
-cl
 ```
 
-```{r}
-# Plot the clusters
-plot(coords, col=cl$cluster+1, pch=20)
-```
 
 ### Finding the best parameters
 
 There are several metrics for evaluating the quality of clusters. The following are some common ones and an evaluation:
 
-Internal: measures cluster quality using the data
-  - 
-  
-Relative: compares two clusters' structures using an internal criteria
-  - Based on examining how scattered data is within a cluster and how separated clusters are
-  - Not appropriate for arbitrarily shaped clusters (such as from density-based algorithms)
-- DBCV: 
-
-
+- CDbw: considers multiple representative points per cluster, but it means that we have to introduce a parameter for defining the number of points
+  - cohesion: within-cluster density change
+  - compactness: average within-cluster density
+  - separation: inter-cluster density
+  - CDbw index: relative validity index that takes into consideration all of the aforementioned metrics
+- DBCV: evaluates clusters by comparing the highest density between clusters and the lowest density in clusters
 
 Reference: 
 Moulavi, Davoud & A Jaskowiak, Pablo & Campello, Ricardo & Zimek, Arthur & Sander, Joerg. (2014). Density-Based Clustering Validation. 10.1137/1.9781611973440.96. 
 [URL](https://www.researchgate.net/publication/260333211_Density-Based_Clustering_Validation)
 
+[A density-based cluster validity approach using multi-representatives](https://www.sciencedirect.com/science/article/pii/S0167865508000020)
+
+Currently, CDbw is used to compare the clusters because there is a well-implemented package in R for it. 
 ```{r}
-# Try DBCV to evaluate model with best performance
+library(fpc)
+
+# Compare CDBW index for all possible clusters
+minpts <- seq(5,100, by=5)
+scores <- c()
+for (x in minpts){
+  cl <- hdbscan(coords, minPts = x)
+  scores <- c(scores, cdbw(coords, cl$cluster)$cdbw)
+}
+
+best_param <- minpts[which.max(scores)]
 ```
+
+```{r}
+# Create hdbscan object with best minPts
+cl <- hdbscan(coords, minPts = best_param)
+plot(coords, col=cl$cluster+1, pch=20)
+```
+
 
 
 ## Cluster Visualization
 
 In HDBSCAN, clusters are arbitrarily shape. Hence, we cannot obtain a cluster "centroid" effectively.
+
 
 ```{r}
 # Add cluster assignments to the original dataset
@@ -85,8 +96,11 @@ one <- st_as_sf(one)
 ```
 
 ```{r}
-mapview(one, zcol = "cluster", label=FALSE, legend=FALSE, layer.name = 'cluster', col.regions = 
-          c("#75B9BE","#DCEAB2"),
+length(unique(one$cluster))
+```
+
+```{r}
+mapview(one, zcol = "cluster", label=FALSE, legend=FALSE, layer.name = 'cluster', 
         popup = popupTable(
               one,
               zcol = c(
@@ -113,6 +127,9 @@ one <- as.tibble(one) %>%
   inner_join(cluster_info, by="cluster")
 ```
 
-
+```{r}
+# Display the average FRP for each cluster and the variance
+cluster_info
+```
 
 
