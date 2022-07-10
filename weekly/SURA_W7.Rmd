@@ -1,0 +1,124 @@
+---
+title: "Week 7: HDBSCAN Clustering P3, Merging with AQS" 
+subtitle: "SURA 2022"
+author: "Shih-Ting (Cindy) Huang"
+date: '2022-07-13'
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE)
+
+library(tidyverse)
+library(dplyr)
+library(leaflet)
+library(sf)
+library(mapview)
+library(ggplot2)
+library(RColorBrewer)
+library(dbscan)
+library(leafpop)
+```
+
+
+```{r load-data, echo=FALSE, include=FALSE}
+# Run the script to preprocess fire datasets to include information on time, location, and FRP
+url1 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_fire_kml.R"
+if (!file.exists("../preprocess_fire_kml.R"))
+  download.file(url1, destfile = "../preprocess_fire_kml.R")
+source("../preprocess_fire_kml.R")
+
+url2 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_smoke_kml.R"
+if (!file.exists("../preprocess_smoke_kml.R"))
+  download.file(url2, destfile = "../preprocess_smoke_kml.R")
+source("../preprocess_smoke_kml.R")
+```
+
+
+## HDBSCAN: Assigning representative points for each cluster
+
+```{r}
+# Try HDBSCAN for 11/08/2018
+one <- in_cali %>%
+  filter(date == "2018-11-08")
+
+coords <- as.tibble(st_coordinates(one$geometry))
+```
+
+```{r}
+library(fpc)
+
+# Compare CDBW index for all possible clusters
+minpts <- seq(5,100, by=5)
+scores <- c()
+for (x in minpts){
+  cl <- hdbscan(coords, minPts = x)
+  scores <- c(scores, cdbw(coords, cl$cluster)$cdbw)
+}
+
+best_param <- minpts[which.max(scores)]
+```
+
+```{r}
+cl <- hdbscan(coords, minPts = best_param)
+```
+
+```{r}
+# Gives us highest member probability of each cluster
+mem_probs <- data.frame(cluster = cl$cluster, prob = cl$membership_prob)
+mem_probs <- mem_probs %>%
+  group_by(cluster) %>%
+  summarise(max_prob = max(prob))
+```
+
+Since our end goal is to calculate the distance between other points of interest and the fire cluster, I decided to first filter by unique points for each cluster before assigning the top k representative points. This will ensure that we have a diverse representation for each cluster. However, if we want to consider the intensity/duration of the fire at that location, we might consider not doing this? **
+
+```{r}
+# Assign cluster and member probability to all observations 
+one <- one %>%
+  mutate(cluster = cl$cluster, mem_prob = cl$membership_prob) %>%
+  filter(cluster != 0)
+
+# Group by cluster
+cluster_info <- as.tibble(one) %>%
+  group_by(cluster) %>%
+  summarise(frp_avg = round(mean(frp, na.rm=TRUE),4),
+            frp_vars = round(var(frp, na.rm=TRUE),4),
+            num_pts = n()) 
+
+# Get the top 5 member probability points for each cluster, ensure points have unique locations
+final <- one %>%
+  inner_join(cluster_info, by="cluster") %>%
+  arrange(desc(mem_prob)) %>%
+  group_by(cluster) %>%
+  distinct(geometry, .keep_all=TRUE) %>%
+  slice(1:5)
+```
+
+```{r}
+# Do this for all the days
+```
+
+## Merging with AQS data
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
