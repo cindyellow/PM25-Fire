@@ -97,7 +97,7 @@ for (d in as.list(dates)){
   day <- in_cali %>%
     filter(date == d)
   cl <- build_best_cl(day)
-  reps <- get_rep_pts(cl, day, 5)
+  reps <- get_rep_pts(cl, day, 1)
   rep_pts <- rbind(rep_pts, reps)
 }
 ```
@@ -118,24 +118,16 @@ aqs <- aqs %>%
 
 ```{r}
 rep_pts_sf <- st_as_sf(rep_pts)
+smoke <- st_as_sf(smoke)
 aqs <- aqs %>%
   st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove=FALSE)
 ```
 
 ## Visualization
+
 ```{r}
-# How to add markers of different shapes?
-mapview(aqs, zcol ="Date", label=FALSE, legend = TRUE, layer.name = 'Date', 
-        popup = popupTable(
-                aqs,
-                zcol = c(
-                  "Date",
-                  "PM25"
-                  ),
-                feature.id = FALSE
-                )        
-        )+
-mapview(rep_pts_sf, zcol = "date", label=FALSE, legend=FALSE, layer.name="Date",
+
+m <- mapview(rep_pts_sf, zcol = "date", label=FALSE, legend=FALSE, layer.name=c("Fire Points"),col.regions = brewer.pal(10, "Spectral"),
         popup = popupTable(
               rep_pts_sf,
               zcol = c(
@@ -146,11 +138,38 @@ mapview(rep_pts_sf, zcol = "date", label=FALSE, legend=FALSE, layer.name="Date",
                 ),
               feature.id = FALSE
               )
+        ) + 
+  mapview(smoke, zcol ="type", label=FALSE, legend = TRUE, layer.name = 'Smoke Type',col.regions = brewer.pal(3, "RdYlGn"), col="transparent",
+        popup = popupTable(
+                smoke,
+                zcol = c(
+                  "start_time",
+                  "end_time",
+                  "density",
+                  "area"
+                  ),
+                feature.id = FALSE
+                )        
         )
+
+# Add AQS points as markers
+
+my_icons <- iconList(star <- makeIcon(iconUrl = "https://img.icons8.com/windows/32/383838/marker.png",
+                          iconWidth = 25, iconHeight = 25))
+m <- m@map %>%
+  addMarkers(~Longitude, ~Latitude,
+             icon=~my_icons,
+             popup=~paste(paste0("Date: ", Date),
+                        paste0("PM 2.5: ", PM25),
+                      sep="<br>"),
+             data=aqs)
+
+m
 ```
 
-
-
+```{r}
+# include aqs distance to cluster? maybe take min distance 
+```
 
 
 
