@@ -106,28 +106,45 @@ for (d in as.list(dates)){
 head(rep_pts)
 ```
 
-Since our end goal is to calculate the distance between other points of interest and the fire cluster, I decided to first filter by unique points for each cluster before assigning the top k representative points. This will ensure that we have a diverse representation for each cluster. However, if we want to consider the intensity/duration of the fire at that location, we might consider not doing this? **
+Since our end goal is to calculate the distance between other points of interest and the fire cluster, I decided to first filter by unique points for each cluster before assigning the top k representative points. This will ensure that we have a diverse representation for each cluster.
 
 ## Merging with AQS data
 ```{r}
 # Read AQS data and restrict to campfire week
 aqs <- read.delim("../data/AQS_PM25_2000_2021_Cali.csv", sep=",", strip.white=TRUE)
 aqs <- aqs %>%
-  filter(Date > "2018-11-07" & Date < "2018-11-17")
+  filter(Date > "2018-11-06" & Date < "2018-11-17")
 ```
 
 ```{r}
 rep_pts_sf <- st_as_sf(rep_pts)
 smoke <- st_as_sf(smoke)
 aqs <- aqs %>%
-  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove=FALSE)
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove=FALSE) %>%
+  st_set_crs(4326)
 ```
+
+### Calculate distance between each AQS point and nearest fire
+
+- Still trying to find a cleaner way of doing this
+```{r}
+calc_dist <- function(x, ind, y_arr){
+  return(st_distance(x, y_arr[ind]))
+}
+
+aqs$Dist <- c()
+# Calculate distance between AQS and nearest fire point
+for (d in as.list(dates)){
+  inds <- st_nearest_feature(aqs[aqs$Date == d,]$geometry, rep_pts_sf[rep_pts_sf$date == d,]$geometry)
+  aqs[aqs$Date == d,]$Dist <- lapply(aqs[aqs$Date == d,], calc_dist, rep_pts_sf[rep_pts_sf$date == d,]$geometry, inds)
+}
+```
+
 
 ## Visualization
 
 ```{r}
-
-m <- mapview(rep_pts_sf, zcol = "date", label=FALSE, legend=FALSE, layer.name=c("Fire Points"),col.regions = brewer.pal(10, "Spectral"),
+m <- mapview(rep_pts_sf, zcol = "date", label=FALSE, legend=FALSE, col.regions = brewer.pal(10, "Spectral"), burst=TRUE,
         popup = popupTable(
               rep_pts_sf,
               zcol = c(
@@ -139,7 +156,7 @@ m <- mapview(rep_pts_sf, zcol = "date", label=FALSE, legend=FALSE, layer.name=c(
               feature.id = FALSE
               )
         ) + 
-  mapview(smoke, zcol ="type", label=FALSE, legend = TRUE, layer.name = 'Smoke Type',col.regions = brewer.pal(3, "RdYlGn"), col="transparent",
+  mapview(smoke, zcol ="type", label=FALSE, layer.name = 'Smoke Type',col.regions = brewer.pal(3, "RdYlGn"), col="transparent",
         popup = popupTable(
                 smoke,
                 zcol = c(
@@ -167,9 +184,6 @@ m <- m@map %>%
 m
 ```
 
-```{r}
-# include aqs distance to cluster? maybe take min distance 
-```
 
 
 
