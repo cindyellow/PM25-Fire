@@ -11,24 +11,63 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Tasks
 ### Week 1
 
-1. Go through the HMS description [website](https://www.ospo.noaa.gov/Products/land/hms.html) and examine data retrieval, product information.
-2. Determine the time frame of the data, its structure, and whether we can solely rely on the hazard mapping system (HMS) as a data source.
-3. Download a data sample and map it.
+- [x] 1. Go through the HMS description [website](https://www.ospo.noaa.gov/Products/land/hms.html) and examine data retrieval, product information.
+- [x] 2. Determine the time frame of the data, its structure, and whether we can solely rely on the hazard mapping system (HMS) as a data source.
+- [x]3. Download a data sample and map it.
 
 ### Week 2
 
-[x] 1. Figure out if we can calculate smoke area.
-[] 2. Investigate how to link information between the smoke and fire detection datasets.
-[] 3. Create better visualizations of the smoke KML data.
-[x] 4. Create histograms of fire detection times throughout the day and color by satellite/method of detection to see if they always collect data at the same times.
-[] 5. Examine the change of fire points overtime, specifically for the California campfire (November 7th, 2018 - November 16th, 2018).
-[x] 6. Summary of ecosystem types (variable "ecosys").
-[] 7. Look into how to structure the fire dataset.
+- [x] 1. Figure out if we can calculate smoke area.
+- [ ] 2. Investigate how to link information between the smoke and fire detection datasets.
+- [ ] 3. Create better visualizations of the smoke KML data.
+- [x] 4. Create histograms of fire detection times throughout the day and color by satellite/method of detection to see if they always collect data at the same times.
+- [ ] 5. Examine the change of fire points overtime, specifically for the California campfire (November 7th, 2018 - November 16th, 2018).
+- [x] 6. Summary of ecosystem types (variable "ecosys").
+- [ ] 7. Look into how to structure the fire dataset.
   - Want to use fire as a predictor for the two projects
   - Would be useful to get information on area, intensity, smoke amount
-[] 8. Check out [FEER.v1](https://feer.gsfc.nasa.gov/projects/emissions/): do they have data available, or do we only have access to the model? Can we combine this data with the HMS data based on location?
+- [ ] 8. Check out [FEER.v1](https://feer.gsfc.nasa.gov/projects/emissions/): do they have data available, or do we only have access to the model? Can we combine this data with the HMS data based on location?
 
 ### Week 3
-[x] 1. Clip data to California's borders
-[x] 2. Smoke dataset visualization
-[] 3. Fire detection points by time
+- [x] 1. Clip data to California's borders
+- [x] 2. Smoke dataset visualization
+- [ ] 3. Fire detection points by time
+  - Not doable given current file format (KML) and available packages (mapview)
+
+### Week 4
+- [x] 1. Combine all fire points of the week into one dataset and merge in FRP
+- [x] 2. Experiment with HDBSCAN to identify clusters where there is persistent fires
+
+### Week 5-6
+- [x] 1. Try HDBSCAN for daily data 
+- [x] 2. Determine best way to assign minpts value
+- [x] 3. Plot it onto a map (one dot per daily cluster -> centroid) + maybe original points in the background
+  - HDBSCAN clusters don't have centroids because shape is irregular
+- [x] 4. Merge in FRP based on clusters and examine variance
+- [ ] 5. Look into POSTGIS
+
+### Week 7
+- [x] 1. Add in AQ data
+  - Clip it to the week
+  - Plot the locations of the air quality record points -> look at concentration of PM 2.5
+  - Maybe get distance between PM2.5 site and fire cluster and where it is wrt smoke
+- [x] 2. Choose top k most probable points in a cluster: display latitude and longitude
+  - So that we can calculate distance between person's home and the cluster point
+- [ ] 3. Research if FRP can tell us anything about emission spread, intensity, etc.
+  - date, center point, frp for cluster, num obs, distance to pm2.5 site
+  
+### Week 8
+- [ ] 1. Cleaner way of calculating each PM2.5 observation to closest cluster of the day
+- [ ] 2. Create 3 indicator variables for if PM2.5 site lies in light, medium, and/or heavy smoke plume that day
+- [ ] 3. Create polygon out of cluster points and calculate area 
+  - small area, lot of points -> intense fire
+
+
+
+
+
+
+
+
+
+
