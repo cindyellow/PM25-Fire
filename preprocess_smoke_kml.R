@@ -1,13 +1,29 @@
+# This R script is for preprocessing smoke KML data
+
+sf_use_s2(FALSE)
+# Combine data from different days
+filelist = list.files(path="../data/smoke/", pattern = "*.kml")
+## ISSUE: formatting is different for 2018-11-07, unable to read different layers so it's removed for now
+filelist <- filelist[-1]
+
+#assuming tab separated values with a header    
+datalist = lapply(filelist, function(x)st_read(paste("../data/smoke/", x, sep=""), layer="Smoke (Light)"))
+smoke_light <- do.call("rbind", datalist) 
+datalist = lapply(filelist, function(x)st_read(paste("../data/smoke/", x, sep=""), layer="Smoke (Medium)"))
+smoke_med <- do.call("rbind", datalist) 
+datalist = lapply(filelist, function(x)st_read(paste("../data/smoke/", x, sep=""), layer="Smoke (Heavy)"))
+smoke_heavy <- do.call("rbind", datalist) 
+
+# alternative way to read all three layers simultaneously
+# list_of_features<-purrr::map(layers$name,~st_read(dsn="../data/smoke/smoke20181107.kml",layer=.))
+
 # Read light, medium, heavy separately
-smoke_light <- st_read("../data/smoke/smoke20181108.kml", layer="Smoke (Light)")
 smoke_light <- as.data.frame(smoke_light) %>%
   mutate(type="light")
 
-smoke_med <- st_read("../data/smoke/smoke20181108.kml", layer="Smoke (Medium)")
 smoke_med <- as.data.frame(smoke_med) %>%
   mutate(type="medium")
 
-smoke_heavy <- st_read("../data/smoke/smoke20181108.kml", layer="Smoke (Heavy)")
 smoke_heavy <- as.data.frame(smoke_heavy) %>%
   mutate(type="heavy")
 
