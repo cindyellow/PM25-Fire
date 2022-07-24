@@ -1,0 +1,204 @@
+---
+title: "Week 8: HDBSCAN Clustering P3, Merging with AQS" 
+subtitle: "SURA 2022"
+author: "Shih-Ting (Cindy) Huang"
+date: '2022-07-29'
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE)
+
+library(tidyverse)
+library(dplyr)
+library(leaflet)
+library(sf)
+library(mapview)
+library(ggplot2)
+library(RColorBrewer)
+library(dbscan)
+library(leafpop)
+library(fpc)
+library(lwgeom)
+```
+
+
+```{r load-data, echo=FALSE, include=FALSE}
+# Run the script to preprocess fire datasets to include information on time, location, and FRP
+url1 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_fire_kml.R"
+if (!file.exists("../preprocess_fire_kml.R"))
+  download.file(url1, destfile = "../preprocess_fire_kml.R")
+source("../preprocess_fire_kml.R")
+
+url2 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_smoke_kml.R"
+if (!file.exists("../preprocess_smoke_kml.R"))
+  download.file(url2, destfile = "../preprocess_smoke_kml.R")
+source("../preprocess_smoke_kml.R")
+```
+
+
+## HDBSCAN: Assigning representative points for each cluster
+
+```{r}
+# Function for finding best minpts for a day and building clusters based on that
+build_best_cl <- function(day){
+  coords <- as.tibble(st_coordinates(day$geometry))
+  scores <- c()
+  for (x in minpts){
+    cl <- hdbscan(coords, minPts = x)
+    # check if there are cluster scores available
+    if (is.na(cl$cluster_scores)){
+      scores <- c(scores, 0)
+    } else{
+      scores <- c(scores, cdbw(coords, cl$cluster)$cdbw)
+    }
+  }
+  
+  best_param <- minpts[which.max(scores)]
+  return (hdbscan(coords, minPts=best_param))
+}
+```
+
+```{r}
+# Function for getting k representative points
+get_rep_pts <- function(cl, day, k){
+  # Gives us highest member probability of each cluster
+  mem_probs <- data.frame(cluster = cl$cluster, prob = cl$membership_prob)
+  mem_probs <- mem_probs %>%
+    group_by(cluster) %>%
+    summarise(max_prob = max(prob))
+  # Assign cluster and member probability to all observations 
+  day <- day %>%
+    mutate(cluster = cl$cluster, mem_prob = cl$membership_prob) %>%
+    filter(cluster != 0)
+  # Group by cluster
+  cluster_info <- as.tibble(day) %>%
+    group_by(cluster) %>%
+    summarise(frp_avg = round(mean(frp, na.rm=TRUE),4),
+              frp_vars = round(var(frp, na.rm=TRUE),4),
+              num_pts = n()) 
+  reps <- day %>%
+    inner_join(cluster_info, by="cluster") %>%
+    arrange(desc(mem_prob)) %>%
+    group_by(cluster) %>%
+    distinct(geometry, .keep_all=TRUE) %>%
+    slice(1:k)  
+  return(reps)
+}
+```
+
+
+```{r}
+# Get representative points for all dates within range
+minpts <- seq(5,100,by=5)
+rep_pts <- c()
+dates <- seq(as.Date("2018-11-07"), as.Date("2018-11-16"), by=1)
+
+for (d in as.list(dates)){
+  day <- in_cali %>%
+    filter(date == d)
+  cl <- build_best_cl(day)
+  reps <- get_rep_pts(cl, day, 1)
+  rep_pts <- rbind(rep_pts, reps)
+}
+```
+
+```{r}
+head(rep_pts)
+```
+
+Since our end goal is to calculate the distance between other points of interest and the fire cluster, I decided to first filter by unique points for each cluster before assigning the top k representative points. This will ensure that we have a diverse representation for each cluster.
+
+## Merging with AQS data
+```{r}
+# Read AQS data and restrict to campfire week
+aqs <- read.delim("../data/AQS_PM25_2000_2021_Cali.csv", sep=",", strip.white=TRUE)
+aqs <- aqs %>%
+  filter(Date > "2018-11-06" & Date < "2018-11-17")
+aqs <- aqs %>%
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove=FALSE) %>%
+  st_set_crs(4326)
+```
+
+```{r}
+rep_pts_sf <- st_as_sf(rep_pts)
+smoke <- st_as_sf(smoke)
+```
+
+### Calculate distance between each AQS point and nearest fire
+
+- Still trying to find a cleaner way of doing this
+```{r}
+calc_dist <- function(x, ind, y_arr){
+  return(st_distance(x, y_arr[ind]))
+}
+
+aqs$Dist <- c()
+# Calculate distance between AQS and nearest fire point
+for (d in as.list(dates)){
+  inds <- st_nearest_feature(aqs[aqs$Date == d,]$geometry, rep_pts_sf[rep_pts_sf$date == d,]$geometry)
+  aqs[aqs$Date == d,]$Dist <- lapply(aqs[aqs$Date == d,], calc_dist, rep_pts_sf[rep_pts_sf$date == d,]$geometry, inds)
+}
+```
+
+## Indicator Variables
+```{r}
+day_smoke
+```
+
+
+```{r}
+#Filter by date for all dfs
+dates <- seq(as.Date("2018-11-08"), as.Date("2018-11-16"), by=1)
+
+# Set default values for smoke indicator variables
+aqs <- aqs %>%
+  mutate(light=NA, med=NA, heavy=NA)
+
+for (d in as.list(dates)){
+  day_smoke <- smoke %>%
+    filter(format(start_time, format="%Y-%m-%d") == d)
+  day_aqs <- aqs %>%
+    dplyr::select(c("PM25", "Date", "Latitude", "Longitude")) %>%
+    filter(Date == d)
+  # day_fire <- rep_pts %>%
+  #   filter(date == d)
+  
+  # Get indicator variables
+  smoke_regions <- st_intersects(day_aqs$geometry, day_smoke$geometry)
+  day_aqs$light <- lapply(smoke_regions, function(x)ifelse('light' %in% unique(day_smoke[unlist(x),]$type), 1, 0))
+  day_aqs$med <- lapply(smoke_regions, function(x)ifelse('medium' %in% unique(day_smoke[unlist(x),]$type), 1, 0))
+  day_aqs$heavy <- lapply(smoke_regions, function(x)ifelse('heavy' %in% unique(day_smoke[unlist(x),]$type), 1, 0))
+  day_aqs <- as.tibble(day_aqs) %>%
+    dplyr::select(-geometry) %>%
+    mutate(across(c("light", "med", "heavy"), as.double))
+  aqs <- aqs %>%
+    left_join(as.tibble(day_aqs), by=c("PM25", "Date", "Latitude", "Longitude")) %>%
+    mutate(light = coalesce(light.y, light.x),
+           med = coalesce(med.y, med.x),
+           heavy = coalesce(heavy.y, heavy.x)) %>% 
+    dplyr::select(-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y)
+}
+# Find intersection 
+
+# Take unique smoke type and assign?
+# use indices 
+
+# Find the closest cluster of the day
+# https://r-spatial.github.io/sf/reference/st_nearest_feature.html
+# https://gis.stackexchange.com/questions/349955/getting-a-new-column-with-distance-to-the-nearest-feature-in-r
+```
+
+```{r}
+typeof(day_aqs$light[0])
+```
+
+## Cluster Polygons
+```{r}
+# https://stackoverflow.com/questions/53440909/polygon-from-cluster-of-lat-long-points-in-r
+
+# https://gis.stackexchange.com/questions/303524/clustering-spatially-connected-polygons-so-all-clusters-have-approximately-the-s
+```
+
+
+
