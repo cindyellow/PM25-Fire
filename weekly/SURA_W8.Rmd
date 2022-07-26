@@ -1,5 +1,5 @@
 ---
-title: "Week 8: HDBSCAN Clustering P3, Merging with AQS" 
+title: "Week 8: Merging with AQS Part 2, Getting Cluster Information" 
 subtitle: "SURA 2022"
 author: "Shih-Ting (Cindy) Huang"
 date: '2022-07-29'
@@ -11,25 +11,26 @@ knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE)
 
 library(tidyverse)
 library(dplyr)
-library(leaflet)
 library(sf)
 library(mapview)
-library(ggplot2)
 library(RColorBrewer)
 library(dbscan)
-library(leafpop)
 library(fpc)
 library(lwgeom)
+library(concaveman)
 ```
-
 
 ```{r load-data, echo=FALSE, include=FALSE}
 # Run the script to preprocess fire datasets to include information on time, location, and FRP
-url1 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_fire_kml.R"
-if (!file.exists("../preprocess_fire_kml.R"))
-  download.file(url1, destfile = "../preprocess_fire_kml.R")
+# This will limit our observations to those in California
+# Object created: "fire", "in_cali" datasets
+url1 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_fire_txt.R"
+if (!file.exists("../preprocess_fire_txt.R"))
+  download.file(url1, destfile = "../preprocess_fire_txt.R")
 source("../preprocess_fire_txt.R")
 
+# Run the script to preprocess smoke dataset, including additional information on smoke area
+# Object created: "smoke" dataset
 url2 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_smoke_kml.R"
 if (!file.exists("../preprocess_smoke_kml.R"))
   download.file(url2, destfile = "../preprocess_smoke_kml.R")
@@ -60,75 +61,92 @@ build_best_cl <- function(day){
 ```
 
 ```{r}
-# Function for getting k representative points
-get_rep_pts <- function(cl, day, k){
-  # Gives us highest member probability of each cluster
-  mem_probs <- data.frame(cluster = cl$cluster, prob = cl$membership_prob)
-  mem_probs <- mem_probs %>%
-    group_by(cluster) %>%
-    summarise(max_prob = max(prob))
-  # Assign cluster and member probability to all observations 
+# Function to get a dataframe of each cluster's polygon, area, FRP summaries, and number of points for a day
+get_cluster_info <- function(cl, day){
+  # Assign cluster to all observations 
   day <- day %>%
-    mutate(cluster = cl$cluster, mem_prob = cl$membership_prob) %>%
-    filter(cluster != 0)
-  # Group by cluster
-  cluster_info <- as.tibble(day) %>%
+    mutate(cluster = paste0(date, "_", cl$cluster)) %>%
+    filter(cluster != paste0(date, "_", "0"))
+  
+  # Create polygon and FRP summaries for each cluster
+  day_cl <- day %>%
     group_by(cluster) %>%
-    summarise(frp_avg = round(mean(frp, na.rm=TRUE),4),
-              frp_vars = round(var(frp, na.rm=TRUE),4),
-              num_pts = n()) 
+    group_modify(function(x,y) bind_rows(tibble(polygon = concaveman(x)$polygons,
+                                              area = round(st_area(polygon), 3),
+                                              frp_avg = round(mean(x$frp, na.rm=TRUE),4),
+                                              frp_vars = round(var(x$frp, na.rm=TRUE),4),
+                                              num_pts = count(x)$n)))
+  return (day_cl)
+}
+```
+
+For this function, there may be warnings that read `Although coordinates are longitude/latitude, it is assumed that they are planar.` This warning is acceptable since we're looking at a small local region for calculating area. More about it [here](https://github.com/r-spatial/sf/issues/493)
+
+```{r}
+# Function for getting k representative points for a day
+get_rep_pts <- function(cl, day, cluster_info, k){
   reps <- day %>%
-    inner_join(cluster_info, by="cluster") %>%
-    mutate(cluster = paste0(date, "_", cluster)) %>%
+    # Get membership probability for each observation
+    mutate(cluster = paste0(date, "_", cl$cluster), mem_prob = cl$membership_prob) %>%
     arrange(desc(mem_prob)) %>%
     group_by(cluster) %>%
+    # Filter by distinct locations
     distinct(geometry, .keep_all=TRUE) %>%
-    slice(1:k)  
+    # Get the top k most probable observations for each cluster
+    slice(1:k) %>%
+    # Append with cluster information to get complete info
+    inner_join(cluster_info, by="cluster")
   return(reps)
 }
 ```
 
-```{r}
-# Get representative points for all dates within range
+```{r, warning=FALSE, message=FALSE}
+# Get representative points and cluster information for all dates within range
 minpts <- seq(5,100,by=5)
+
+# Dataframes for storing all the info
 rep_pts <- c()
+cluster_info <- c()
+
 dates <- seq(as.Date("2018-11-08"), as.Date("2018-11-16"), by=1)
 
 for (d in as.list(dates)){
   day <- in_cali %>%
+    st_as_sf(coords = c("longitude", "latitude"), crs = 4326, remove=FALSE) %>%
+    st_set_crs(4326) %>%
     filter(date == d)
+  
   cl <- build_best_cl(day)
-  reps <- get_rep_pts(cl, day, 1)
+  ci <- get_cluster_info(cl,day)
+  reps <- get_rep_pts(cl, day, ci, 1)
+  cluster_info <- rbind(cluster_info, ci)
   rep_pts <- rbind(rep_pts, reps)
 }
 ```
 
-```{r}
-head(rep_pts)
-```
-
-Since our end goal is to calculate the distance between other points of interest and the fire cluster, I decided to first filter by unique points for each cluster before assigning the top k representative points. This will ensure that we have a diverse representation for each cluster.
 
 ## Merging with AQS data
+
 ```{r}
 # Read AQS data and restrict to campfire week
 aqs <- read.delim("../data/AQS_PM25_2000_2021_Cali.csv", sep=",", strip.white=TRUE)
 aqs <- aqs %>%
-  filter(Date > "2018-11-06" & Date < "2018-11-17")
+  filter(Date > "2018-11-07" & Date < "2018-11-17")
+
+# Create geometry object for coordinates (used for sf calculations)
 aqs <- aqs %>%
   st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove=FALSE) %>%
   st_set_crs(4326)
 ```
 
 ```{r}
+# Convert dataframes to sf objects
 rep_pts_sf <- st_as_sf(rep_pts)
 smoke <- st_as_sf(smoke)
 ```
 
-### Calculate distance between each AQS point and nearest fire
 
-
-## Indicator Variables
+## Smoke Indicator Variables & Distance to Closest Fire
 
 ```{r}
 #Filter by date for all dfs
@@ -161,6 +179,7 @@ for (d in as.list(dates)){
     dplyr::select(-geometry) %>%
     mutate(across(c("light", "med", "heavy"), as.double))
   
+  # Clean up everything
   aqs <- aqs %>%
     left_join(as.tibble(day_aqs), by=c("PM25", "Date", "Latitude", "Longitude")) %>%
     mutate(light = coalesce(light.y, light.x),
@@ -175,26 +194,53 @@ for (d in as.list(dates)){
 
 ### Doublecheck
 
+We doublecheck that all the closest clusters are assigned correctly with respect to date.
+
 ```{r}
-#??? don't know what's going on
 match <- aqs$Date == as.Date(gsub("_[0-9][0-9]*", "", aqs$closest_cl))
-as.tibble(aqs[match==FALSE,])
-
-# Drop null observations
-aqs_na <- aqs %>%
-  drop_na(Longitude)
-
-sum(aqs$Longitude=="NA")
-
+sum(is.na(match) | match == FALSE)
 ```
 
 
 ## Cluster Polygons
-```{r}
-# https://stackoverflow.com/questions/53440909/polygon-from-cluster-of-lat-long-points-in-r
+References: 
+- [Creating polygons](https://stackoverflow.com/questions/53440909/polygon-from-cluster-of-lat-long-points-in-r)
 
-# https://gis.stackexchange.com/questions/303524/clustering-spatially-connected-polygons-so-all-clusters-have-approximately-the-s
+In the previous section calculating representative points, I have added each cluster's polygon object as well, storing the information in a dataframe called `cluster_info`. Let's plot it out and see what a sample polygon looks like.
+
+### Plot on Map
+
+```{r}
+ci_sf <- cluster_info %>%
+  mutate(density = num_pts/area, date = as.Date(gsub("_[0-9][0-9]*", "", cluster))) %>%
+  filter(date == "2018-11-08") %>%
+  st_as_sf()
+
+nov_8 <- in_cali %>%
+    filter(date == "2018-11-08")
+
+mapview(ci_sf, zcol="cluster", label=FALSE, layer.name = 'Cluster',
+        popup = popupTable(
+                ci_sf,
+                zcol = c(
+                  "cluster",
+                  "area",
+                  "density",
+                  "frp_avg",
+                  "frp_vars",
+                  "num_pts"
+                  ),
+                feature.id = FALSE
+                )         
+        ) + 
+  mapview(nov_8, cex=5, label=FALSE, legend=FALSE)
 ```
+
+
+
+
+
+
 
 
 
