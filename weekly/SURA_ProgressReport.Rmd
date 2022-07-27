@@ -1,7 +1,7 @@
 ---
 title: "Progress & Findings Summary" 
 subtitle: "SURA 2022"
-author: "Shih-Ting (Cindy) Huang"
+author: "Shih-Ting (Cindy) Huang, supervised by Professor Meredith Franklin"
 date: "2022-07-28"
 output: html_document
 ---
