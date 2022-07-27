@@ -1,0 +1,387 @@
+---
+title: "Progress & Findings Summary" 
+subtitle: "SURA 2022"
+author: "Shih-Ting (Cindy) Huang"
+date: "2022-07-28"
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE)
+
+library(tidyverse)
+library(dplyr)
+library(leaflet)
+library(sf)
+library(mapview)
+library(ggplot2)
+library(RColorBrewer)
+library(dbscan)
+library(leafpop)
+library(fpc)
+library(concaveman)
+library(kableExtra)
+
+```
+
+```{r load-data, echo=FALSE, include=FALSE}
+# Run the script to preprocess fire datasets to include information on time, location, and FRP
+# This will limit our observations to those in California
+# Object created: "fire", "in_cali" datasets
+url1 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_fire_txt.R"
+if (!file.exists("../preprocess_fire_txt.R"))
+  download.file(url1, destfile = "../preprocess_fire_txt.R")
+source("../preprocess_fire_txt.R")
+
+# Run the script to preprocess smoke dataset, including additional information on smoke area
+# Object created: "smoke" dataset
+url2 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_smoke_kml.R"
+if (!file.exists("../preprocess_smoke_kml.R"))
+  download.file(url2, destfile = "../preprocess_smoke_kml.R")
+source("../preprocess_smoke_kml.R")
+```
+
+## About the Datasets
+
+### Fire
+
+- Refer to the dataset `in_cali` for fire points restricted to California's borders.
+- **Time Frame**: The HMS system has operated 24x7x365 since June 16th, 2003, when some of its first satellites have been put to use. Some of these satellite sources have been discontinued after some time, but Terra/MODIS is one of the first satellites used and is still in use.
+- **Data Source**: Satellites used include GOES, Terra/MODIS, Aqua/MODIS, NOAA, MetOp, and S-NPP/VIIRs. Even though most of the satellites only operated for a certain time, we can still use HMS as our main data source because Terra/MODIS has been present since the beginning. This can be used as a baseline, and we can draw data from other satellites to compare with it if needed.
+
+#### Data Structure, Variables, Etc.
+
+- They record fire detection data several times a day (around once every 2 hours), but there can be a little delay in making the data available (this doesn't affect the observation time recorded).
+- Each observation represents a fire detection point recorded on a satellite for a specific time of a date at one location. 
+- The variables provided are:
+  
+  - Longitude
+  - Latitude
+  - Observation date (year & Julian day 0-365)
+  - Observation time (in UTC)
+  - Satellite/sensor used
+  - Method of detection (either manual or automated)
+  - Ecosystem type (explained below)
+  - Fire Radiative Power (FRP) in megawatts
+
+- In particular, FRP is the rate of emitted radiative energy by the fire at the time of the observation, expressed in units of power (i.e. Watts). It can be used to gauge fire intensity.
+
+- There is correspondence between method of detection and satellites:
+
+  - VIIRs: SUOMI NPP, NOAA20
+  - FDC: GOES-EAST
+  - MODIS: MODIS-TERRA
+  
+#### Ecosys
+
+- The different types of ecosystems are listed in the [GLCC README file](https://www.usgs.gov/media/files/global-land-cover-characteristics-data-base-readme-version2) under Appendix 1 "Global Ecosystems Legend". These categories have been created based on " 1-km AVHRR (Advanced Very High Resolution Radiometer) 10-day NDVI (Normalized Difference Vegetation Index ) composites". The ones we have in the dataset (during the Californian fire) are:
+
+```{r, echo=FALSE}
+in_cali %>%
+  ggplot(aes(ecosys)) +
+  geom_bar()+
+  theme_minimal() +
+  xlab("Ecosystem") + 
+  ylab("Frequency") +
+  labs(title = "Bar Graph for Ecosystem Code") +
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
+```
+
+- From the bar chart, we can see that the following ecosystems are the most prominent during the Californian fire:
+
+  - 22: Cool Conifer Forest 
+  - 24: Mixed Forest 
+  - 26: Deciduous Broadleaf Forest 
+  - 46: Mediterranean Scrub
+  - 91: Woody Savanna
+
+### Smoke
+
+- Refer to the dataset `smoke` to see details.
+- Each observation represents a unique smoke polygon of a specific level recorded at a certain time by one satellite.
+- The variables included in the smoke dataset are:
+
+  - Density: thickness of smoke
+  - Satellite/sensor used
+  - Geometry: smoke polygon object
+  - Type: level of smoke (light, medium, heavy)
+  - Start time
+  - End time
+  - Area: area of the smoke polygon in $m^2$ 
+
+## Clustering
+
+- We use HDBSCAN to cluster fire detection points for each day. 
+- To find the best-performing clusters for each day, we built HDBSCAN using `minPts` ranging from 5-100 with step size = 5. Model performance is measured using `CDbw`. It considers multiple representative points per cluster, but it means that we have to introduce a parameter for defining the number of points. CDbw index (a type of relative validity index) is calculated based on the following metrics:
+  - cohesion: within-cluster density change
+  - compactness: average within-cluster density
+  - separation: inter-cluster density
+- The higher the CDbw index, the better the clustering compared to the others.
+
+```{r, include=FALSE}
+# Function for finding best minpts for a day and building clusters based on that
+build_best_cl <- function(day){
+  coords <- as_tibble(st_coordinates(day$geometry))
+  scores <- c()
+  for (x in minpts){
+    cl <- hdbscan(coords, minPts = x)
+    # check if there are cluster scores available
+    if (all(is.na(cl$cluster_scores))){
+      scores <- c(scores, 0)
+    } else{
+      scores <- c(scores, cdbw(coords, cl$cluster)$cdbw)
+    }
+  }
+  
+  best_param <- minpts[which.max(scores)]
+  return (hdbscan(coords, minPts=best_param))
+}
+```
+
+```{r, include=FALSE}
+# Function to get a dataframe of each cluster's polygon, area, FRP summaries, and number of points for a day
+get_cluster_info <- function(cl, day){
+  # Assign cluster to all observations 
+  day <- day %>%
+    mutate(cluster = paste0(date, "_", cl$cluster)) %>%
+    filter(cluster != paste0(date, "_", "0"))
+  
+  # Create polygon and FRP summaries for each cluster
+  day_cl <- day %>%
+    group_by(cluster) %>%
+    group_modify(function(x,y) bind_rows(tibble(polygon = concaveman(x)$polygons,
+                                                num_pts = count(x)$n,
+                                                area = round(st_area(polygon), 3),
+                                                density = round(num_pts/area, 3),
+                                                frp_avg = round(mean(x$frp, na.rm=TRUE),4),
+                                                frp_vars = round(var(x$frp, na.rm=TRUE),4)
+                                              )))
+  return (day_cl)
+}
+```
+
+```{r, include=FALSE}
+# Function for getting k representative points for a day
+get_rep_pts <- function(cl, day, cluster_info, k){
+  reps <- day %>%
+    # Get membership probability for each observation
+    mutate(cluster = paste0(date, "_", cl$cluster), mem_prob = cl$membership_prob) %>%
+    arrange(desc(mem_prob)) %>%
+    group_by(cluster) %>%
+    # Filter by distinct locations
+    distinct(geometry, .keep_all=TRUE) %>%
+    # Get the top k most probable observations for each cluster
+    slice(1:k) %>%
+    # Append with cluster information to get complete info
+    inner_join(cluster_info, by="cluster")
+  return(reps)
+}
+```
+
+```{r, warning=FALSE, message=FALSE, include=FALSE}
+# Get representative points and cluster information for all dates within range
+minpts <- seq(5,100,by=5)
+
+# Dataframes for storing all the info
+rep_pts <- c()
+cluster_info <- c()
+
+dates <- seq(as.Date("2018-11-08"), as.Date("2018-11-16"), by=1)
+
+for (d in as.list(dates)){
+  day <- in_cali %>%
+    st_as_sf(coords = c("longitude", "latitude"), crs = 4326, remove=FALSE) %>%
+    st_set_crs(4326) %>%
+    filter(date == d)
+  
+  cl <- build_best_cl(day)
+  ci <- get_cluster_info(cl,day)
+  reps <- get_rep_pts(cl, day, ci, 1)
+  cluster_info <- rbind(cluster_info, ci)
+  rep_pts <- rbind(rep_pts, reps)
+}
+```
+
+- The following table was created using the dataframe `cluster_info`.
+
+```{r, echo=FALSE}
+tibble("Cluster" = cluster_info$cluster,  
+       "Number of Observations" = cluster_info$num_pts,
+       "Cluster Area" = cluster_info$area,
+       "Cluster Density" = cluster_info$density,
+       "Average FRP" = cluster_info$frp_avg, 
+       "FRP Variance" = cluster_info$frp_vars) %>%
+  knitr::kable(caption="Cluster Summary for 11/08/2018-11/16/2018") %>%
+  kable_styling("striped", full_width = F) %>% 
+ scroll_box(height="300px")
+```
+
+
+- NA entries in FRP average and variance indicate that all points in the clusters don't have FRP values recorded.
+
+## Merging with Air Quality System (AQS) data
+
+```{r, include=FALSE}
+# Read AQS data and restrict to campfire week
+aqs <- read.delim("../data/AQS_PM25_2000_2021_Cali.csv", sep=",", strip.white=TRUE)
+aqs <- aqs %>%
+  filter(Date > "2018-11-07" & Date < "2018-11-17")
+
+# Create geometry object for coordinates (used for sf calculations)
+aqs <- aqs %>%
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove=FALSE) %>%
+  st_set_crs(4326)
+```
+
+```{r, include=FALSE}
+# Convert dataframes to sf objects
+rep_pts_sf <- st_as_sf(rep_pts)
+smoke <- st_as_sf(smoke) %>%
+  st_set_crs(4326)
+```
+
+### Smoke Indicator Variables & Distance to Closest Fire
+
+- For each PM2.5 observation, we will create three indicator variables based on whether it is (1) or is not (0) in the 1) light, 2) medium, and/or 3) heavy smoke plume of the same day. 
+- We will also create a numerical variable indicating the distance to the closest cluster (as indicated by a single representative point) in meters. 
+
+```{r, include=FALSE}
+#Filter by date for all dfs
+dates <- seq(as.Date("2018-11-08"), as.Date("2018-11-16"), by=1)
+
+# Set default values for smoke indicator variables
+aqs <- aqs %>%
+  mutate(in_light=NA, in_med=NA, in_heavy=NA, fire_dist=NA, closest_cl=NA)
+
+for (d in as.list(dates)){
+  day_smoke <- smoke %>%
+    filter(format(start_time, format="%Y-%m-%d") == d)
+  day_aqs <- aqs %>%
+    dplyr::select(c("PM25", "Date", "Latitude", "Longitude")) %>%
+    filter(Date == d)
+  day_fire <- rep_pts_sf %>%
+    filter(date == d)
+  
+  # Get closest cluster & distance
+  closest_fire <- st_nearest_feature(day_aqs, day_fire)
+  day_aqs$fire_dist <- st_distance(day_aqs$geometry, day_fire[closest_fire,], by_element=TRUE)
+  day_aqs$closest_cl <- day_aqs$closest_cl <- day_fire[closest_fire,]$cluster
+  
+  # Get indicator variables
+  smoke_regions <- st_intersects(day_aqs$geometry, day_smoke$geometry)
+  day_aqs$in_light <- lapply(smoke_regions, function(x)ifelse('light' %in% unique(day_smoke[unlist(x),]$type), 1, 0))
+  day_aqs$in_med <- lapply(smoke_regions, function(x)ifelse('medium' %in% unique(day_smoke[unlist(x),]$type), 1, 0))
+  day_aqs$in_heavy <- lapply(smoke_regions, function(x)ifelse('heavy' %in% unique(day_smoke[unlist(x),]$type), 1, 0))
+  day_aqs <- as_tibble(day_aqs) %>%
+    dplyr::select(-geometry) %>%
+    mutate(across(c("in_light", "in_med", "in_heavy"), as.double))
+  
+  # Clean up everything
+  aqs <- aqs %>%
+    left_join(as_tibble(day_aqs), by=c("PM25", "Date", "Latitude", "Longitude")) %>%
+    mutate(in_light = coalesce(in_light.y, in_light.x),
+           in_med = coalesce(in_med.y, in_med.x),
+           in_heavy = coalesce(in_heavy.y, in_heavy.x),
+           fire_dist = coalesce(fire_dist.y, fire_dist.x),
+           closest_cl = coalesce(closest_cl.y, closest_cl.x)) %>% 
+    dplyr::select(-in_light.x, -in_light.y, -in_med.x, -in_med.y, -in_heavy.x, -in_heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
+}
+```
+
+- Here's the first five observations of the augmented AQS dataset (variable `aqs`): 
+
+```{r, echo=FALSE}
+aqs %>%
+  head() %>%
+  knitr::kable(caption="AQS Dataset for 11/08/2018-11/16/2018") %>%
+  kable_styling("striped", full_width = F) %>% 
+ scroll_box(width="800px")
+```
+
+
+## Visualization
+
+### 1. Fire Clusters
+
+- Here, we take a look at a sample of how polygons are created for each fire cluster. These are the clusters for 11/08/2018.
+
+```{r, echo=FALSE}
+ci_sf <- cluster_info %>%
+  mutate(date = as.Date(gsub("_[0-9][0-9]*", "", cluster))) %>%
+  filter(date == "2018-11-08") %>%
+  st_as_sf()
+
+nov_8 <- in_cali %>%
+    filter(date == "2018-11-08")
+
+mapview(ci_sf, zcol="cluster", label=FALSE, layer.name = 'Cluster',
+        popup = popupTable(
+                ci_sf,
+                zcol = c(
+                  "cluster",
+                  "area",
+                  "density",
+                  "frp_avg",
+                  "frp_vars",
+                  "num_pts"
+                  ),
+                feature.id = FALSE
+                )         
+        ) + 
+  mapview(nov_8, cex=5, label=FALSE, legend=FALSE)
+```
+
+### 2. Looking at AQS, fire representatives, and smoke polygons altogether
+
+- In this visualization, we have smoke polygons from all days 11/8-11/16, fire representative points as circles (colored by day), and AQS PM2.5 observations marked by the grey icons. From this, we can visually see how PM2.5 values reflect their distance to a nearby fire cluster as well as placement in smoke polygons. 
+
+```{r, echo=FALSE}
+# Currently this map doesn't display properly if CRS is 3310, so I kept CRS throughout the whole file as 4326 for now before I understand how to change the map accordingly
+m <- mapview(rep_pts_sf, zcol = "date", label=FALSE, legend=FALSE, col.regions = brewer.pal(10, "Spectral"), 
+        popup = popupTable(
+              rep_pts_sf,
+              zcol = c(
+                "date",
+                "method_of_detect",
+                "satellite",
+                "cluster"
+                ),
+              feature.id = FALSE
+              )
+        ) +
+  mapview(smoke, zcol ="type", label=FALSE, layer.name = 'Smoke Type', col.regions = brewer.pal(3, "RdYlGn"), col="transparent",
+        popup = popupTable(
+                smoke,
+                zcol = c(
+                  "start_time",
+                  "end_time",
+                  "density",
+                  "area"
+                  ),
+                feature.id = FALSE
+                )
+        )
+
+# Add AQS points as markers
+
+my_icons <- iconList(star <- makeIcon(iconUrl = "https://img.icons8.com/windows/32/383838/marker.png",
+                          iconWidth = 25, iconHeight = 25))
+m <- m@map %>%
+  addMarkers(~Longitude, ~Latitude,
+             icon=~my_icons,
+             popup=~paste(paste0("Date: ", Date),
+                        paste0("PM 2.5: ", PM25),
+                      sep="<br>"),
+             data=aqs)
+
+m
+```
+```
+
+
+
+
+
+
+
+
