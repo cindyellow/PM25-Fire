@@ -1,5 +1,5 @@
 ---
-title: "Week 8: Merging with AQS Part 2, Getting Cluster Information" 
+title: "Week 8-9: Merging with AQS Part 2, Getting Cluster Information" 
 subtitle: "SURA 2022"
 author: "Shih-Ting (Cindy) Huang"
 date: '2022-07-29'
@@ -7,7 +7,7 @@ output: html_document
 ---
 
 ```{r setup, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
-knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE)
+knitr::opts_chunk$set(message=FALSE, warning=FALSE)
 
 library(tidyverse)
 library(dplyr)
@@ -18,6 +18,7 @@ library(dbscan)
 library(fpc)
 library(lwgeom)
 library(concaveman)
+library(leafpop)
 ```
 
 ```{r load-data, echo=FALSE, include=FALSE}
@@ -40,10 +41,10 @@ source("../preprocess_smoke_kml.R")
 
 ## HDBSCAN: Assigning representative points for each cluster
 
-```{r}
+```{r, include=FALSE}
 # Function for finding best minpts for a day and building clusters based on that
 build_best_cl <- function(day){
-  coords <- as.tibble(st_coordinates(day$geometry))
+  coords <- as_tibble(st_coordinates(day$geometry))
   scores <- c()
   for (x in minpts){
     cl <- hdbscan(coords, minPts = x)
@@ -60,7 +61,7 @@ build_best_cl <- function(day){
 }
 ```
 
-```{r}
+```{r, include=FALSE}
 # Function to get a dataframe of each cluster's polygon, area, FRP summaries, and number of points for a day
 get_cluster_info <- function(cl, day){
   # Assign cluster to all observations 
@@ -80,9 +81,9 @@ get_cluster_info <- function(cl, day){
 }
 ```
 
-For this function, there may be warnings that read `Although coordinates are longitude/latitude, it is assumed that they are planar.` This warning is acceptable since we're looking at a small local region for calculating area. More about it [here](https://github.com/r-spatial/sf/issues/493)
+For this function, there may be warnings that read `Although coordinates are longitude/latitude, it is assumed that they are planar.` This warning is caused by the CRS we use. We'll be switching over to California's CRS (EPSG=3310).
 
-```{r}
+```{r, include=FALSE}
 # Function for getting k representative points for a day
 get_rep_pts <- function(cl, day, cluster_info, k){
   reps <- day %>%
@@ -127,7 +128,7 @@ for (d in as.list(dates)){
 
 ## Merging with AQS data
 
-```{r}
+```{r, include=FALSE}
 # Read AQS data and restrict to campfire week
 aqs <- read.delim("../data/AQS_PM25_2000_2021_Cali.csv", sep=",", strip.white=TRUE)
 aqs <- aqs %>%
@@ -139,16 +140,18 @@ aqs <- aqs %>%
   st_set_crs(4326)
 ```
 
-```{r}
+```{r, include=FALSE}
 # Convert dataframes to sf objects
 rep_pts_sf <- st_as_sf(rep_pts)
 smoke <- st_as_sf(smoke)
 ```
 
 
-## Smoke Indicator Variables & Distance to Closest Fire
+### Smoke Indicator Variables & Distance to Closest Fire
 
-```{r}
+For each PM2.5 observation, we will create three indicator variables based on whether it is (1) or is not (0) in the 1) light, 2) medium, and/or 3) heavy smoke plume of the same day. We will also create a numerical variable indicating the distance to the closest cluster (as indicated by a single representative point) in meters. 
+
+```{r, include=FALSE}
 #Filter by date for all dfs
 dates <- seq(as.Date("2018-11-08"), as.Date("2018-11-16"), by=1)
 
@@ -175,13 +178,13 @@ for (d in as.list(dates)){
   day_aqs$light <- lapply(smoke_regions, function(x)ifelse('light' %in% unique(day_smoke[unlist(x),]$type), 1, 0))
   day_aqs$med <- lapply(smoke_regions, function(x)ifelse('medium' %in% unique(day_smoke[unlist(x),]$type), 1, 0))
   day_aqs$heavy <- lapply(smoke_regions, function(x)ifelse('heavy' %in% unique(day_smoke[unlist(x),]$type), 1, 0))
-  day_aqs <- as.tibble(day_aqs) %>%
+  day_aqs <- as_tibble(day_aqs) %>%
     dplyr::select(-geometry) %>%
     mutate(across(c("light", "med", "heavy"), as.double))
   
   # Clean up everything
   aqs <- aqs %>%
-    left_join(as.tibble(day_aqs), by=c("PM25", "Date", "Latitude", "Longitude")) %>%
+    left_join(as_tibble(day_aqs), by=c("PM25", "Date", "Latitude", "Longitude")) %>%
     mutate(light = coalesce(light.y, light.x),
            med = coalesce(med.y, med.x),
            heavy = coalesce(heavy.y, heavy.x),
@@ -192,25 +195,26 @@ for (d in as.list(dates)){
 
 ```
 
+
 ### Doublecheck
 
-We doublecheck that all the closest clusters are assigned correctly with respect to date.
-
-```{r}
+```{r, include=FALSE}
 match <- aqs$Date == as.Date(gsub("_[0-9][0-9]*", "", aqs$closest_cl))
-sum(is.na(match) | match == FALSE)
+mismatches <- sum(is.na(match) | match == FALSE)
 ```
 
+We doublecheck that all the closest clusters are assigned correctly with respect to date. There are `r mismatches` mismatches.
 
 ## Cluster Polygons
 References: 
+
 - [Creating polygons](https://stackoverflow.com/questions/53440909/polygon-from-cluster-of-lat-long-points-in-r)
 
 In the previous section calculating representative points, I have added each cluster's polygon object as well, storing the information in a dataframe called `cluster_info`. Let's plot it out and see what a sample polygon looks like.
 
 ### Plot on Map
 
-```{r}
+```{r, echo=FALSE}
 ci_sf <- cluster_info %>%
   mutate(density = num_pts/area, date = as.Date(gsub("_[0-9][0-9]*", "", cluster))) %>%
   filter(date == "2018-11-08") %>%

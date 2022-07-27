@@ -7,7 +7,7 @@ output: html_document
 ---
 
 ```{r setup, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
-knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE)
+knitr::opts_chunk$set(message=FALSE, warning=FALSE)
 
 library(tidyverse)
 library(dplyr)
@@ -25,23 +25,25 @@ library(leafpop)
 ## Fire Data: Preprocessing
 
 ### Combining all California Campfire Data
-```{r}
+
+In this section, we read and process all the fire data for the California Campfire week. 
+```{r, echo=T, results='hide'}
 # Combine data from different days
-filelist = list.files(path="./data/fire/", pattern = "*.kml")
+filelist = list.files(path="../data/fire/", pattern = "*.kml")
 
 #assuming tab separated values with a header    
-datalist = lapply(filelist, function(x)st_read(paste("./data/fire/", x, sep="")))
+datalist = lapply(filelist, function(x)st_read(paste("../data/fire/", x, sep="")))
 
 #assuming the same header/columns for all files
 fire <- do.call("rbind", datalist) 
 ```
 
-```{r}
+```{r, echo=T, results='hide'}
 # Combine data from different days
-filelist = list.files(path="./data/fire/", pattern = "*.txt")
+filelist = list.files(path="../data/fire/", pattern = "*.txt")
 
 #assuming tab separated values with a header    
-datalist = lapply(filelist, function(x)read.delim(paste("./data/fire/",x,sep=""), sep=",", strip.white=TRUE))
+datalist = lapply(filelist, function(x)read.delim(paste("../data/fire/",x,sep=""), sep=",", strip.white=TRUE))
 
 #assuming the same header/columns for all files
 firetxt <- do.call("rbind", datalist) 
@@ -74,9 +76,10 @@ firetxt <- firetxt %>%
   )
 ```
 
+We also use the California boundary file to restrict our view to only points in California.
 
-```{r}
-cal_bound <- st_read("ca-state-boundary/CA_State_TIGER2016.shp")
+```{r, echo=T, results='hide'}
+cal_bound <- st_read("../ca-state-boundary/CA_State_TIGER2016.shp")
 
 # Convert to the same coordinate system as HMS (4326)
 cal_bound <- cal_bound %>%
@@ -123,44 +126,36 @@ in_cali <- in_cali %>%
 
 ## Smoke Data: Preprocessing & Visualization
 
-```{r}
-filelist = list.files(path="./data/smoke/", pattern = "*.kml")
-
-smoke <- do.call(rbind, lapply(filelist, function(x) st_read(paste("./data/smoke/",x, sep=""), layer = c("Smoke (Light)", "Smoke (Medium)", "Smoke (Heavy)"))))
-```
-
-
-```{r}
+```{r, results='hide'}
 # Read light, medium, heavy separately
 # Combine data from different days
-filelist = list.files(path="data/smoke/", pattern = "*.kml")
+filelist = list.files(path="../data/smoke/", pattern = "*.kml")
+filelist <- filelist[-1]
 
 #assuming tab separated values with a header    
-datalist = lapply(filelist, function(x)st_read(paste("data/smoke/", x, sep=""), layer="Smoke (Medium)"))
+datalist = lapply(filelist, function(x)st_read(paste("../data/smoke/", x, sep=""), layer="Smoke (Light)"))
 
 #assuming the same header/columns for all files
 smoke_light <- do.call("rbind", datalist) 
 
-# smoke_light <- st_read("data/smoke/smoke20181108.kml", layer="Smoke (Light)")
+# smoke_light <- st_read("../data/smoke/smoke20181108.kml", layer="Smoke (Light)")
 smoke_light <- as.data.frame(smoke_light) %>%
   mutate(type="light")
 ```
 
-```{r}
-filelist = list.files(path="./data/smoke/", pattern = "*.kml")
+```{r, results='hide'}
 #assuming tab separated values with a header    
-datalist = lapply(filelist, function(x)st_read(paste("./data/smoke/", x, sep=""), layer="Smoke (Medium)"))
+datalist = lapply(filelist, function(x)st_read(paste("../data/smoke/", x, sep=""), layer="Smoke (Medium)"))
 smoke_med <- do.call("rbind", datalist) 
-# smoke_med <- st_read("data/smoke/smoke20181108.kml", layer="Smoke (Medium)")
+# smoke_med <- st_read("../data/smoke/smoke20181108.kml", layer="Smoke (Medium)")
 smoke_med <- as.data.frame(smoke_med) %>%
   mutate(type="medium")
 ```
 
-```{r}
-filelist = list.files(path="./data/smoke/", pattern = "*.kml")
-datalist = lapply(filelist, function(x)st_read(paste("./data/smoke/", x, sep=""), layer="Smoke (Heavy)"))
+```{r, results='hide'}
+datalist = lapply(filelist, function(x)st_read(paste("../data/smoke/", x, sep=""), layer="Smoke (Heavy)"))
 smoke_heavy <- do.call("rbind", datalist) 
-# smoke_heavy <- st_read("data/smoke/smoke20181108.kml", layer="Smoke (Heavy)")
+# smoke_heavy <- st_read("../data/smoke/smoke20181108.kml", layer="Smoke (Heavy)")
 smoke_heavy <- as.data.frame(smoke_heavy) %>%
   mutate(type="heavy")
 
@@ -170,7 +165,7 @@ smoke <- smoke %>%
   reduce(full_join, by=c('Name', 'Description', 'type','geometry'))
 ```
 
-```{r}
+```{r, results='hide'}
 smoke <- smoke %>%
   dplyr::select(-Name) %>%
   mutate(Description = gsub('Smoke Attributes: Start Time: ', '', Description)) %>%
@@ -180,7 +175,9 @@ smoke <- smoke %>%
            sep = ',') 
 ```
 
-```{r}
+```{r, results='hide'}
+# Switch off spherical geometry
+sf_use_s2(FALSE)
 # Clean time and add smoke area
 smoke <- smoke %>% 
   # Remove unnecessary substrings
@@ -205,12 +202,12 @@ smoke <- smoke %>%
 ```
 
 ## Mapping Data for the Week
-```{r}
+```{r, echo=FALSE}
 # Convert dataframes to sf objects for mapview
 in_cali <- st_as_sf(in_cali)
 ```
 
-```{r}
+```{r, echo=FALSE}
 mapview(in_cali, zcol = "date", label=FALSE, legend=FALSE, layer.name = 'date', col.regions = brewer.pal(10, "Paired"),
         popup = popupTable(
               in_cali,
@@ -226,14 +223,17 @@ mapview(in_cali, zcol = "date", label=FALSE, legend=FALSE, layer.name = 'date', 
 
 ## HDBSCAN 
 
-```{r}
+First, we plot all the fire detection points in California.
+```{r, echo=FALSE}
 # Plot the points
 library("dbscan")
 
 plot(in_cali$geometry, pch=20)
 ```
 
-```{r}
+Then, we plot it making adjustments to the coordinate system.
+
+```{r, echo=FALSE}
 # Convert to tibble object with separate columns for longitude and latitude
 coords <- as.tibble(st_coordinates(in_cali$geometry))
 
@@ -241,18 +241,21 @@ coords <- as.tibble(st_coordinates(in_cali$geometry))
 plot(coords, pch=20)
 ```
 
-```{r}
+Using these coordinates, we input into HDBSCAN specifying `minPts = 100`.
+```{r, include=FALSE}
 # Create hdbscan object 
 cl <- hdbscan(coords, minPts = 100)
 cl
 ```
 
-```{r}
+We can plot the resulting clusters, excluding the outliers (belonging to `cluster = 0`).
+```{r, echo=FALSE}
 # Plot the clusters
 plot(coords, col=cl$cluster+1, pch=20)
 ```
 
-```{r}
+The points can also be shaded based on their membership probability. The higher the probability, the more solid the color.
+```{r, echo=FALSE}
 # Plot clusters and color by certainty of being in that cluster
 plot(coords, col=cl$cluster+1, pch=21)
 colors <- mapply(function(col, i) adjustcolor(col, alpha.f = cl$membership_prob[i]), 

@@ -23,10 +23,10 @@ library(leafpop)
 
 ```{r load-data, echo=FALSE, include=FALSE}
 # Run the script to preprocess fire datasets to include information on time, location, and FRP
-url1 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_fire_kml.R"
-if (!file.exists("../preprocess_fire_kml.R"))
-  download.file(url1, destfile = "../preprocess_fire_kml.R")
-source("../preprocess_fire_kml.R")
+url1 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_fire_txt.R"
+if (!file.exists("../preprocess_fire_txt.R"))
+  download.file(url1, destfile = "../preprocess_fire_txt.R")
+source("../preprocess_fire_txt.R")
 
 url2 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_smoke_kml.R"
 if (!file.exists("../preprocess_smoke_kml.R"))
@@ -67,6 +67,7 @@ minpts <- seq(5,100, by=5)
 scores <- c()
 for (x in minpts){
   cl <- hdbscan(coords, minPts = x)
+  
   scores <- c(scores, cdbw(coords, cl$cluster)$cdbw)
 }
 
@@ -98,6 +99,7 @@ smoke <- st_as_sf(smoke)
 
 
 ```{r}
+sf_use_s2(FALSE)
 mapview(smoke, zcol ="type", label=FALSE, legend = TRUE, layer.name = 'Smoke Type',col.regions = brewer.pal(3, "RdYlGn"), col="transparent",
         popup = popupTable(
                 smoke,
@@ -114,7 +116,7 @@ mapview(one, zcol = "cluster", label=FALSE, legend=FALSE, layer.name = 'cluster'
         popup = popupTable(
               one,
               zcol = c(
-                "start_time",
+                "time",
                 "method_of_detect",
                 "satellite",
                 "cluster"
@@ -128,7 +130,7 @@ mapview(one, zcol = "cluster", label=FALSE, legend=FALSE, layer.name = 'cluster'
 
 ```{r}
 # Group by cluster
-cluster_info <- as.tibble(one) %>%
+cluster_info <- as_tibble(one) %>%
   group_by(cluster) %>%
   summarise(frp_avg = round(mean(frp, na.rm=TRUE),4),
             frp_vars = round(var(frp, na.rm=TRUE),4)) 

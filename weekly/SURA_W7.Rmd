@@ -7,7 +7,7 @@ output: html_document
 ---
 
 ```{r setup, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
-knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE)
+knitr::opts_chunk$set(message=FALSE, warning=FALSE)
 
 library(tidyverse)
 library(dplyr)
@@ -24,10 +24,10 @@ library(fpc)
 
 ```{r load-data, echo=FALSE, include=FALSE}
 # Run the script to preprocess fire datasets to include information on time, location, and FRP
-url1 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_fire_kml.R"
-if (!file.exists("../preprocess_fire_kml.R"))
-  download.file(url1, destfile = "../preprocess_fire_kml.R")
-source("../preprocess_fire_kml.R")
+url1 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_fire_txt.R"
+if (!file.exists("../preprocess_fire_txt.R"))
+  download.file(url1, destfile = "../preprocess_fire_txt.R")
+source("../preprocess_fire_txt.R")
 
 url2 <- "https://raw.githubusercontent.com/cindyellow/SURA-2022/main/preprocess_smoke_kml.R"
 if (!file.exists("../preprocess_smoke_kml.R"))
@@ -38,15 +38,17 @@ source("../preprocess_smoke_kml.R")
 
 ## HDBSCAN: Assigning representative points for each cluster
 
-```{r}
+Here, we define two functions to help us better wrangle the data and obtain cluster information. 
+
+```{r, results='hide'}
 # Function for finding best minpts for a day and building clusters based on that
 build_best_cl <- function(day){
-  coords <- as.tibble(st_coordinates(day$geometry))
+  coords <- as_tibble(st_coordinates(day$geometry))
   scores <- c()
   for (x in minpts){
     cl <- hdbscan(coords, minPts = x)
     # check if there are cluster scores available
-    if (is.na(cl$cluster_scores)){
+    if (all(is.na(cl$cluster_scores))){
       scores <- c(scores, 0)
     } else{
       scores <- c(scores, cdbw(coords, cl$cluster)$cdbw)
@@ -58,7 +60,7 @@ build_best_cl <- function(day){
 }
 ```
 
-```{r}
+```{r, results='hide'}
 # Function for getting k representative points
 get_rep_pts <- function(cl, day, k){
   # Gives us highest member probability of each cluster
@@ -71,7 +73,7 @@ get_rep_pts <- function(cl, day, k){
     mutate(cluster = cl$cluster, mem_prob = cl$membership_prob) %>%
     filter(cluster != 0)
   # Group by cluster
-  cluster_info <- as.tibble(day) %>%
+  cluster_info <- as_tibble(day) %>%
     group_by(cluster) %>%
     summarise(frp_avg = round(mean(frp, na.rm=TRUE),4),
               frp_vars = round(var(frp, na.rm=TRUE),4),
@@ -86,12 +88,12 @@ get_rep_pts <- function(cl, day, k){
 }
 ```
 
-
-```{r}
+Using the above two functions, we loop over the desired dates to find the best representative point for each cluster of each day.
+```{r, results='hide'}
 # Get representative points for all dates within range
 minpts <- seq(5,100,by=5)
 rep_pts <- c()
-dates <- seq(as.Date("2018-11-07"), as.Date("2018-11-16"), by=1)
+dates <- seq(as.Date("2018-11-08"), as.Date("2018-11-16"), by=1)
 
 for (d in as.list(dates)){
   day <- in_cali %>%
@@ -102,21 +104,18 @@ for (d in as.list(dates)){
 }
 ```
 
-```{r}
-head(rep_pts)
-```
-
 Since our end goal is to calculate the distance between other points of interest and the fire cluster, I decided to first filter by unique points for each cluster before assigning the top k representative points. This will ensure that we have a diverse representation for each cluster.
 
 ## Merging with AQS data
-```{r}
+
+```{r, echo=FALSE}
 # Read AQS data and restrict to campfire week
 aqs <- read.delim("../data/AQS_PM25_2000_2021_Cali.csv", sep=",", strip.white=TRUE)
 aqs <- aqs %>%
   filter(Date > "2018-11-06" & Date < "2018-11-17")
 ```
 
-```{r}
+```{r, echo=FALSE}
 rep_pts_sf <- st_as_sf(rep_pts)
 smoke <- st_as_sf(smoke)
 aqs <- aqs %>%
@@ -127,7 +126,7 @@ aqs <- aqs %>%
 ### Calculate distance between each AQS point and nearest fire
 
 - Still trying to find a cleaner way of doing this
-```{r}
+```{r, eval=FALSE}
 calc_dist <- function(x, ind, y_arr){
   return(st_distance(x, y_arr[ind]))
 }
@@ -140,11 +139,12 @@ for (d in as.list(dates)){
 }
 ```
 
-
 ## Visualization
 
-```{r}
-m <- mapview(rep_pts_sf, zcol = "date", label=FALSE, legend=FALSE, col.regions = brewer.pal(10, "Spectral"), burst=TRUE,
+In this visualization, we have the smoke polygons from all days 11/8-11/16, fire representative points as circles, and AQS PM2.5 observations marked by the grey icons.
+
+```{r, echo=FALSE}
+m <- mapview(rep_pts_sf, zcol = "date", label=FALSE, legend=FALSE, col.regions = brewer.pal(10, "Spectral"), 
         popup = popupTable(
               rep_pts_sf,
               zcol = c(
@@ -155,8 +155,8 @@ m <- mapview(rep_pts_sf, zcol = "date", label=FALSE, legend=FALSE, col.regions =
                 ),
               feature.id = FALSE
               )
-        ) + 
-  mapview(smoke, zcol ="type", label=FALSE, layer.name = 'Smoke Type',col.regions = brewer.pal(3, "RdYlGn"), col="transparent",
+        ) +
+  mapview(smoke, zcol ="type", label=FALSE, layer.name = 'Smoke Type', col.regions = brewer.pal(3, "RdYlGn"), col="transparent",
         popup = popupTable(
                 smoke,
                 zcol = c(
@@ -166,7 +166,7 @@ m <- mapview(rep_pts_sf, zcol = "date", label=FALSE, legend=FALSE, col.regions =
                   "area"
                   ),
                 feature.id = FALSE
-                )        
+                )
         )
 
 # Add AQS points as markers

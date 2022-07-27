@@ -7,7 +7,7 @@ output: html_document
 ---
 
 ```{r setup, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
-knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE)
+knitr::opts_chunk$set(message=FALSE, warning=FALSE)
 
 library(tidyverse)
 library(dplyr)
@@ -25,33 +25,29 @@ library(leafpop)
 ## Fire Data: Preprocessing
 
 ### Restrict to California
-```{r}
+```{r, include=FALSE}
 # Read the kml file
-fire <- st_read("data/fire/fire20181108.kml")
+fire <- st_read("../data/fire/fire20181108.kml")
 ```
 
-```{r}
+```{r, results='hide'}
 cal_bound <- st_read("../ca-state-boundary/CA_State_TIGER2016.shp")
 
 # Convert to the same coordinate system as HMS (4326)
 cal_bound <- cal_bound %>%
   st_set_crs(3857) %>% 
   st_transform(4326)
-```
 
-```{r}
 # Get an array of whether each observation is in California
 in_bound <- lengths(st_intersects(fire, cal_bound))>0
-```
 
-```{r}
 # Get subset with indexing
 # https://gis.stackexchange.com/questions/394954/r-using-st-intersects-to-classify-points-inside-outside-and-within-a-buffer
 in_cali <- fire[in_bound,]
 ```
 
 ### Cleaning
-```{r}
+```{r, include=FALSE}
 in_cali <- as.data.frame(in_cali) %>%
   dplyr::select(-Name) %>%
   # Remove prefix
@@ -64,7 +60,7 @@ in_cali <- as.data.frame(in_cali) %>%
            sep = ',') 
 ```
 
-```{r}
+```{r, include=FALSE}
 in_cali <- in_cali %>% 
   # Remove unnecessary substrings
   mutate(satellite = (str_remove_all(satellite,"Method of"))) %>%
@@ -77,7 +73,7 @@ in_cali <- in_cali %>%
 
 ## Smoke Data: Preprocessing & Visualization
 
-```{r}
+```{r, include=FALSE}
 # Read light, medium, heavy separately
 smoke_light <- st_read("https://raw.githubusercontent.com/cindyellow/SURA-2022/main/data/smoke/smoke20181108.kml", layer="Smoke (Light)")
 smoke_light <- as.data.frame(smoke_light) %>%
@@ -97,7 +93,7 @@ smoke <- smoke %>%
   reduce(full_join, by=c('Name', 'Description', 'type','geometry'))
 ```
 
-```{r}
+```{r, results='hide'}
 smoke <- smoke %>%
   dplyr::select(-Name) %>%
   mutate(Description = gsub('Smoke Attributes: Start Time: ', '', Description)) %>%
@@ -107,7 +103,7 @@ smoke <- smoke %>%
            sep = ',') 
 ```
 
-```{r}
+```{r, results='hide'}
 # Clean time and add smoke area
 smoke <- smoke %>% 
   # Remove unnecessary substrings
@@ -131,13 +127,13 @@ smoke <- smoke %>%
   dplyr::select(-start_date, -end_date, -st, -et)
 ```
 
-```{r}
+```{r, include=FALSE}
 # Convert dataframes to sf objects for mapview
 smoke <- st_as_sf(smoke)
 in_cali <- st_as_sf(in_cali)
 ```
 
-```{r}
+```{r, echo=FALSE}
 # THANK YOU SAVIOR: https://bookdown.org/nicohahn/making_maps_with_r5/docs/mapview.html#using-mapview-to-create-maps
 mapview(smoke, zcol ="type", label=FALSE, legend = TRUE, layer.name = 'Smoke Type',col.regions = brewer.pal(3, "RdYlGn"), col="transparent",
         popup = popupTable(
@@ -164,7 +160,7 @@ mapview(smoke, zcol ="type", label=FALSE, legend = TRUE, layer.name = 'Smoke Typ
           )
 ```
 
-```{r}
+```{r, include=FALSE}
 # Timeslider
 # Not possible with mapview, but can do a pop-up of time series graph: http://environmentalinformatics-marburg.github.io/mapview/popups/html/popups.html#popupgraph
 ```
