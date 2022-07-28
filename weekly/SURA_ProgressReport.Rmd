@@ -152,7 +152,7 @@ get_cluster_info <- function(cl, day){
     group_modify(function(x,y) bind_rows(tibble(polygon = concaveman(x)$polygons,
                                                 num_pts = count(x)$n,
                                                 area = round(st_area(polygon), 3),
-                                                density = round(num_pts/area, 3),
+                                                density = num_pts/area,
                                                 frp_avg = round(mean(x$frp, na.rm=TRUE),4),
                                                 frp_vars = round(var(x$frp, na.rm=TRUE),4)
                                               )))
@@ -200,6 +200,7 @@ for (d in as.list(dates)){
   cluster_info <- rbind(cluster_info, ci)
   rep_pts <- rbind(rep_pts, reps)
 }
+
 ```
 
 - The following table was created using the dataframe `cluster_info`.
