@@ -3,15 +3,21 @@
 sf_use_s2(FALSE)
 # Combine data from different days
 filelist = list.files(path="../data/smoke/", pattern = "*.kml")
-## ISSUE: formatting is different for 2018-11-07, unable to read different layers so it's removed for now
-filelist <- filelist[-1]
 
-#assuming tab separated values with a header    
-datalist = lapply(filelist, function(x)st_read(paste("../data/smoke/", x, sep=""), layer="Smoke (Light)"))
+# Define custom read file function to skip over errors
+read_file <- function (file_path, l) {
+  return(tryCatch(st_read(file_path, layer=l), error=function(e) {NULL}))
+}
+
+# Define the layer names we want to check for
+layers <- c("Smoke (Light)", "Smoke (Medium)", "Smoke (Heavy)")
+
+# Assuming tab separated values with a header    
+datalist = lapply(filelist, function(x)read_file(paste("../data/smoke/", x, sep=""), l=layers[1]))
 smoke_light <- do.call("rbind", datalist) 
-datalist = lapply(filelist, function(x)st_read(paste("../data/smoke/", x, sep=""), layer="Smoke (Medium)"))
+datalist = lapply(filelist, function(x)read_file(paste("../data/smoke/", x, sep=""), l=layers[2]))
 smoke_med <- do.call("rbind", datalist) 
-datalist = lapply(filelist, function(x)st_read(paste("../data/smoke/", x, sep=""), layer="Smoke (Heavy)"))
+datalist = lapply(filelist, function(x)read_file(paste("../data/smoke/", x, sep=""), l=layers[3]))
 smoke_heavy <- do.call("rbind", datalist) 
 
 # alternative way to read all three layers simultaneously
@@ -30,11 +36,13 @@ smoke_heavy <- as.data.frame(smoke_heavy) %>%
 smoke <- list(smoke_light, smoke_med, smoke_heavy)
 
 smoke <- smoke %>%
-  reduce(full_join, by=c('Name', 'Description', 'type','geometry'))
+  reduce(full_join, by=c('Name', 'Description', 'type','geometry')) 
 
 smoke <- smoke %>%
   dplyr::select(-Name) %>%
-  mutate(Description = gsub('Smoke Attributes: Start Time: ', '', Description)) %>%
+  # Remove any HTML tags
+  mutate(Description = gsub('<[^\r\n\t\f\v ]+>', ' ', Description)) %>% 
+  mutate(Description = gsub('.*Start Time: ', '', Description)) %>%
   mutate(Description = gsub('[a-zA-Z]*: ', ',', Description)) %>%
   separate(., col=Description, 
            into = c('start_time', 'end_time', 'density', 'satellite'),
@@ -61,3 +69,7 @@ smoke <- smoke %>%
                                 format = "%Y%j %H:%M"),
           area = st_area(smoke$geometry)) %>%
   dplyr::select(-start_date, -end_date, -st, -et)
+
+# Doublecheck
+smoke <- smoke %>%
+  mutate(density = ifelse(type == 'light', 5, ifelse(type == 'medium', 16, 27)))
