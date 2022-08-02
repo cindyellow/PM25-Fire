@@ -10,7 +10,7 @@ fire <- do.call("rbind", datalist)
 # Get sf geometry of coordinates
 fire <- fire %>%
   st_as_sf(coords = c("Lon", "Lat"), crs = 4326, remove=FALSE) %>%
-  st_set_crs(4326)
+  st_transform(3310)
 
 # Read in California's boundaries # 
 cal_bound <- st_read("../ca-state-boundary/CA_State_TIGER2016.shp")
@@ -18,7 +18,7 @@ cal_bound <- st_read("../ca-state-boundary/CA_State_TIGER2016.shp")
 # Convert to the same coordinate system as HMS (4326)
 cal_bound <- cal_bound %>%
   st_set_crs(3857) %>% 
-  st_transform(4326)
+  st_transform(3310)
 
 # Get an array of whether each observation is in California
 in_bound <- lengths(st_intersects(fire, cal_bound))>0
