@@ -1,5 +1,5 @@
 ---
-title: "Week 8-9: Merging with AQS Part 2, Getting Cluster Information" 
+title: "Week 10-11: Kernel Density & Troubleshooting" 
 subtitle: "SURA 2022"
 author: "Shih-Ting (Cindy) Huang"
 date: '2022-07-29'
@@ -38,188 +38,155 @@ if (!file.exists("../preprocess_smoke_kml.R"))
 source("../preprocess_smoke_kml.R")
 ```
 
+
+## Scraping for 2015
+
+```{r}
+library(XML)
+url<-c("https://satepsanone.nesdis.noaa.gov/pub/FIRE/web/HMS/Fire_Points/Text/2015/01")
+doc<-htmlParse(url)
+#get <a> nodes.
+Anodes<-getNodeSet(doc,"/a")
+#get the ones with .zip's and .gz's
+files<-grep("*.txt",sapply(Anodes, function(Anode) xmlGetAttr(Anode,"href")),value=TRUE)
+#make the full url
+urls<-paste(url,files,sep="")
+#Download each file.
+mapply(function(x,y) download.file(x,y),urls,files)
+```
+
+```{r}
+website <- xml2::read_html("https://satepsanone.nesdis.noaa.gov/pub/FIRE/web/HMS/Fire_Points/Text/2015/01")
+
+counts <- xml2::xml_find_first(website, "/html/body/table/tbody/tr[4]/td[2]/a")
+
+str(doc)
+```
+
+
+```{r}
+library(polite)
+# Device
+url <- "https://satepsanone.nesdis.noaa.gov/pub/FIRE/web/HMS/Fire_Points/Text/2015/01"
+# Provide informative user_agent details
+target <- bow(url,
+              user_agent = "cindyy.huang@utoronto.ca for research project",
+              force = TRUE)
+target
+```
+
 ## KDE: Fire Points
 
 ```{r}
-# library(SpatialKDE)
-# in_cali <- in_cali %>%
-#   st_transform(3310)
-# points <- st_sample(fire$geometry, 500) %>% st_as_sf()
-# grid <- create_grid_hexagonal(in_cali, cell_size = 100000)
-# kde_estimate_grid <- kde(points, band_width = 150000, grid = grid)
-# raster <- create_raster(in_cali, cell_size = 100000)
-# kde_estimate_raster <- kde(points, band_width = 150000, grid = raster)
+library(spatstat)
+library(data.table)
+dense.ca.window = "../ca-state-boundary/CA_State_TIGER2016.shp" %>%
+  st_read(quiet = TRUE) %>% st_union() %>% 
+  st_transform(crs = 3310) %>% st_coordinates() %>% 
+  data.table() %>% 
+  mutate(x = rev(X / 1e4), y = rev(Y / 1e4)) %>% 
+  select(x, y) %>% data.table()
+
+dates <- seq(as.Date("2018-11-07"), as.Date("2018-11-16"), by=1)
+fire.dense.dat <- c()
+
+for (d in as.list(dates)){
+  fire.ppp = in_cali %>%
+    filter(date == d) %>%
+    st_coordinates() %>% data.table() %>% 
+    mutate(x = X / 1e4, y = Y / 1e4) %>% select(x, y) %>% 
+    as.ppp(X = ., W = owin(poly = dense.ca.window))  
+  fire.dense = fire.ppp %>% 
+    density(kernel = "gaussian",
+            sigma = bw.scott(fire.ppp)[2],
+            diggle = TRUE,
+            dimyx = c(114, 126))
+  day.dense.dat = data.table(
+    expand.grid(x = fire.dense$xcol * 1e4,
+                y = fire.dense$yrow * 1e4),
+    fire.dense$v %>% t %>% as.data.table() %>% melt %>%
+      select(density = value)) %>% na.omit() %>%
+    st_as_sf(coords = c("x", "y"), crs = 3310) %>%
+    st_transform(4326) %>%
+    cbind(., st_coordinates(.)) %>% st_drop_geometry() %>%
+    select(lon = X, lat = Y, density) %>% 
+    mutate(date = d) %>%
+    data.table()  
+  
+  fire.dense.dat <- rbind(fire.dense.dat, day.dense.dat)
+}
+
 ```
+
+```{r}
+cal <- "../ca-state-boundary/CA_State_TIGER2016.shp" %>%
+  st_read(quiet = TRUE) %>% st_union() %>% st_sf() %>%
+  st_transform(4326)
+
+trans.theme = theme(
+  rect = element_rect(fill = "transparent"),
+  panel.background = element_rect(fill = "transparent"), # bg of the panel
+  plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
+  panel.grid = element_blank(),
+  panel.border = element_blank(),
+  axis.ticks = element_blank(),
+  axis.text = element_blank(),
+  axis.title = element_blank())
+
+fire.dense.dat %>% 
+  filter(density >= 2 & date == "2018-11-16") %>%
+  mutate(density_cut = cut(density, c(2, seq(10, 80, by = 10)))) %>% 
+  ggplot() +
+  geom_sf(data = cal, color = "goldenrod", fill = NA) +
+  geom_point(aes(x = lon, y = lat, color = density_cut),
+             shape = 15, size = 1.5) +
+  scale_color_viridis_d() +
+  labs(color = "Fire / 100 km2") + 
+  trans.theme
+```
+
 
 ## KDE: AQS Points
 
-
-## HDBSCAN: Assigning representative points for each cluster
-
-```{r, include=FALSE}
-# Function for finding best minpts for a day and building clusters based on that
-build_best_cl <- function(day){
-  coords <- as_tibble(st_coordinates(day$geometry))
-  scores <- c()
-  for (x in minpts){
-    cl <- hdbscan(coords, minPts = x)
-    # check if there are cluster scores available
-    if (all(is.na(cl$cluster_scores))){
-      scores <- c(scores, 0)
-    } else{
-      scores <- c(scores, cdbw(coords, cl$cluster)$cdbw)
-    }
-  }
-  
-  best_param <- minpts[which.max(scores)]
-  return (hdbscan(coords, minPts=best_param))
-}
-```
-
-```{r, include=FALSE}
-# Function to get a dataframe of each cluster's polygon, area, FRP summaries, and number of points for a day
-get_cluster_info <- function(cl, day){
-  # Assign cluster to all observations 
-  day <- day %>%
-    mutate(cluster = paste0(date, "_", cl$cluster)) %>%
-    filter(cluster != paste0(date, "_", "0"))
-  
-  # Create polygon and FRP summaries for each cluster
-  day_cl <- day %>%
-    group_by(cluster) %>%
-    group_modify(function(x,y) bind_rows(tibble(polygon = concaveman(x)$polygons,
-                                              area = round(st_area(polygon), 3),
-                                              frp_avg = round(mean(x$frp, na.rm=TRUE),4),
-                                              frp_vars = round(var(x$frp, na.rm=TRUE),4),
-                                              num_pts = count(x)$n)))
-  return (day_cl)
-}
-```
-
-For this function, there may be warnings that read `Although coordinates are longitude/latitude, it is assumed that they are planar.` This warning is caused by the CRS we use. We'll be switching over to California's CRS (EPSG=3310).
-
-```{r, include=FALSE}
-# Function for getting k representative points for a day
-get_rep_pts <- function(cl, day, cluster_info, k){
-  reps <- day %>%
-    # Get membership probability for each observation
-    mutate(cluster = paste0(date, "_", cl$cluster), mem_prob = cl$membership_prob) %>%
-    arrange(desc(mem_prob)) %>%
-    group_by(cluster) %>%
-    # Filter by distinct locations
-    distinct(geometry, .keep_all=TRUE) %>%
-    # Get the top k most probable observations for each cluster
-    slice(1:k) %>%
-    # Append with cluster information to get complete info
-    inner_join(cluster_info, by="cluster")
-  return(reps)
-}
-```
-
-```{r, warning=FALSE, message=FALSE}
-# Get representative points and cluster information for all dates within range
-minpts <- seq(5,100,by=5)
-
-# Dataframes for storing all the info
-rep_pts <- c()
-cluster_info <- c()
-
-dates <- seq(as.Date("2018-11-07"), as.Date("2018-11-16"), by=1)
-
-for (d in as.list(dates)){
-  day <- in_cali %>%
-    st_as_sf(coords = c("longitude", "latitude"), crs = 3310, remove=FALSE) %>%
-    st_set_crs(3310) %>%
-    filter(date == d)
-  
-  cl <- build_best_cl(day)
-  ci <- get_cluster_info(cl,day)
-  reps <- get_rep_pts(cl, day, ci, 1)
-  cluster_info <- rbind(cluster_info, ci)
-  rep_pts <- rbind(rep_pts, reps)
-}
-```
-
-
-## Merging with AQS data
-
-```{r, include=FALSE}
+```{r}
 # Read AQS data and restrict to campfire week
 aqs <- read.delim("../data/AQS_PM25_2000_2021_Cali.csv", sep=",", strip.white=TRUE)
 aqs <- aqs %>%
-  filter(Date > "2018-11-07" & Date < "2018-11-17")
+  filter(Date > "2018-11-06" & Date < "2018-11-17")
 
 # Create geometry object for coordinates (used for sf calculations)
 aqs <- aqs %>%
-  st_as_sf(coords = c("Longitude", "Latitude"), crs = 3310, remove=FALSE) %>%
-  st_set_crs(3310)
-```
-
-```{r, include=FALSE}
-# Convert dataframe to sf object
-rep_pts_sf <- st_as_sf(rep_pts) %>%
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove=FALSE) %>%
   st_transform(3310)
-```
 
-
-### Smoke Indicator Variables & Distance to Closest Fire
-
-For each PM2.5 observation, we will create three indicator variables based on whether it is (1) or is not (0) in the 1) light, 2) medium, and/or 3) heavy smoke plume of the same day. We will also create a numerical variable indicating the distance to the closest cluster (as indicated by a single representative point) in meters. 
-
-```{r, include=FALSE}
-#Filter by date for all dfs
-dates <- seq(as.Date("2018-11-08"), as.Date("2018-11-16"), by=1)
-
-# Set default values for smoke indicator variables
-aqs <- aqs %>%
-  mutate(light=NA, med=NA, heavy=NA,fire_dist=NA,closest_cl=NA)
+aqs.dense.dat <- c()
 
 for (d in as.list(dates)){
-  day_smoke <- smoke %>%
-    filter(format(start_time, format="%Y-%m-%d") == d)
-  day_aqs <- aqs %>%
-    dplyr::select(c("PM25", "Date", "Latitude", "Longitude")) %>%
-    filter(Date == d)
-  day_fire <- rep_pts_sf %>%
-    filter(date == d)
+  aqs.ppp = aqs %>%
+    filter(Date == d) %>%
+    st_coordinates() %>% data.table() %>% 
+    mutate(x = X / 1e4, y = Y / 1e4) %>% select(x, y) %>% 
+    as.ppp(X = ., W = owin(poly = dense.ca.window))  
+  aqs.dense = aqs.ppp %>% 
+    density(kernel = "gaussian",
+            sigma = bw.scott(aqs.ppp)[2],
+            diggle = TRUE,
+            dimyx = c(114, 126))
+  day.dense.dat = data.table(
+    expand.grid(x = aqs.dense$xcol * 1e4,
+                y = aqs.dense$yrow * 1e4),
+    aqs.dense$v %>% t %>% as.data.table() %>% melt %>%
+      select(density = value)) %>% na.omit() %>%
+    st_as_sf(coords = c("x", "y"), crs = 3310) %>%
+    st_transform(4326) %>%
+    cbind(., st_coordinates(.)) %>% st_drop_geometry() %>%
+    select(lon = X, lat = Y, density) %>% 
+    mutate(date = d) %>%
+    data.table()  
   
-  # Get closest cluster & distance
-  closest_fire <- st_nearest_feature(day_aqs, day_fire)
-  day_aqs$fire_dist <- st_distance(day_aqs$geometry, day_fire[closest_fire,], by_element=TRUE)
-  day_aqs$closest_cl <- day_aqs$closest_cl <- day_fire[closest_fire,]$cluster
-  
-  # Get indicator variables
-  smoke_regions <- st_intersects(day_aqs$geometry, day_smoke$geometry)
-  day_aqs$light <- lapply(smoke_regions, function(x)ifelse('light' %in% unique(day_smoke[unlist(x),]$type), 1, 0))
-  day_aqs$med <- lapply(smoke_regions, function(x)ifelse('medium' %in% unique(day_smoke[unlist(x),]$type), 1, 0))
-  day_aqs$heavy <- lapply(smoke_regions, function(x)ifelse('heavy' %in% unique(day_smoke[unlist(x),]$type), 1, 0))
-  day_aqs <- as_tibble(day_aqs) %>%
-    dplyr::select(-geometry) %>%
-    mutate(across(c("light", "med", "heavy"), as.double))
-  
-  # Clean up everything
-  aqs <- aqs %>%
-    left_join(as_tibble(day_aqs), by=c("PM25", "Date", "Latitude", "Longitude")) %>%
-    mutate(light = coalesce(light.y, light.x),
-           med = coalesce(med.y, med.x),
-           heavy = coalesce(heavy.y, heavy.x),
-           fire_dist = coalesce(fire_dist.y, fire_dist.x),
-           closest_cl = coalesce(closest_cl.y, closest_cl.x)) %>% 
-    dplyr::select(-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
+  aqs.dense.dat <- rbind(aqs.dense.dat, day.dense.dat)
 }
-
 ```
-
-### Doublecheck
-
-```{r, include=FALSE}
-match <- aqs$Date == as.Date(gsub("_[0-9][0-9]*", "", aqs$closest_cl))
-mismatches <- sum(is.na(match) | match == FALSE)
-```
-
-We doublecheck that all the closest clusters are assigned correctly with respect to date. There are `r mismatches` mismatches.
-
-
 
 
 
