@@ -1,8 +1,27 @@
-# Combine data from different days
-filelist = list.files(path="../data/fire/", pattern = "*.txt")
+# R script for downloading data in bulk; applied on fire data for now
+pkgs = c('tidyverse', 'dplyr', 'sf')
+for(p in pkgs) require(p, character.only = T)
+rm(p, pkgs)
+
+# Specify directory
+data.fire.dir = paste0(dirname(getwd()), '/data/fire/')
+
+# Specify the time range to examine
+years <- seq("2015", "2015", by=1)
+months <- seq("01", "12", by=1)
+months[1:9] <- paste0("0",months[1:9])
+
+all_files <- c()
+for (year in years){
+  for (month in months){
+    subdir <- paste0(year, "/", month, "/")
+    filelist = list.files(path=paste0(data.fire.dir, subdir), pattern = "*.txt")
+    all_files <- c(all_files, paste0(subdir,filelist)) 
+  }
+}
 
 #assuming tab separated values with a header    
-datalist = lapply(filelist, function(x)read.delim(paste("../data/fire/",x,sep=""), sep=",", strip.white=TRUE))
+datalist = lapply(all_files, function(x)read.delim(paste0(data.fire.dir,x), sep=",", strip.white=TRUE))
 
 #assuming the same header/columns for all files
 fire <- do.call("rbind", datalist) 
@@ -33,9 +52,9 @@ in_cali <- in_cali %>%
     date = YearDay,
     time = Time, 
     satellite = Satellite,
-    method_of_detect = Method.of.Detect,
-    ecosys = Ecosys,
-    frp = Fire.RadPower
+    method_of_detect = Method,
+    ecosys = Ecosystem,
+    frp = FRP
   ) %>%
   mutate(
     date = as.Date(as.character(date),          

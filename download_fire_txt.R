@@ -11,7 +11,7 @@ months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
 
 # Specify directory for fire data
-data.dir = paste0(dirname(getwd()), '/data/fire/')
+data.fire.dir = paste0(dirname(getwd()), '/data/fire/')
 
 # Base URL containing all data 
 base_url <- "https://satepsanone.nesdis.noaa.gov/pub/FIRE/web/HMS/Fire_Points/Text/"
@@ -23,7 +23,7 @@ for (year in years){
     subdir <- paste0(year, "/", month, "/")
     
     # Check if directory exists and create a new folder if nonexistent
-    ifelse(!dir.exists(file.path(data.dir, subdir)), dir.create(file.path(data.dir, subdir),recursive=TRUE), FALSE)
+    ifelse(!dir.exists(file.path(data.fire.dir, subdir)), dir.create(file.path(data.fire.dir, subdir),recursive=TRUE), FALSE)
     
     # URL for a specific year-month
     url <- paste0(base_url, subdir)
@@ -41,6 +41,6 @@ for (year in years){
     h <- new_handle()
     handle_setopt(h, userpwd = "user:pwd")
     lapply(files, function(filename){
-      curl_download(paste(url, filename, sep = ""), destfile = paste0(data.dir, subdir, filename), handle = h)})
+      curl_download(paste(url, filename, sep = ""), destfile = paste0(data.fire.dir, subdir, filename), handle = h)})
   }
 }
