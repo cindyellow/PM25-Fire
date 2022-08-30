@@ -1,8 +1,27 @@
-# This R script is for preprocessing smoke KML data
+# R script for preprocessing smoke KML files
 
 sf_use_s2(FALSE)
+pkgs = c('tidyverse', 'dplyr', 'sf')
+for(p in pkgs) require(p, character.only = T)
+rm(p, pkgs)
+
+# Specify directory
+data.smoke.dir = paste0(dirname(getwd()), '/data/smoke/')
+
+# Specify the time range to examine
+years <- seq("2015", "2015", by=1)
+months <- seq("01", "12", by=1)
+months[1:9] <- paste0("0",months[1:9])
+
 # Combine data from different days
-filelist = list.files(path="../data/smoke/", pattern = "*.kml")
+all_files <- c()
+for (year in years){
+  for (month in months){
+    subdir <- paste0(year, "/", month, "/")
+    filelist = list.files(path=paste0(data.smoke.dir, subdir), pattern = "*.kml")
+    all_files <- c(all_files, paste0(subdir,filelist)) 
+  }
+}
 
 # Define custom read file function to skip over errors
 read_file <- function (file_path, l) {
@@ -13,11 +32,11 @@ read_file <- function (file_path, l) {
 layers <- c("Smoke (Light)", "Smoke (Medium)", "Smoke (Heavy)")
 
 # Assuming tab separated values with a header    
-datalist = lapply(filelist, function(x)read_file(paste("../data/smoke/", x, sep=""), l=layers[1]))
+datalist = lapply(all_files, function(x)read_file(paste0(data.smoke.dir,x), l=layers[1]))
 smoke_light <- do.call("rbind", datalist) 
-datalist = lapply(filelist, function(x)read_file(paste("../data/smoke/", x, sep=""), l=layers[2]))
+datalist = lapply(all_files, function(x)read_file(paste0(data.smoke.dir,x), l=layers[2]))
 smoke_med <- do.call("rbind", datalist) 
-datalist = lapply(filelist, function(x)read_file(paste("../data/smoke/", x, sep=""), l=layers[3]))
+datalist = lapply(all_files, function(x)read_file(paste0(data.smoke.dir,x), l=layers[3]))
 smoke_heavy <- do.call("rbind", datalist) 
 
 # alternative way to read all three layers simultaneously
@@ -72,4 +91,6 @@ smoke <- smoke %>%
 
 # Doublecheck
 smoke <- smoke %>%
-  mutate(density = ifelse(type == 'light', 5, ifelse(type == 'medium', 16, 27)))
+  mutate(density = ifelse(type == 'light', 5, ifelse(type == 'medium', 16, 21))) %>%
+  st_as_sf() %>%
+  st_set_crs(3310) 

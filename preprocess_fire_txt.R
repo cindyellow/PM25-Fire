@@ -1,4 +1,4 @@
-# R script for downloading data in bulk; applied on fire data for now
+# R script for preprocessing fire txt files
 pkgs = c('tidyverse', 'dplyr', 'sf')
 for(p in pkgs) require(p, character.only = T)
 rm(p, pkgs)
