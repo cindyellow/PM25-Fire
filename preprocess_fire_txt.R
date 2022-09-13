@@ -10,7 +10,7 @@ data.fire.dir = paste0(dirname(getwd()), '/data/fire/')
 years <- seq("2015", "2015", by=1)
 months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
-dates <- seq(as.Date("2015-01-01"), as.Date("2015-01-29"), by=1)
+dates <- seq(as.Date("2015-01-01"), as.Date("2015-12-31"), by=1)
 
 minpts <- seq(5,100,by=5)
 
@@ -37,7 +37,7 @@ fire <- fire %>%
 # Read in California's boundaries # 
 cal_bound <- st_read("../ca-state-boundary/CA_State_TIGER2016.shp")
 
-# Convert to the same coordinate system as HMS (4326)
+# Convert to the same coordinate system as HMS (3310)
 cal_bound <- cal_bound %>%
   st_transform(3310)
 
@@ -76,6 +76,10 @@ in_cali <- in_cali %>%
 
 # Function for finding best minpts for a day and building clusters based on that
 build_best_cl <- function(day){
+  if (dim(day)[1] == 0){
+    # No observations for the day
+    return (NULL)
+  }
   coords <- as_tibble(st_coordinates(day$geometry))
   scores <- numeric(length(minpts))
   for (x in minpts){
@@ -89,7 +93,13 @@ build_best_cl <- function(day){
       if (all(is.na(cl$cluster_scores))){
         scores[which(minpts==x)] = 0
       } else{
-        scores[which(minpts==x)] = cdbw(coords, cl$cluster)$cdbw
+        score <- cdbw(coords, cl$cluster)$cdbw
+        if (is.nan(score)){
+          # Score is invalid; it means that clusters cannot be distinguished and should not even be considered
+          scores[which(minpts==x)] = -1
+        } else{
+          scores[which(minpts==x)] = score
+        }
       }
     }
   }
@@ -114,14 +124,15 @@ get_cluster_info <- function(cl, day){
   if (dim(day)[1] == 0){
     # Return placeholder for this date
     day_cl <- data.frame(date = c(d), 
-                         cluster=c("0"))
+                         cluster=c(NA),
+                         polygon=c(NA))
   } else{
     # Create polygon and FRP summaries for each cluster
     day_cl <- day %>%
       group_by(cluster) %>%
       group_modify(function(x,y) bind_rows(tibble(date=d,
                                                   polygon = concaveman(x)$polygons,
-                                                  area = round(st_area(polygon)/ 1e4, 3),
+                                                  area_km2 = round(st_area(polygon)/ 1e4, 3),
                                                   frp_avg = round(mean(x$frp, na.rm=TRUE),4),
                                                   frp_vars = round(var(x$frp, na.rm=TRUE),4),
                                                   num_pts = count(x)$n)))    
@@ -160,7 +171,7 @@ rep_pts <- data.frame(date=as.Date(character()),
                       mem_prob=double(),
                       geometry=st_sfc(list()),
                       polygon=st_sfc(list()),
-                      area=double(),
+                      area_km2=double(),
                       frp_avg=double(),
                       frp_vars=double(),
                       num_pts=integer()
@@ -169,7 +180,7 @@ rep_pts <- data.frame(date=as.Date(character()),
 cluster_info <- data.frame(date=as.Date(character()),
                            cluster=character(),
                            polygon=st_sfc(list()),
-                           area=double(),
+                           area_km2=double(),
                            frp_avg=double(),
                            frp_vars=double(),
                            num_pts=integer()) %>%
@@ -178,18 +189,21 @@ cluster_info <- data.frame(date=as.Date(character()),
 for (d in as.list(dates)){
   day <- in_cali %>%
     st_as_sf(coords = c("longitude", "latitude"), crs = 4326, remove=FALSE) %>%
-    st_transform(4326) %>%
+    st_transform(3310) %>%
     filter(date == d)
   
   cl <- build_best_cl(day)
   if (is.null(cl)){
     # No best cluster for the day
     placeholder <- data.frame(date = d,
-                              cluster=NA)
+                              cluster=NA,
+                              polygon=NA,
+                              geometry=NA)
     cluster_info <- cluster_info %>%
-      merge(placeholder, by=c("cluster","date"), all=TRUE)
+      merge(placeholder, by=c("cluster","date", "polygon"), all=TRUE) %>%
+      select(-geometry)
     rep_pts <- rep_pts %>%
-      merge(placeholder, by=c("cluster", "date"), all=TRUE)
+      merge(placeholder, by=c("cluster", "date", "polygon", "geometry"), all=TRUE)
   } else{
     ci <- get_cluster_info(cl,day)
     reps <- get_rep_pts(cl, day, ci, 1)
@@ -198,4 +212,11 @@ for (d in as.list(dates)){
   }
   
 }
+
+# Convert to correct type
+rep_pts$polygon <- st_as_sfc(rep_pts$polygon)
+rep_pts$geometry <- st_as_sfc(rep_pts$geometry)
+cluster_info$polygon <- st_as_sfc(cluster_info$polygon)
+
+
 
