@@ -1,4 +1,4 @@
-# SURA-2022
+# PM25-Fire
 
 This is a research project I am working on under my supervisor [Professor Meredith Franklin](https://www.statistics.utoronto.ca/people/directories/all-faculty/meredith-franklin).
 
