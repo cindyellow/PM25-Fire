@@ -18,7 +18,7 @@ all_files <- c()
 for (year in years){
   for (month in months){
     subdir <- paste0(year, "/", month, "/")
-    filelist = list.files(path=paste0(data.fire.dir, subdir), pattern = "*.txt")
+    filelist = list.files(path=paste0(data.fire.dir, subdir), pattern = "*.txt", no..=TRUE)
     all_files <- c(all_files, paste0(subdir,filelist)) 
   }
 }
