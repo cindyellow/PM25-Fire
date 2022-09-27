@@ -1,16 +1,16 @@
 # R script for preprocessing fire txt files
-pkgs = c('tidyverse', 'dplyr', 'sf')
+pkgs = c('tidyverse', 'dplyr', 'sf', 'dbscan', 'fpc', 'concaveman')
 for(p in pkgs) require(p, character.only = T)
 rm(p, pkgs)
 
 # Specify directory
-data.fire.dir = paste0(dirname(getwd()), '/data/fire/')
+data.fire.dir = paste0(getwd(), '/data/fire/')
 
 # Specify the time range to examine
-years <- seq("2015", "2015", by=1)
+years <- seq("2015", "2022", by=1)
 months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
-dates <- seq(as.Date("2015-01-01"), as.Date("2015-12-31"), by=1)
+dates <- seq(as.Date("2015-01-01"), as.Date("2022-09-26"), by=1)
 
 minpts <- seq(5,100,by=5)
 
