@@ -18,8 +18,10 @@ all_files <- c()
 for (year in years){
   for (month in months){
     subdir <- paste0(year, "/", month, "/")
-    filelist = list.files(path=paste0(data.fire.dir, subdir), pattern = "*.txt", no..=TRUE)
-    all_files <- c(all_files, paste0(subdir,filelist)) 
+    filelist = list.files(path=paste0(data.fire.dir, subdir), pattern = "*.txt", no..=FALSE)
+    if (length(filelist) >0){
+      all_files <- c(all_files, paste0(subdir,filelist)) 
+    }
   }
 }
 
@@ -35,7 +37,7 @@ fire <- fire %>%
   st_transform(3310)
 
 # Read in California's boundaries # 
-cal_bound <- st_read("../ca-state-boundary/CA_State_TIGER2016.shp")
+cal_bound <- st_read("ca-state-boundary/CA_State_TIGER2016.shp")
 
 # Convert to the same coordinate system as HMS (3310)
 cal_bound <- cal_bound %>%
