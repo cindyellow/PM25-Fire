@@ -220,5 +220,8 @@ rep_pts$polygon <- st_as_sfc(rep_pts$polygon)
 rep_pts$geometry <- st_as_sfc(rep_pts$geometry)
 cluster_info$polygon <- st_as_sfc(cluster_info$polygon)
 
+write.csv(cluster_info,"./data/2015_2022_fire_cluster_info.csv", row.names = FALSE)
+write.csv(rep_pts,"./data/2015_2022_fire_rep_pts.csv", row.names = FALSE)
+
 
 
