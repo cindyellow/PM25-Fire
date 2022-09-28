@@ -212,7 +212,7 @@ for (d in as.list(dates)){
     cluster_info <- rbind(cluster_info, ci)
     rep_pts <- rbind(rep_pts, reps)    
   }
-  
+  print(d)
 }
 
 # Convert to correct type
