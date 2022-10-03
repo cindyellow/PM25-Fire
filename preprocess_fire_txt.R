@@ -1,10 +1,16 @@
 # R script for preprocessing fire txt files
+# Downloads: .csv for daily cluster information and representative points for fire in California from 2015-2022
+# Find files in cosmos
+# Directory dependencies:
+  # Run in PM25-Fire folder
+
+
 pkgs = c('tidyverse', 'dplyr', 'sf', 'dbscan', 'fpc', 'concaveman')
 for(p in pkgs) require(p, character.only = T)
 rm(p, pkgs)
 
 # Specify directory
-data.fire.dir = paste0(getwd(), '/data/fire/')
+data.fire.dir = '/data/home/huan1766/PM25-Fire/data/fire/'
 
 # Specify the time range to examine
 years <- seq("2015", "2022", by=1)
@@ -37,7 +43,7 @@ fire <- fire %>%
   st_transform(3310)
 
 # Read in California's boundaries # 
-cal_bound <- st_read("ca-state-boundary/CA_State_TIGER2016.shp")
+cal_bound <- st_read("/data/home/huan1766/PM25-Fire/ca-state-boundary/CA_State_TIGER2016.shp")
 
 # Convert to the same coordinate system as HMS (3310)
 cal_bound <- cal_bound %>%
@@ -47,9 +53,9 @@ cal_bound <- cal_bound %>%
 in_bound <- lengths(st_intersects(fire, cal_bound))>0
 
 # Get subset with indexing
-in_cali <- fire[in_bound,]
+in_cali_fire <- fire[in_bound,]
 
-in_cali <- in_cali %>%
+in_cali_fire <- in_cali_fire %>%
   rename(
     longitude = Lon,
     latitude = Lat,
@@ -69,7 +75,7 @@ in_cali <- in_cali %>%
     time = substr(as.POSIXct(sprintf("%04.0f", time), format='%H%M'), 12, 16)
   )
 # Add a new column for date and time
-in_cali <- in_cali %>%
+in_cali_fire <- in_cali_fire %>%
   mutate(
     date_comp = as.POSIXct(paste(date, time), 
                            format = "%Y-%m-%d %H:%M"),
@@ -189,7 +195,7 @@ cluster_info <- data.frame(date=as.Date(character()),
   rename(polygon=geometry)
 
 for (d in as.list(dates)){
-  day <- in_cali %>%
+  day <- in_cali_fire %>%
     st_as_sf(coords = c("longitude", "latitude"), crs = 4326, remove=FALSE) %>%
     st_transform(3310) %>%
     filter(date == d)
