@@ -24,7 +24,9 @@ for (year in years){
   for (month in months){
     subdir <- paste0(year, "/", month, "/")
     dirlist = list.dirs(path = paste0(data.smoke.dir, subdir), full.names = FALSE, recursive = FALSE)
-    all_files <- c(all_files, paste0(subdir,dirlist)) 
+    if (length(dirlist) >0){
+      all_files <- c(all_files, paste0(subdir,dirlist)) 
+    }
   }
 }
 
