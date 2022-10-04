@@ -5,7 +5,7 @@
   # Run in PM25-Fire folder
 
 ## capture messages and errors to a file.
-zz <- file("error_log.Rout", open="wt")
+zz <- file("error_log_fire_prep.Rout", open="wt")
 sink(zz, type="message")
 
 pkgs = c('tidyverse', 'dplyr', 'sf', 'dbscan', 'fpc', 'concaveman')
@@ -143,7 +143,7 @@ get_cluster_info <- function(cl, day){
       group_by(cluster) %>%
       group_modify(function(x,y) bind_rows(tibble(date=d,
                                                   polygon = concaveman(x)$polygons,
-                                                  area_km2 = round(st_area(polygon)/ 1e4, 3),
+                                                  area_km2 = round(units::set_units(st_area(polygon), value=km^2), 3),
                                                   frp_avg = round(mean(x$frp, na.rm=TRUE),4),
                                                   frp_vars = round(var(x$frp, na.rm=TRUE),4),
                                                   num_pts = count(x)$n)))    
@@ -225,18 +225,23 @@ for (d in as.list(dates)){
 
 # Convert to correct type
 rep_pts$polygon <- st_as_sfc(rep_pts$polygon)
-rep_pts$geometry <- st_as_sfc(rep_pts$geometry)
+rep_pts <- rep_pts %>%
+  select(-geometry)
 cluster_info$polygon <- st_as_sfc(cluster_info$polygon)
 
-write.csv(cluster_info,"./data/2015_2022_fire_cluster_info.csv", row.names = FALSE)
-write.csv(rep_pts,"./data/2015_2022_fire_rep_pts.csv", row.names = FALSE)
+# write.table(cluster_info,"/data/home/huan1766/PM25-Fire/data/2015_2022_fire_cluster_info.csv", sep = ";", row.names = FALSE)
+# write.csv(rep_pts,"/data/home/huan1766/PM25-Fire/data/2015_2022_fire_rep_pts.csv", row.names = FALSE)
+
+# Retain polygons with shapefile
+st_write(cluster_info, paste0(data.fire.dir,"2015_2022_fire_cluster_info.shp"), append=FALSE)
+st_write(rep_pts, paste0(data.fire.dir,"2015_2022_fire_rep_pts.shp"), append=FALSE)
 
 ## reset message sink and close the file connection
 sink(type="message")
 close(zz)
 
 ## Display the log file
-readLines("error_log.Rout")
+readLines("error_log_fire_prep.Rout")
 
 
 

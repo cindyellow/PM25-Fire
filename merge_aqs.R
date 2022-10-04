@@ -1,12 +1,21 @@
 ### For merging AQS
+## capture messages and errors to a file.
+zz <- file("error_log_aqs_merge.Rout", open="wt")
+sink(zz, type="message")
+
 dates <- seq(as.Date("2015-01-01"), as.Date("2021-11-11"), by=1)
 
 # Convert dataframes to sf objects
-rep_pts_sf <- st_as_sf(rep_pts) %>%
+repo.dir <- '/data/home/huan1766/PM25-Fire/'
+rep_pts <- st_read(paste0(repo.dir, "data/fire/2015_2022_fire_rep_pts.shp")) %>%
+  st_as_sf() %>%
+  st_set_crs(3310)
+in_cali_smoke <- st_read(paste0(repo.dir, "data/smoke/2015_2022_smoke.shp")) %>%
+  st_as_sf() %>%
   st_set_crs(3310)
 
 # Read AQS data and restrict to campfire week
-aqs <- read.delim("/data/home/huan1766/remoteproject/PM25-Research/Data/AQS Data/AQS_PM25_2000_2021_Cali.csv", sep=",", strip.white=TRUE)
+aqs <- read.delim(paste0(repo.dir, "data/AQS_PM25_2000_2021_Cali.csv"), sep=",", strip.white=TRUE)
 aqs <- aqs %>%
   filter(Date %in% as.character(dates))
 
@@ -17,36 +26,48 @@ aqs <- aqs %>%
 
 # Set default values for smoke indicator variables
 aqs <- aqs %>%
-  mutate(fire_dist=NA,closest_cl=NA)
+  mutate(fire_dist=NA,closest_cl=NA, light=NA, med=NA, heavy=NA)
 
 for (d in as.list(dates)){
-  # day_smoke <- smoke %>%
-  #   filter(date == d)
+  day_smoke <- in_cali_smoke %>%
+    filter(date == d)
   day_aqs <- aqs %>%
     dplyr::select(c("PM25", "Date", "Latitude", "Longitude")) %>%
     filter(Date == d)
-  day_fire <- rep_pts_sf %>%
+  day_fire <- rep_pts %>%
     filter(date == d)
 
   # Get closest cluster & distance
   closest_fire <- st_nearest_feature(day_aqs, day_fire)
 
-  day_aqs$fire_dist <- st_distance(day_aqs$geometry, day_fire[closest_fire,], by_element=TRUE)
+  day_aqs$fire_dist <- units::set_units(st_distance(day_aqs$geometry, day_fire[closest_fire,], by_element=TRUE), value=km)
   day_aqs$closest_cl <- day_fire[closest_fire,]$cluster
 
   # Get indicator variables
-  # smoke_regions <- st_intersects(day_aqs$geometry, day_smoke$geometry)
-  # day_aqs$light <- lapply(smoke_regions, function(x)ifelse('Light' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
-  # day_aqs$med <- lapply(smoke_regions, function(x)ifelse('Medium' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
-  # day_aqs$heavy <- lapply(smoke_regions, function(x)ifelse('Heavy' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
-  # day_aqs <- as_tibble(day_aqs) %>%
-  #   dplyr::select(-geometry) %>%
-  #   mutate(across(c("light", "med", "heavy"), as.double))
+  smoke_regions <- st_intersects(day_aqs$geometry, day_smoke$geometry)
+  day_aqs$light <- lapply(smoke_regions, function(x)ifelse('Light' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
+  day_aqs$med <- lapply(smoke_regions, function(x)ifelse('Medium' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
+  day_aqs$heavy <- lapply(smoke_regions, function(x)ifelse('Heavy' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
+  day_aqs <- as_tibble(day_aqs) %>%
+    dplyr::select(-geometry) %>%
+    mutate(across(c("light", "med", "heavy"), as.double))
 
   # Clean up everything
   aqs <- aqs %>%
     left_join(as_tibble(day_aqs), by=c("PM25", "Date", "Latitude", "Longitude")) %>%
-    mutate(fire_dist = coalesce(fire_dist.y, fire_dist.x),
-           closest_cl = coalesce(closest_cl.y, closest_cl.x)) %>%
-    dplyr::select(-fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
+    mutate(light = coalesce(light.y, light.x),
+           med = coalesce(med.y, med.x),
+           heavy = coalesce(heavy.y, heavy.x),
+           fire_dist = coalesce(fire_dist.y, fire_dist.x),
+           closest_cl = coalesce(closest_cl.y, closest_cl.x)) %>% 
+    dplyr::select(-geometry,-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
 }
+
+write.csv(aqs,"../data/Merged_AQS_PM25_2015_2021_Cali.csv", row.names = FALSE)
+
+## reset message sink and close the file connection
+sink(type="message")
+close(zz)
+
+## Display the log file
+readLines("error_log_aqs_merge.Rout")
