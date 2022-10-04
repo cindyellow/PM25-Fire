@@ -6,7 +6,7 @@
 zz <- file("error_log_smoke_prep.Rout", open="wt")
 sink(zz, type="message")
 
-pkgs = c('tidyverse', 'dplyr', 'sf', 'units')
+pkgs = c('tidyverse', 'dplyr', 'sf', 'units', 'lwgeom')
 for(p in pkgs) require(p, character.only = T)
 rm(p, pkgs)
 sf_use_s2(FALSE)
@@ -33,17 +33,11 @@ for (year in years){
 datalist <- lapply(all_files, function(x)read_sf(dsn = paste0(data.smoke.dir, x)))
 smoke <- do.call("rbind", datalist) 
 
-# Clean time and add smoke area
+# Clean variables
 smoke <- smoke %>%
   st_transform(3310) %>%
-  mutate(
-    # start_time = as.POSIXct(Start,
-    #                              format = "%Y%j %H%M"),
-    #      end_time = as.POSIXct(End,
-    #                            format = "%Y%j %H%M"), 
-         date = as.POSIXct(Start,
-                           format = "%Y%j"),
-         area = units::set_units(st_area(smoke$geometry), value=km^2)) %>%
+  mutate(date = as.POSIXct(Start,
+                           format = "%Y%j")) %>%
   rename(satellite = Satellite,
          density = Density) %>%
   dplyr::select(-Start, -End) %>%
@@ -64,7 +58,8 @@ smoke <- smoke %>%
 in_bound <- lengths(st_intersects(smoke$as_line, cal_bound))>0
 in_cali_smoke <- smoke[in_bound,] %>%
   select(-as_line, -count) %>%
-  mutate(geometry = replace(geometry, is.na(st_is_valid(geometry)), NA))
+  mutate(geometry = replace(geometry, is.na(st_is_valid(geometry)), NA),
+         area = units::set_units(st_area(geometry), value=km^2))
 
 st_write(in_cali_smoke, paste0(data.smoke.dir,"2015_2022_smoke.shp"), append=FALSE)
 
