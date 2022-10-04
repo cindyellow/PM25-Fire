@@ -233,8 +233,8 @@ cluster_info$polygon <- st_as_sfc(cluster_info$polygon)
 # write.csv(rep_pts,"/data/home/huan1766/PM25-Fire/data/2015_2022_fire_rep_pts.csv", row.names = FALSE)
 
 # Retain polygons with shapefile
-st_write(cluster_info, paste0(data.fire.dir,"2015_2022_fire_cluster_info.shp"), append=FALSE)
-st_write(rep_pts, paste0(data.fire.dir,"2015_2022_fire_rep_pts.shp"), append=FALSE)
+st_write(cluster_info, paste0(data.fire.dir,"2015_2017_fire_cluster_info.shp"), append=FALSE)
+st_write(rep_pts, paste0(data.fire.dir,"2015_2017_fire_rep_pts.shp"), append=FALSE)
 
 ## reset message sink and close the file connection
 sink(type="message")
