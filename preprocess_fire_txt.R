@@ -4,6 +4,9 @@
 # Directory dependencies:
   # Run in PM25-Fire folder
 
+## capture messages and errors to a file.
+zz <- file("error_log.Rout", open="wt")
+sink(zz, type="message")
 
 pkgs = c('tidyverse', 'dplyr', 'sf', 'dbscan', 'fpc', 'concaveman')
 for(p in pkgs) require(p, character.only = T)
@@ -218,7 +221,6 @@ for (d in as.list(dates)){
     cluster_info <- rbind(cluster_info, ci)
     rep_pts <- rbind(rep_pts, reps)    
   }
-  print(d)
 }
 
 # Convert to correct type
@@ -228,6 +230,13 @@ cluster_info$polygon <- st_as_sfc(cluster_info$polygon)
 
 write.csv(cluster_info,"./data/2015_2022_fire_cluster_info.csv", row.names = FALSE)
 write.csv(rep_pts,"./data/2015_2022_fire_rep_pts.csv", row.names = FALSE)
+
+## reset message sink and close the file connection
+sink(type="message")
+close(zz)
+
+## Display the log file
+readLines("error_log.Rout")
 
 
 
