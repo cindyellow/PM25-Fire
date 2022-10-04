@@ -16,10 +16,10 @@ rm(p, pkgs)
 data.fire.dir = '/data/home/huan1766/PM25-Fire/data/fire/'
 
 # Specify the time range to examine
-years <- seq("2015", "2022", by=1)
+years <- seq("2015", "2017", by=1)
 months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
-dates <- seq(as.Date("2015-01-01"), as.Date("2022-09-26"), by=1)
+dates <- seq(as.Date("2015-01-01"), as.Date("2017-12-31"), by=1)
 
 minpts <- seq(5,100,by=5)
 
