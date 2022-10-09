@@ -13,13 +13,13 @@ for(p in pkgs) require(p, character.only = T)
 rm(p, pkgs)
 
 # Specify directory
-data.fire.dir = '/data/home/huan1766/PM25-Fire/data/fire/'
+repo.dir = '/data/home/huan1766/PM25-Fire/'
+data.fire.dir = paste0(repo.dir, 'data/fire/')
 
 # Specify the time range to examine
-years <- seq("2015", "2017", by=1)
+years <- seq("2003", "2022", by=1)
 months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
-dates <- seq(as.Date("2015-01-01"), as.Date("2017-12-31"), by=1)
 
 minpts <- seq(5,100,by=5)
 
@@ -46,7 +46,7 @@ fire <- fire %>%
   st_transform(3310)
 
 # Read in California's boundaries # 
-cal_bound <- st_read("/data/home/huan1766/PM25-Fire/ca-state-boundary/CA_State_TIGER2016.shp")
+cal_bound <- st_read(paste0(repo.dir, "ca-state-boundary/CA_State_TIGER2016.shp"))
 
 # Convert to the same coordinate system as HMS (3310)
 cal_bound <- cal_bound %>%
@@ -196,46 +196,47 @@ cluster_info <- data.frame(date=as.Date(character()),
                            frp_vars=double(),
                            num_pts=integer()) %>%
   rename(polygon=geometry)
-
-for (d in as.list(dates)){
-  day <- in_cali_fire %>%
-    st_as_sf(coords = c("longitude", "latitude"), crs = 4326, remove=FALSE) %>%
-    st_transform(3310) %>%
-    filter(date == d)
-  
-  cl <- build_best_cl(day)
-  if (is.null(cl)){
-    # No best cluster for the day
-    placeholder <- data.frame(date = d,
-                              cluster=NA,
-                              polygon=NA,
-                              geometry=NA)
-    cluster_info <- cluster_info %>%
-      merge(placeholder, by=c("cluster","date", "polygon"), all=TRUE) %>%
-      select(-geometry)
-    rep_pts <- rep_pts %>%
-      merge(placeholder, by=c("cluster", "date", "polygon", "geometry"), all=TRUE)
-  } else{
-    ci <- get_cluster_info(cl,day)
-    reps <- get_rep_pts(cl, day, ci, 1)
-    cluster_info <- rbind(cluster_info, ci)
-    rep_pts <- rbind(rep_pts, reps)    
+for (y in years){
+  dates <- seq(as.Date(paste0(y, "-01-01")), as.Date(paste0(y, "-12-31")), by=1)
+  for (d in as.list(dates)){
+    day <- in_cali_fire %>%
+      st_as_sf(coords = c("longitude", "latitude"), crs = 4326, remove=FALSE) %>%
+      st_transform(3310) %>%
+      filter(date == d)
+    
+    cl <- build_best_cl(day)
+    if (is.null(cl)){
+      # No best cluster for the day
+      placeholder <- data.frame(date = d,
+                                cluster=NA,
+                                polygon=NA,
+                                geometry=NA)
+      cluster_info <- cluster_info %>%
+        merge(placeholder, by=c("cluster","date", "polygon"), all=TRUE) %>%
+        select(-geometry)
+      rep_pts <- rep_pts %>%
+        merge(placeholder, by=c("cluster", "date", "polygon", "geometry"), all=TRUE)
+    } else{
+      ci <- get_cluster_info(cl,day)
+      reps <- get_rep_pts(cl, day, ci, 1)
+      cluster_info <- rbind(cluster_info, ci)
+      rep_pts <- rbind(rep_pts, reps)    
+    }
   }
+  
+  # Convert to correct type
+  rep_pts$polygon <- st_as_sfc(rep_pts$polygon)
+  rep_pts <- rep_pts %>%
+    select(-geometry)
+  cluster_info$polygon <- st_as_sfc(cluster_info$polygon)
+  
+  # Retain polygons with shapefile
+  # Check if directory exists and create a new folder if nonexistent
+  ifelse(!dir.exists(file.path(data.fire.dir, "cluster_info", y)), dir.create(file.path(data.fire.dir, "cluster_info", y),recursive=TRUE), FALSE)
+  ifelse(!dir.exists(file.path(data.fire.dir, "rep_pts", y)), dir.create(file.path(data.fire.dir, "rep_pts", y),recursive=TRUE), FALSE)
+  st_write(cluster_info, paste0(data.fire.dir, "cluster_info/", y, paste0("/", y,"_fire_cluster_info.shp")), append=FALSE)
+  st_write(rep_pts, paste0(data.fire.dir, "rep_pts/", y, paste0("/", y,"_fire_rep_pts.shp")), append=FALSE)
 }
-
-# Convert to correct type
-rep_pts$polygon <- st_as_sfc(rep_pts$polygon)
-rep_pts <- rep_pts %>%
-  select(-geometry)
-cluster_info$polygon <- st_as_sfc(cluster_info$polygon)
-
-# write.table(cluster_info,"/data/home/huan1766/PM25-Fire/data/2015_2022_fire_cluster_info.csv", sep = ";", row.names = FALSE)
-# write.csv(rep_pts,"/data/home/huan1766/PM25-Fire/data/2015_2022_fire_rep_pts.csv", row.names = FALSE)
-
-# Retain polygons with shapefile
-st_write(cluster_info, paste0(data.fire.dir,"2015_2017_fire_cluster_info.shp"), append=FALSE)
-st_write(rep_pts, paste0(data.fire.dir,"2015_2017_fire_rep_pts.shp"), append=FALSE)
-
 ## reset message sink and close the file connection
 sink(type="message")
 close(zz)
