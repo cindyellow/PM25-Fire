@@ -7,15 +7,16 @@ for(p in pkgs) require(p, character.only = T)
 rm(p, pkgs)
 
 # Specify the time range to examine
-years <- seq("2003", "2014", by=1)
+years <- seq("2003", "2022", by=1)
 months <- seq("01", "12", by=1)
 
 # Add leading zeroes for single-digit months
 months[1:9] <- paste0("0",months[1:9])
 
 # Specify directory for fire and smoke data
-data.fire.dir = '/data/home/huan1766/PM25-Fire/data/fire/'
-data.smoke.dir = '/data/home/huan1766/PM25-Fire/data/smoke/'
+repo.dir = '/data/home/huan1766/PM25-Fire/'
+data.fire.dir = paste0(repo.dir, 'data/fire/')
+data.fire.dir = paste0(repo.dir, 'data/smoke/')
 
 # Base URL containing all data 
 fire_base_url <- "https://satepsanone.nesdis.noaa.gov/pub/FIRE/web/HMS/Fire_Points/Text/"

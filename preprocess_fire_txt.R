@@ -169,34 +169,34 @@ get_rep_pts <- function(cl, day, cluster_info, k){
   return(reps)
 }
 
-# Get representative points and cluster information for all dates within range
-# Dataframes for storing all the info
-rep_pts <- data.frame(date=as.Date(character()),
-                      longitude=double(),
-                      latitude=double(),
-                      satellite=character(),
-                      method_of_detect = character(),
-                      ecosys=integer(),
-                      frp=double(),
-                      cluster=character(),
-                      mem_prob=double(),
-                      geometry=st_sfc(list()),
-                      polygon=st_sfc(list()),
-                      area_km2=double(),
-                      frp_avg=double(),
-                      frp_vars=double(),
-                      num_pts=integer()
-) %>%
-  rename(polygon=geometry.1)
-cluster_info <- data.frame(date=as.Date(character()),
-                           cluster=character(),
-                           polygon=st_sfc(list()),
-                           area_km2=double(),
-                           frp_avg=double(),
-                           frp_vars=double(),
-                           num_pts=integer()) %>%
-  rename(polygon=geometry)
 for (y in years){
+  # Get representative points and cluster information for all dates within range
+  # Dataframes for storing all the info
+  rep_pts <- data.frame(date=as.Date(character()),
+                        longitude=double(),
+                        latitude=double(),
+                        satellite=character(),
+                        method_of_detect = character(),
+                        ecosys=integer(),
+                        frp=double(),
+                        cluster=character(),
+                        mem_prob=double(),
+                        geometry=st_sfc(list()),
+                        polygon=st_sfc(list()),
+                        area_km2=double(),
+                        frp_avg=double(),
+                        frp_vars=double(),
+                        num_pts=integer()) %>%
+    rename(polygon=geometry.1)
+  cluster_info <- data.frame(date=as.Date(character()),
+                             cluster=character(),
+                             polygon=st_sfc(list()),
+                             area_km2=double(),
+                             frp_avg=double(),
+                             frp_vars=double(),
+                             num_pts=integer()) %>%
+    rename(polygon=geometry)
+
   dates <- seq(as.Date(paste0(y, "-01-01")), as.Date(paste0(y, "-12-31")), by=1)
   for (d in as.list(dates)){
     day <- in_cali_fire %>%
