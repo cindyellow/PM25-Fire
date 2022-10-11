@@ -17,7 +17,7 @@ repo.dir = '/data/home/huan1766/PM25-Fire/'
 data.fire.dir = paste0(repo.dir, 'data/fire/')
 
 # Specify the time range to examine
-years <- seq("2003", "2022", by=1)
+years <- seq("2019", "2022", by=1)
 months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
 
@@ -207,15 +207,10 @@ for (y in years){
     cl <- build_best_cl(day)
     if (is.null(cl)){
       # No best cluster for the day
-      placeholder <- data.frame(date = d,
-                                cluster=NA,
-                                polygon=NA,
-                                geometry=NA)
-      cluster_info <- cluster_info %>%
-        merge(placeholder, by=c("cluster","date", "polygon"), all=TRUE) %>%
-        select(-geometry)
-      rep_pts <- rep_pts %>%
-        merge(placeholder, by=c("cluster", "date", "polygon", "geometry"), all=TRUE)
+      cluster_info[nrow(cluster_info)+1,] <- NA
+      cluster_info[nrow(cluster_info),"date"] <- d
+      rep_pts[nrow(rep_pts)+1,] <- NA
+      rep_pts[nrow(rep_pts),"date"] <- d      
     } else{
       ci <- get_cluster_info(cl,day)
       reps <- get_rep_pts(cl, day, ci, 1)
@@ -225,10 +220,10 @@ for (y in years){
   }
   
   # Convert to correct type
-  rep_pts$polygon <- st_as_sfc(rep_pts$polygon)
-  rep_pts <- rep_pts %>%
-    select(-geometry)
-  cluster_info$polygon <- st_as_sfc(cluster_info$polygon)
+  # rep_pts$polygon <- st_as_sfc(rep_pts$polygon)
+  # rep_pts <- rep_pts %>%
+  #   select(-geometry)
+  # cluster_info$polygon <- st_as_sfc(cluster_info$polygon)
   
   # Retain polygons with shapefile
   # Check if directory exists and create a new folder if nonexistent
