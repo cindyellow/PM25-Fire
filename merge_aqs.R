@@ -11,7 +11,7 @@ rm(p, pkgs)
 repo.dir = '/data/home/huan1766/PM25-Fire/'
 data.fire.dir = paste0(repo.dir, 'data/fire/')
 data.smoke.dir = paste0(repo.dir, 'data/smoke/')
-aqs.dir = '/home/huan1766/remoteproject/PM25-Research/Data'
+aqs.dir = '/home/huan1766/remoteproject/PM25-Research/Data/'
 
 # Convert dataframes to sf objects
 years <- seq("2003", "2015", by=1)
