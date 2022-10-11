@@ -3,21 +3,47 @@
 zz <- file("error_log_aqs_merge.Rout", open="wt")
 sink(zz, type="message")
 
-dates <- seq(as.Date("2015-01-01"), as.Date("2021-11-11"), by=1)
+pkgs = c('tidyverse', 'dplyr', 'sf', 'units')
+for(p in pkgs) require(p, character.only = T)
+rm(p, pkgs)
+
+# Specify directory
+repo.dir = '/data/home/huan1766/PM25-Fire/'
+data.fire.dir = paste0(repo.dir, 'data/fire/')
+data.smoke.dir = paste0(repo.dir, 'data/smoke/')
+aqs.dir = '/home/huan1766/remoteproject/PM25-Research/Data'
 
 # Convert dataframes to sf objects
-repo.dir <- '/data/home/huan1766/PM25-Fire/'
-rep_pts <- st_read(paste0(repo.dir, "data/fire/2015_2022_fire_rep_pts.shp")) %>%
-  st_as_sf() %>%
-  st_set_crs(3310)
-in_cali_smoke <- st_read(paste0(repo.dir, "data/smoke/2015_2022_smoke.shp")) %>%
+years <- seq("2003", "2015", by=1)
+months <- seq("01", "12", by=1)
+months[1:9] <- paste0("0",months[1:9])
+dates <- seq(as.Date("2003-01-01"), as.Date("2015-12-31"), by=1)
+
+all_files <- c()
+for (year in years){
+  subdir <- paste0("rep_pts/", year, "/")
+  filelist = list.files(path=paste0(data.fire.dir, subdir), pattern = "*.shp", no..=FALSE)
+  if (length(filelist) >0){
+    all_files <- c(all_files, paste0(subdir,filelist)) 
+  }
+}
+
+# Read all rep pts
+datalist = lapply(all_files, function(x)st_read(paste0(data.fire.dir,x)))
+rep_pts <- do.call("rbind", datalist) 
+
+rep_pts <- rep_pts %>%
   st_as_sf() %>%
   st_set_crs(3310)
 
-# Read AQS data and restrict to campfire week
-aqs <- read.delim(paste0(repo.dir, "data/AQS_PM25_2000_2021_Cali.csv"), sep=",", strip.white=TRUE)
-aqs <- aqs %>%
-  filter(Date %in% as.character(dates))
+in_cali_smoke <- st_read(paste0(data.smoke.dir, "2003_2015_smoke.shp")) %>%
+  st_as_sf() %>%
+  st_set_crs(3310)
+
+# Read AQS data and restrict to dates
+aqs <- read.delim(paste0(aqs.dir, "AQS Data/AQS_PM25_2000_2021_Cali.csv"), sep=",", strip.white=TRUE)
+# aqs <- aqs %>%
+#   filter(Date %in% as.character(dates))
 
 # Create geometry object for coordinates (used for sf calculations)
 aqs <- aqs %>%
@@ -63,7 +89,7 @@ for (d in as.list(dates)){
     dplyr::select(-geometry,-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
 }
 
-write.csv(aqs,"../data/Merged_AQS_PM25_2015_2021_Cali.csv", row.names = FALSE)
+write.csv(aqs,paste0(repo.dir, "data/merged/Merged_AQS_PM25_2000_2015_Cali.csv"), row.names = FALSE)
 
 ## reset message sink and close the file connection
 sink(type="message")
