@@ -43,7 +43,7 @@ in_cali_smoke <- st_read(paste0(data.smoke.dir, "2003_2015_smoke.shp")) %>%
 
 # Read AQS data and restrict to dates
 unzip(paste0(remote.aqs.dir, "AQS_CSN_Data_2000_2021.zip"), exdir = data.aqs.dir)
-aqs <- read.delim(paste(data.aqs.dir, "AQS_CSN_Data_2000_2021.csv"), sep=",", strip.white=TRUE)
+aqs <- read.delim(paste0(data.aqs.dir, "AQS_CSN_Data_2000_2021.csv"), sep=",", strip.white=TRUE)
 # aqs <- aqs %>%
 #   filter(Date %in% as.character(dates))
 
