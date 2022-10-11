@@ -17,7 +17,7 @@ repo.dir = '/data/home/huan1766/PM25-Fire/'
 data.fire.dir = paste0(repo.dir, 'data/fire/')
 
 # Specify the time range to examine
-years <- seq("2019", "2022", by=1)
+years <- seq("2020", "2022", by=1)
 months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
 
@@ -207,10 +207,10 @@ for (y in years){
     cl <- build_best_cl(day)
     if (is.null(cl)){
       # No best cluster for the day
-      cluster_info[nrow(cluster_info)+1,] <- NA
-      cluster_info[nrow(cluster_info),"date"] <- d
-      rep_pts[nrow(rep_pts)+1,] <- NA
-      rep_pts[nrow(rep_pts),"date"] <- d      
+      cluster_info[nrow(cluster_info)+1,"date"] <- d
+      # cluster_info[nrow(cluster_info),] <- NA
+      rep_pts[nrow(rep_pts)+1,"date"] <- d  
+      # rep_pts[nrow(rep_pts),] <- NA
     } else{
       ci <- get_cluster_info(cl,day)
       reps <- get_rep_pts(cl, day, ci, 1)
