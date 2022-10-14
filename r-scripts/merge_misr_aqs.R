@@ -52,7 +52,7 @@ aqs <- read.delim(paste0(remote.aqs.dir, "MISR_AQS_Matched.csv"), sep=",", strip
 
 # Create geometry object for coordinates (used for sf calculations)
 aqs <- aqs %>%
-  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove=FALSE) %>%
+  st_as_sf(coords = c("Site.Longitude", "Site.Latitude"), crs = 4326, remove=FALSE) %>%
   st_transform(3310)
 
 # Read in California's boundaries # 
