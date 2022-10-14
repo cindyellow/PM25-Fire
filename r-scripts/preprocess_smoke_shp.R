@@ -1,6 +1,7 @@
 # R script for preprocessing smoke shp files
 # Downloads: .csv for smoke in California from 2015-2022
 # Find files in cosmos
+repo.dir = '/data/home/huan1766/PM25-Fire/'
 
 ## capture messages and errors to a file.
 zz <- file(paste0(repo.dir, "errors-logs/errors_smoke_prep.Rout"), open="wt")
@@ -12,7 +13,6 @@ rm(p, pkgs)
 sf_use_s2(FALSE)
 
 # Specify directory
-repo.dir = '/data/home/huan1766/PM25-Fire/'
 data.smoke.dir = paste0(repo.dir, 'data/smoke/')
 
 # Specify the time range to examine

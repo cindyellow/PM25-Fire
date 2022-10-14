@@ -3,8 +3,9 @@
 # Find files in cosmos
 # Directory dependencies:
   # ./ca-state-boundary/CA_State_TIGER2016.shp
+repo.dir = '/data/home/huan1766/PM25-Fire/'
 
-## capture messages and errors to a file.
+## Capture messages and errors to a file.
 zz <- file(paste0(repo.dir, "errors-logs/errors_fire_prep.Rout"), open="wt")
 sink(zz, type="message")
 
@@ -13,7 +14,6 @@ for(p in pkgs) require(p, character.only = T)
 rm(p, pkgs)
 
 # Specify directory
-repo.dir = '/data/home/huan1766/PM25-Fire/'
 data.fire.dir = paste0(repo.dir, 'data/fire/')
 
 # Specify the time range to examine

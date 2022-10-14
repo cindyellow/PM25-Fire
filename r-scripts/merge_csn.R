@@ -1,5 +1,7 @@
 ### For merging AQS
-## capture messages and errors to a file.
+repo.dir = '/data/home/huan1766/PM25-Fire/'
+
+## Capture messages and errors to a file.
 zz <- file(paste0(repo.dir, "errors-logs/errors_merge_csn.Rout"), open="wt")
 sink(zz, type="message")
 
@@ -8,7 +10,6 @@ for(p in pkgs) require(p, character.only = T)
 rm(p, pkgs)
 
 # Specify directory
-repo.dir = '/data/home/huan1766/PM25-Fire/'
 data.fire.dir = paste0(repo.dir, 'data/fire/')
 data.smoke.dir = paste0(repo.dir, 'data/smoke/')
 # Need to mount project beforehand
