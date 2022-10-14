@@ -2,7 +2,7 @@
 repo.dir = '/data/home/huan1766/PM25-Fire/'
 
 ## Capture messages and errors to a file.
-zz <- file(paste0(repo.dir, "errors-logs/errors_merge_aqs_csn.Rout"), open="wt")
+zz <- file(paste0(repo.dir, "errors-logs/errors_merge_misr_aqs.Rout"), open="wt")
 sink(zz, type="message")
 
 pkgs = c('tidyverse', 'dplyr', 'sf', 'units')
@@ -69,6 +69,8 @@ in_bound <- lengths(st_intersects(aqs, cal_bound))>0
 in_cali_aqs <- aqs[in_bound,]
 
 # Set default values for smoke indicator variables
+message(dim(in_cali_aqs)[1])
+
 in_cali_aqs <- in_cali_aqs %>%
   mutate(fire_dist=NA,closest_cl=NA, light=NA, med=NA, heavy=NA)
 
@@ -116,6 +118,8 @@ for (d in as.list(dates)){
 
 message("==========FINISHED MERGING==========")
 
+message(dim(in_cali_aqs)[1])
+
 write.csv(in_cali_aqs,paste0(repo.dir, "data/merged/Merged_MISR_AQS_Matched_2003_2015.csv"), row.names = FALSE)
 
 ## reset message sink and close the file connection
@@ -123,4 +127,4 @@ sink(type="message")
 close(zz)
 
 ## Display the log file
-readLines(paste0(repo.dir, "errors-logs/errors_merge_aqs_csn.Rout"))
+readLines(paste0(repo.dir, "errors-logs/errors_merge_misr_aqs.Rout"))
