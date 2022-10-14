@@ -137,7 +137,7 @@ get_cluster_info <- function(cl, day){
     # Return placeholder for this date
     day_cl <- data.frame(date = c(d), 
                          cluster=c(NA),
-                         polygon=c(NA))
+                         polygon=c(st_polygon()))
   } else{
     # Create polygon and FRP summaries for each cluster
     day_cl <- day %>%
@@ -209,9 +209,7 @@ for (y in years){
     if (is.null(cl)){
       # No best cluster for the day
       cluster_info[nrow(cluster_info)+1,"date"] <- d
-      # cluster_info[nrow(cluster_info),] <- NA
       rep_pts[nrow(rep_pts)+1,"date"] <- d  
-      # rep_pts[nrow(rep_pts),] <- NA
     } else{
       ci <- get_cluster_info(cl,day)
       reps <- get_rep_pts(cl, day, ci, 1)
@@ -221,10 +219,10 @@ for (y in years){
   }
   
   # Convert to correct type
-  rep_pts$polygon <- st_as_sf(rep_pts$polygon)
+  rep_pts$polygon <- st_sfc(rep_pts$polygon)
   rep_pts <- rep_pts %>%
     select(-geometry)
-  cluster_info$polygon <- st_as_sf(cluster_info$polygon)
+  cluster_info$polygon <- st_sfc(cluster_info$polygon)
   
   # Retain polygons with shapefile
   # Check if directory exists and create a new folder if nonexistent
