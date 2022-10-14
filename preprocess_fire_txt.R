@@ -2,7 +2,7 @@
 # Downloads: .csv for daily cluster information and representative points for fire in California from 2015-2022
 # Find files in cosmos
 # Directory dependencies:
-  # Run in PM25-Fire folder
+  # ./ca-state-boundary/CA_State_TIGER2016.shp
 
 ## capture messages and errors to a file.
 zz <- file("error_log_fire_prep.Rout", open="wt")
@@ -17,7 +17,7 @@ repo.dir = '/data/home/huan1766/PM25-Fire/'
 data.fire.dir = paste0(repo.dir, 'data/fire/')
 
 # Specify the time range to examine
-years <- seq("2020", "2022", by=1)
+years <- seq("2004", "2004", by=1)
 months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
 
@@ -46,6 +46,7 @@ fire <- fire %>%
   st_transform(3310)
 
 # Read in California's boundaries # 
+
 cal_bound <- st_read(paste0(repo.dir, "ca-state-boundary/CA_State_TIGER2016.shp"))
 
 # Convert to the same coordinate system as HMS (3310)
@@ -220,10 +221,10 @@ for (y in years){
   }
   
   # Convert to correct type
-  # rep_pts$polygon <- st_as_sfc(rep_pts$polygon)
-  # rep_pts <- rep_pts %>%
-  #   select(-geometry)
-  # cluster_info$polygon <- st_as_sfc(cluster_info$polygon)
+  rep_pts$polygon <- st_as_sf(rep_pts$polygon)
+  rep_pts <- rep_pts %>%
+    select(-geometry)
+  cluster_info$polygon <- st_as_sf(cluster_info$polygon)
   
   # Retain polygons with shapefile
   # Check if directory exists and create a new folder if nonexistent
