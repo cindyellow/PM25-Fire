@@ -69,11 +69,10 @@ in_bound <- lengths(st_intersects(aqs, cal_bound))>0
 in_cali_aqs <- aqs[in_bound,]
 
 # Set default values for smoke indicator variables
-message(dim(in_cali_aqs)[1])
-
 in_cali_aqs <- in_cali_aqs %>%
   mutate(fire_dist=NA,closest_cl=NA, light=NA, med=NA, heavy=NA)
 
+message(dim(in_cali_aqs)[1])
 message("==========FINISHED READING==========")
 
 message("==========START MERGING==========")
@@ -83,17 +82,21 @@ for (d in as.list(dates)){
     filter(date == d)
   day_aqs <- in_cali_aqs %>%
     dplyr::select(c("Date", "Site.Latitude", "Site.Longitude")) %>%
-    filter(Date == d)
+    filter(Date == d) %>%
+    distinct()
   day_fire <- rep_pts %>%
     filter(date == d)
   
   if (dim(day_aqs)[1] == 0) next
   
   # Get closest cluster & distance
-  if (dim(dat_fire)[1] != 0){
+  if (dim(day_fire)[1] != 0){
     closest_fire <- st_nearest_feature(day_aqs, day_fire)
     day_aqs$fire_dist <- units::set_units(st_distance(day_aqs$geometry, day_fire[closest_fire,]$geometry, by_element = TRUE), value=km)
     day_aqs$closest_cl <- day_fire[closest_fire,]$cluster
+  } else{
+    day_aqs$fire_dist <- NA
+    day_aqs$closest_cl <- NA    
   }
   # Get indicator variables
   if (dim(day_smoke)[1] != 0){
@@ -101,10 +104,15 @@ for (d in as.list(dates)){
     day_aqs$light <- lapply(smoke_regions, function(x)ifelse('Light' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
     day_aqs$med <- lapply(smoke_regions, function(x)ifelse('Medium' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
     day_aqs$heavy <- lapply(smoke_regions, function(x)ifelse('Heavy' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
-    day_aqs <- as_tibble(day_aqs) %>%
-      dplyr::select(-geometry) %>%
-      mutate(across(c("light", "med", "heavy"), as.double))
+  } else{
+    day_aqs$light <- NA
+    day_aqs$med <- NA
+    day_aqs$heavy <- NA    
   }
+  day_aqs <- as_tibble(day_aqs) %>%
+    dplyr::select(-geometry) %>%
+    mutate(across(c("light", "med", "heavy"), as.double))
+  
   # Clean up everything
   in_cali_aqs <- in_cali_aqs %>%
     left_join(as_tibble(day_aqs), by=c("Date", "Site.Latitude", "Site.Longitude")) %>%
@@ -117,9 +125,7 @@ for (d in as.list(dates)){
 }
 
 message("==========FINISHED MERGING==========")
-
 message(dim(in_cali_aqs)[1])
-
 write.csv(in_cali_aqs,paste0(repo.dir, "data/merged/Merged_MISR_AQS_Matched_2003_2015.csv"), row.names = FALSE)
 
 ## reset message sink and close the file connection
