@@ -34,6 +34,7 @@ for (year in years){
 datalist = lapply(all_files, function(x)st_read(paste0(data.fire.dir,x)))
 rep_pts <- do.call("rbind", datalist) 
 
+message("==========START READING==========")
 rep_pts <- rep_pts %>%
   st_as_sf() %>%
   st_set_crs(3310)
@@ -56,6 +57,9 @@ aqs <- aqs %>%
 aqs <- aqs %>%
   mutate(fire_dist=NA,closest_cl=NA, light=NA, med=NA, heavy=NA)
 
+message("==========FINISHED READING==========")
+
+message("==========START MERGING==========")
 for (d in as.list(dates)){
   day_smoke <- in_cali_smoke %>%
     filter(date == d)
@@ -91,6 +95,7 @@ for (d in as.list(dates)){
     dplyr::select(-geometry,-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
 }
 
+message("==========FINISHED MERGING==========")
 write.csv(aqs,paste0(repo.dir, "data/merged/Merged_AQS_PM25_2000_2015_Cali.csv"), row.names = FALSE)
 
 ## reset message sink and close the file connection
