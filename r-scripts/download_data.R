@@ -1,6 +1,11 @@
 # R script for downloading data in bulk
 # Downloads: .txt for active fire detection datasets and kml for smoke distribution datasets
 # Find files in cosmos
+repo.dir = '/data/home/huan1766/PM25-Fire/'
+
+## Capture messages and errors to a file.
+zz <- file(paste0(repo.dir, "errors-logs/errors_download.Rout"), open="wt")
+sink(zz, type="message")
 
 pkgs = c('curl', 'RCurl', 'stringr', 'downloader')
 for(p in pkgs) require(p, character.only = T)
@@ -14,7 +19,6 @@ months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
 
 # Specify directory for fire and smoke data
-repo.dir = '/data/home/huan1766/PM25-Fire/'
 data.fire.dir = paste0(repo.dir, 'data/fire/')
 data.smoke.dir = paste0(repo.dir, 'data/smoke/')
 
@@ -67,3 +71,10 @@ for (year in years){
     }
   }
 }
+
+## reset message sink and close the file connection
+sink(type="message")
+close(zz)
+
+## Display the log file
+readLines(paste0(repo.dir, "errors-logs/errors_download.Rout"))
