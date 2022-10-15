@@ -51,9 +51,9 @@ aqs <- read.delim(paste0(remote.aqs.dir, "MISR_AQS_Matched.csv"), sep=",", strip
 #   filter(Date %in% as.character(dates))
 
 # Create geometry object for coordinates (used for sf calculations)
-# aqs <- aqs %>%
-#   st_as_sf(coords = c("Site.Longitude", "Site.Latitude"), crs = 4326, remove=FALSE) %>%
-#   st_transform(3310)
+aqs <- aqs %>%
+  st_as_sf(coords = c("Site.Longitude", "Site.Latitude"), crs = 4326, remove=FALSE) %>%
+  st_transform(3310)
 
 # Read in California's boundaries # 
 cal_bound <- st_read(paste0(repo.dir, "ca-state-boundary/CA_State_TIGER2016.shp"))
