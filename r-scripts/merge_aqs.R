@@ -16,10 +16,10 @@ data.smoke.dir = paste0(repo.dir, 'data/smoke/')
 remote.aqs.dir = '/home/huan1766/remoteproject/PM25-Research/Data/AQS Data/'
 
 # Convert dataframes to sf objects
-years <- seq("2015", "2020", by=1)
+years <- seq("2003", "2015", by=1)
 months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
-dates <- seq(as.Date("2015-01-01"), as.Date("2020-12-31"), by=1)
+dates <- seq(as.Date("2003-01-01"), as.Date("2015-12-31"), by=1)
 
 all_files <- c()
 for (year in years){
@@ -39,7 +39,7 @@ rep_pts <- rep_pts %>%
   st_as_sf() %>%
   st_set_crs(3310)
 
-in_cali_smoke <- st_read(paste0(data.smoke.dir, "2015_2022_smoke.shp")) %>%
+in_cali_smoke <- st_read(paste0(data.smoke.dir, "2003_2015_smoke.shp")) %>%
   st_as_sf() %>%
   st_set_crs(3310)
 
@@ -106,7 +106,9 @@ for (d in as.list(dates)){
            heavy = coalesce(heavy.y, heavy.x),
            fire_dist = coalesce(fire_dist.y, fire_dist.x),
            closest_cl = coalesce(closest_cl.y, closest_cl.x)) %>% 
-    dplyr::select(-geometry,-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
+    dplyr::select(-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
+  
+  aqs <- st_drop_geometry(aqs)
 }
 
 message("==========FINISHED MERGING==========")

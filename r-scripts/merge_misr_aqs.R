@@ -121,7 +121,9 @@ for (d in as.list(dates)){
            heavy = coalesce(heavy.y, heavy.x),
            fire_dist = coalesce(fire_dist.y, fire_dist.x),
            closest_cl = coalesce(closest_cl.y, closest_cl.x)) %>% 
-    dplyr::select(-geometry,-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
+    dplyr::select(-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
+  
+  in_cali_aqs <- st_drop_geometry(in_cali_aqs)
 }
 
 message("==========FINISHED MERGING==========")
