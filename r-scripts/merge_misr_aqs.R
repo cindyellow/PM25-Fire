@@ -83,13 +83,13 @@ for (d in as.list(dates)){
   day_aqs <- in_cali_aqs %>%
     dplyr::select(c("Date", "Site.Latitude", "Site.Longitude")) %>%
     filter(Date == d) %>%
-    distinct()
+    distinct() %>%
+    st_transform(3310)
   day_fire <- rep_pts %>%
     filter(date == d)
   
   if (dim(day_aqs)[1] == 0) next
   
-  message(st_crs(day_fire), st_crs(day_aqs))
   # Get closest cluster & distance
   if (dim(day_fire)[1] != 0){
     closest_fire <- st_nearest_feature(day_aqs, day_fire)
