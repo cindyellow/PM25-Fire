@@ -84,6 +84,7 @@ for (d in as.list(dates)){
     dplyr::select(c("Date", "Site.Latitude", "Site.Longitude")) %>%
     filter(Date == d) %>%
     distinct() %>%
+    st_as_sf() %>%
     st_transform(3310)
   day_fire <- rep_pts %>%
     filter(date == d)
