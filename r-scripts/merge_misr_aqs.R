@@ -51,9 +51,9 @@ aqs <- read.delim(paste0(remote.aqs.dir, "MISR_AQS_Matched.csv"), sep=",", strip
 #   filter(Date %in% as.character(dates))
 
 # Create geometry object for coordinates (used for sf calculations)
-aqs <- aqs %>%
-  st_as_sf(coords = c("Site.Longitude", "Site.Latitude"), crs = 4326, remove=FALSE) %>%
-  st_transform(3310)
+# aqs <- aqs %>%
+#   st_as_sf(coords = c("Site.Longitude", "Site.Latitude"), crs = 4326, remove=FALSE) %>%
+#   st_transform(3310)
 
 # Read in California's boundaries # 
 cal_bound <- st_read(paste0(repo.dir, "ca-state-boundary/CA_State_TIGER2016.shp"))
@@ -84,7 +84,7 @@ for (d in as.list(dates)){
     dplyr::select(c("Date", "Site.Latitude", "Site.Longitude")) %>%
     filter(Date == d) %>%
     distinct() %>%
-    st_as_sf() %>%
+    st_as_sf(coords = c("Site.Longitude", "Site.Latitude"), crs = 4326, remove=FALSE) %>%
     st_transform(3310)
   day_fire <- rep_pts %>%
     filter(date == d)
@@ -111,8 +111,10 @@ for (d in as.list(dates)){
     day_aqs$med <- NA
     day_aqs$heavy <- NA    
   }
-  day_aqs <- as_tibble(day_aqs) %>%
-    dplyr::select(-geometry) %>%
+  
+  day_aqs <- day_aqs %>%
+    st_drop_geometry() %>%
+    as_tibble() %>%
     mutate(across(c("light", "med", "heavy"), as.double))
   
   # Clean up everything
@@ -125,7 +127,6 @@ for (d in as.list(dates)){
            closest_cl = coalesce(closest_cl.y, closest_cl.x)) %>% 
     dplyr::select(-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
   
-  in_cali_aqs <- st_drop_geometry(in_cali_aqs)
 }
 
 message("==========FINISHED MERGING==========")
