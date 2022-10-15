@@ -38,11 +38,11 @@ message("==========START READING==========")
 
 rep_pts <- rep_pts %>%
   st_as_sf() %>%
-  st_transform(3310)
+  st_set_crs(3310)
 
 in_cali_smoke <- st_read(paste0(data.smoke.dir, "2003_2015_smoke.shp")) %>%
   st_as_sf() %>%
-  st_transform(3310)
+  st_set_crs(3310)
 
 # Read AQS data and restrict to dates
 aqs <- read.delim(paste0(remote.aqs.dir, "MISR_AQS_Matched.csv"), sep=",", strip.white=TRUE, row.names=NULL)
@@ -89,6 +89,7 @@ for (d in as.list(dates)){
   
   if (dim(day_aqs)[1] == 0) next
   
+  message(st_crs(day_fire), st_crs(day_aqs))
   # Get closest cluster & distance
   if (dim(day_fire)[1] != 0){
     closest_fire <- st_nearest_feature(day_aqs, day_fire)
