@@ -102,7 +102,7 @@ for (y in years){
     
     # Clean up everything
     year_aqs <- year_aqs %>%
-      left_join(as_tibble(day_aqs), by=c("Date", "Latitude", "Longitude")) %>%
+      left_join(day_aqs, by=c("Date", "Latitude", "Longitude")) %>%
       mutate(light = coalesce(light.y, light.x),
              med = coalesce(med.y, med.x),
              heavy = coalesce(heavy.y, heavy.x),
