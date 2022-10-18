@@ -16,7 +16,7 @@ sf_use_s2(FALSE)
 data.smoke.dir = paste0(repo.dir, 'data/smoke/')
 
 # Specify the time range to examine
-years <- seq("2015", "2015", by=1)
+years <- seq("2003", "2022", by=1)
 months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
 
@@ -62,7 +62,7 @@ in_cali_smoke <- smoke[in_bound,] %>%
   mutate(geometry = replace(geometry, is.na(st_is_valid(geometry)), NA),
          area = units::set_units(st_area(geometry), value=km^2))
 
-st_write(in_cali_smoke, paste0(data.smoke.dir,"2015_smoke.shp"), append=FALSE)
+st_write(in_cali_smoke, paste0(data.smoke.dir,"2003_2022_smoke.shp"), append=FALSE)
 
 ## reset message sink and close the file connection
 sink(type="message")

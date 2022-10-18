@@ -16,7 +16,7 @@ data.smoke.dir = paste0(repo.dir, 'data/smoke/')
 remote.aqs.dir = '/home/huan1766/remoteproject/PM25-Research/Data/AQS Data/'
 
 # Convert dataframes to sf objects
-years <- seq("2003", "2015", by=1)
+years <- seq("2000", "2021", by=1)
 months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
 
@@ -38,7 +38,7 @@ rep_pts <- rep_pts %>%
   st_as_sf() %>%
   st_set_crs(3310)
 
-in_cali_smoke <- st_read(paste0(data.smoke.dir, "2003_2015_smoke.shp")) %>%
+in_cali_smoke <- st_read(paste0(data.smoke.dir, "2003_2022_smoke.shp")) %>%
   st_as_sf() %>%
   st_set_crs(3310)
 
@@ -57,7 +57,7 @@ aqs.annual <- vector("list", length = length(years))
 
 for(i in 1:length(years)){
   y <- years[i]
-  message("==========PROCESSING: ", y, " ==========")
+  message("==========PROCESSING: ", y, "==========")
   dates <- seq(as.Date(paste0(y, "-01-01")), as.Date(paste0(y, "-12-31")), by=1)
   year_aqs <- aqs %>%
     filter(format(as.POSIXct(Date, format="%Y-%m-%d"), format="%Y") == y)
@@ -118,7 +118,7 @@ for(i in 1:length(years)){
 aqs.merged <- do.call("rbind", aqs.annual)
 message("==========FINISHED MERGING==========")
 message("Merged dataset dimension: ", dim(aqs.merged)[1], " observations and ", dim(aqs.merged)[2], " features.")
-write.csv(aqs.merged, paste0(repo.dir, "data/merged/Merged_AQS_PM25_2000_2015_Cali.csv"), row.names = FALSE)
+write.csv(aqs.merged, paste0(repo.dir, "data/merged/Merged_AQS_PM25_2000_2021_Cali.csv"), row.names = FALSE)
 
 ## reset message sink and close the file connection
 sink(type="message")

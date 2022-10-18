@@ -17,10 +17,9 @@ remote.aqs.dir = '/home/huan1766/remoteproject/PM25-Research/Data/AQS-CSN Mergin
 data.aqs.dir = paste0(repo.dir, 'data/aqs/')
 
 # Convert dataframes to sf objects
-years <- seq("2003", "2015", by=1)
+years <- seq("2000", "2021", by=1)
 months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
-dates <- seq(as.Date("2003-01-01"), as.Date("2015-12-31"), by=1)
 
 all_files <- c()
 for (year in years){
@@ -35,22 +34,18 @@ for (year in years){
 datalist = lapply(all_files, function(x)st_read(paste0(data.fire.dir,x)))
 rep_pts <- do.call("rbind", datalist) 
 
+message("==========START READING==========")
 rep_pts <- rep_pts %>%
   st_as_sf() %>%
   st_set_crs(3310)
 
-in_cali_smoke <- st_read(paste0(data.smoke.dir, "2003_2015_smoke.shp")) %>%
+in_cali_smoke <- st_read(paste0(data.smoke.dir, "2003_2022_smoke.shp")) %>%
   st_as_sf() %>%
   st_set_crs(3310)
 
 # Read AQS data and restrict to dates
 unzip(paste0(remote.aqs.dir, "AQS_CSN_Data_2000_2021.zip"), exdir = data.aqs.dir)
 aqs <- read.delim(paste0(data.aqs.dir, "AQS_CSN_Data_2000_2021.csv"), sep=",", strip.white=TRUE)
-
-aqs <- read.delim("Merged_AQS_CSN_2000_2015.csv", sep=",", strip.white=TRUE, row.names=NULL)
-
-# aqs <- aqs %>%
-#   filter(Date %in% as.character(dates))
 
 # Create geometry object for coordinates (used for sf calculations)
 aqs <- aqs %>%
@@ -74,43 +69,76 @@ in_cali_aqs <- aqs[in_bound,]
 in_cali_aqs <- in_cali_aqs %>%
   mutate(fire_dist=NA,closest_cl=NA, light=NA, med=NA, heavy=NA)
 
-for (d in as.list(dates)){
-  day_smoke <- in_cali_smoke %>%
-    filter(date == d)
-  day_aqs <- in_cali_aqs %>%
-    dplyr::select(c("PM25", "Date", "Latitude", "Longitude")) %>%
-    filter(Date == d)
-  day_fire <- rep_pts %>%
-    filter(date == d)
-  
-  if (dim(day_aqs)[1] == 0 | dim(day_fire)[1] == 0) next
-  
-  # Get closest cluster & distance
-  closest_fire <- st_nearest_feature(day_aqs, day_fire)
-  day_aqs$fire_dist <- units::set_units(st_distance(day_aqs$geometry, day_fire[closest_fire,]$geometry, by_element = TRUE), value=km)
-  day_aqs$closest_cl <- day_fire[closest_fire,]$cluster
+message("==========FINISHED READING==========")
+message("Original dataset dimension: ", dim(in_cali_aqs)[1], " observations and ", dim(in_cali_aqs)[2], " features.")
 
-  # Get indicator variables
-  smoke_regions <- st_intersects(day_aqs$geometry, day_smoke$geometry)
-  day_aqs$light <- lapply(smoke_regions, function(x)ifelse('Light' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
-  day_aqs$med <- lapply(smoke_regions, function(x)ifelse('Medium' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
-  day_aqs$heavy <- lapply(smoke_regions, function(x)ifelse('Heavy' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
-  day_aqs <- as_tibble(day_aqs) %>%
-    dplyr::select(-geometry) %>%
-    mutate(across(c("light", "med", "heavy"), as.double))
+message("==========START MERGING==========")
+aqs.annual <- vector("list", length = length(years))
 
-  # Clean up everything
-  in_cali_aqs <- in_cali_aqs %>%
-    left_join(as_tibble(day_aqs), by=c("PM25", "Date", "Latitude", "Longitude")) %>%
-    mutate(light = coalesce(light.y, light.x),
-           med = coalesce(med.y, med.x),
-           heavy = coalesce(heavy.y, heavy.x),
-           fire_dist = coalesce(fire_dist.y, fire_dist.x),
-           closest_cl = coalesce(closest_cl.y, closest_cl.x)) %>% 
-    dplyr::select(-geometry,-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
+for(i in 1:length(years)){
+  y <- years[i]
+  message("==========PROCESSING: ", y, "==========")
+  dates <- seq(as.Date(paste0(y, "-01-01")), as.Date(paste0(y, "-12-31")), by=1)
+  year_aqs <- in_cali_aqs %>%
+    filter(format(as.POSIXct(Date, format="%Y-%m-%d"), format="%Y") == y)
+  for (d in as.list(dates)){
+    day_smoke <- in_cali_smoke %>%
+      filter(date == d)
+    day_aqs <- year_aqs %>%
+      dplyr::select(c("Date", "Latitude", "Longitude")) %>%
+      filter(Date == d) %>%
+      distinct() %>%
+      st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove=FALSE) %>%
+      st_transform(3310)
+    day_fire <- rep_pts %>%
+      filter(date == d)
+    
+    if (dim(day_aqs)[1] == 0) next
+    
+    # Get closest cluster & distance
+    if (dim(day_fire)[1] != 0){
+      closest_fire <- st_nearest_feature(day_aqs, day_fire)
+      day_aqs$fire_dist <- units::set_units(st_distance(day_aqs$geometry, day_fire[closest_fire,], by_element=TRUE), value=km)
+      day_aqs$closest_cl <- day_fire[closest_fire,]$cluster
+    } else{
+      day_aqs$fire_dist <- NA
+      day_aqs$closest_cl <- NA
+    }
+    # Get indicator variables
+    if (dim(day_smoke)[1] != 0){
+      smoke_regions <- st_intersects(day_aqs$geometry, day_smoke$geometry)
+      day_aqs$light <- lapply(smoke_regions, function(x)ifelse('Light' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
+      day_aqs$med <- lapply(smoke_regions, function(x)ifelse('Medium' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
+      day_aqs$heavy <- lapply(smoke_regions, function(x)ifelse('Heavy' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
+    } else{
+      day_aqs$light <- NA
+      day_aqs$med <- NA
+      day_aqs$heavy <- NA
+    }
+    
+    day_aqs <- day_aqs %>%
+      st_drop_geometry() %>%
+      as_tibble() %>%
+      mutate(across(c("light", "med", "heavy"), as.double))
+    
+    # Clean up everything
+    year_aqs <- year_aqs %>%
+      left_join(day_aqs, by=c("Date", "Latitude", "Longitude")) %>%
+      mutate(light = coalesce(light.y, light.x),
+             med = coalesce(med.y, med.x),
+             heavy = coalesce(heavy.y, heavy.x),
+             fire_dist = coalesce(fire_dist.y, fire_dist.x),
+             closest_cl = coalesce(closest_cl.y, closest_cl.x)) %>% 
+      dplyr::select(-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
+  } 
+  aqs.annual[[i]] <- year_aqs
+  message("==========FINISHED: ", y, " ==========")  
 }
 
-write.csv(in_cali_aqs,paste0(repo.dir, "data/merged/Merged_AQS_CSN_2000_2015.csv"), row.names = FALSE)
+aqs.merged <- do.call("rbind", aqs.annual)
+message("==========FINISHED MERGING==========")
+message("Merged dataset dimension: ", dim(aqs.merged)[1], " observations and ", dim(aqs.merged)[2], " features.")
+write.csv(aqs.merged, paste0(repo.dir, "data/merged/Merged_AQS_CSN_2000_2021_Cali.csv"), row.names = FALSE)
 
 ## reset message sink and close the file connection
 sink(type="message")
