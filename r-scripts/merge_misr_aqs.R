@@ -31,7 +31,8 @@ for (year in years){
 
 # Read all rep pts
 datalist = lapply(all_files, function(x)st_read(paste0(data.fire.dir,x)))
-rep_pts <- do.call("rbind", datalist) 
+shpfiles <- lapply(datalist, function(x) {st_crs(x) <- 3310; x})
+rep_pts <- do.call("rbind", shpfiles) 
 
 message("==========START READING==========")
 
