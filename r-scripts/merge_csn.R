@@ -56,7 +56,8 @@ message("Original dataset dimension: ", dim(csn)[1], " observations and ", dim(c
 message("==========START MERGING==========")
 csn.annual <- vector("list", length = length(years))
 
-for (y in years){
+for(i in 1:length(years)){
+  y <- years[i]
   message("==========PROCESSING: ", y, " ==========")
   dates <- seq(as.Date(paste0(y, "-01-01")), as.Date(paste0(y, "-12-31")), by=1)
   year_csn <- csn %>%
