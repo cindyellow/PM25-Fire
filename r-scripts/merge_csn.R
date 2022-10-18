@@ -16,7 +16,7 @@ data.smoke.dir = paste0(repo.dir, 'data/smoke/')
 remote.csn.dir = '/home/huan1766/remoteproject/PM25-Research/Data/CSN Data/'
 
 # Convert dataframes to sf objects
-years <- seq("2003", "2015", by=1)
+years <- seq("2000", "2021", by=1)
 months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
 
@@ -31,15 +31,15 @@ for (year in years){
 
 # Read all rep pts
 datalist = lapply(all_files, function(x)st_read(paste0(data.fire.dir,x)))
-rep_pts <- do.call("rbind", datalist) 
+shpfiles <- lapply(datalist, function(x) {st_crs(x) <- 3310; x})
+rep_pts <- do.call("rbind", shpfiles) 
 
 message("==========START READING==========")
 
 rep_pts <- rep_pts %>%
-  st_as_sf() %>%
-  st_set_crs(3310)
+  st_as_sf() 
 
-in_cali_smoke <- st_read(paste0(data.smoke.dir, "2003_2015_smoke.shp")) %>%
+in_cali_smoke <- st_read(paste0(data.smoke.dir, "2003_2022_smoke.shp")) %>%
   st_as_sf() %>%
   st_set_crs(3310)
 
@@ -58,7 +58,7 @@ csn.annual <- vector("list", length = length(years))
 
 for(i in 1:length(years)){
   y <- years[i]
-  message("==========PROCESSING: ", y, " ==========")
+  message("==========PROCESSING: ", y, "==========")
   dates <- seq(as.Date(paste0(y, "-01-01")), as.Date(paste0(y, "-12-31")), by=1)
   year_csn <- csn %>%
     filter(format(as.POSIXct(Date, format="%Y-%m-%d"), format="%Y") == y)
@@ -113,7 +113,7 @@ for(i in 1:length(years)){
       dplyr::select(-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
   }
   csn.annual[[i]] <- year_csn
-  message("==========FINISHED: ", y, " ==========")
+  message("==========FINISHED: ", y, "==========")
 }
 
 csn.merged <- do.call("rbind", csn.annual)
