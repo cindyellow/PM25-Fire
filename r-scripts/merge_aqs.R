@@ -95,7 +95,7 @@ for (y in years){
       day_aqs$heavy <- NA
     }
     
-    day_aqs <- as_tibble(day_aqs) %>%
+    day_aqs <- day_aqs %>%
       st_drop_geometry() %>%
       as_tibble() %>%
       mutate(across(c("light", "med", "heavy"), as.double))

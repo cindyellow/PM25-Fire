@@ -96,7 +96,7 @@ for (y in years){
       day_csn$heavy <- NA
     }
     
-    day_csn <- as_tibble(day_csn) %>%
+    day_csn <- day_csn %>%
       st_drop_geometry() %>%
       as_tibble() %>%
       mutate(across(c("light", "med", "heavy"), as.double))
