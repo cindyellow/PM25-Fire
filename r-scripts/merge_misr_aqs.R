@@ -84,10 +84,10 @@ for(i in 1:length(years)){
     day_smoke <- in_cali_smoke %>%
       filter(date == d)
     day_aqs <- year_aqs %>%
-      dplyr::select(c("Date", "Site.Longitude", "Site.Longitude")) %>%
+      dplyr::select(c("Date", "Site.Latitude", "Site.Longitude")) %>%
       filter(Date == d) %>%
       distinct() %>%
-      st_as_sf(coords = c("Site.Longitude", "Site.Longitude"), crs = 4326, remove=FALSE) %>%
+      st_as_sf(coords = c("Site.Latitude", "Site.Longitude"), crs = 4326, remove=FALSE) %>%
       st_transform(3310)
     day_fire <- rep_pts %>%
       filter(date == d)
