@@ -50,8 +50,8 @@ csn <- read.delim(paste0(remote.csn.dir, "CSN_PM25_SPEC_2000_2021_Cali.csv"), se
 csn <- csn %>%
   mutate(fire_dist=NA,closest_cl=NA, light=NA, med=NA, heavy=NA)
 
-message("Original dataset dimension: ", dim(csn)[1], " observations and ", dim(csn)[2], " features.")
 message("==========FINISHED READING==========")
+message("Original dataset dimension: ", dim(csn)[1], " observations and ", dim(csn)[2], " features.")
 
 message("==========START MERGING==========")
 csn.annual <- vector("list", length = length(years))
@@ -116,7 +116,7 @@ for (y in years){
 }
 
 csn.merged <- do.call("rbind", csn.annual)
-message("==========FINISHED ALL MERGING==========")
+message("==========FINISHED MERGING==========")
 message("Merged dataset dimension: ", dim(csn.merged)[1], " observations and ", dim(csn.merged)[2], " features.")
 write.csv(csn.merged, paste0(repo.dir, "data/merged/Merged_CSN_PM25_SPEC_2000_2015_Cali.csv"), row.names = FALSE)
 
