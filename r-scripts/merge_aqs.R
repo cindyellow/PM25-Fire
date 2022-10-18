@@ -45,13 +45,6 @@ in_cali_smoke <- st_read(paste0(data.smoke.dir, "2003_2015_smoke.shp")) %>%
 
 # Read AQS data and restrict to dates
 aqs <- read.delim(paste0(remote.aqs.dir, "AQS_PM25_2000_2021_Cali.csv"), sep=",", strip.white=TRUE)
-# aqs <- aqs %>%
-#   filter(Date %in% as.character(dates))
-
-# Create geometry object for coordinates (used for sf calculations)
-aqs <- aqs %>%
-  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove=FALSE) %>%
-  st_transform(3310)
 
 # Set default values for smoke indicator variables
 aqs <- aqs %>%
@@ -67,7 +60,9 @@ for (d in as.list(dates)){
   day_aqs <- aqs %>%
     dplyr::select(c("Date", "Latitude", "Longitude")) %>%
     filter(Date == d) %>%
-    distinct()
+    distinct() %>%
+    st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove=FALSE) %>%
+    st_transform(3310)
   day_fire <- rep_pts %>%
     filter(date == d)
   
@@ -95,7 +90,8 @@ for (d in as.list(dates)){
   }
   
   day_aqs <- as_tibble(day_aqs) %>%
-    dplyr::select(-geometry) %>%
+    st_drop_geometry() %>%
+    as_tibble() %>%
     mutate(across(c("light", "med", "heavy"), as.double))
   
   # Clean up everything
@@ -108,7 +104,6 @@ for (d in as.list(dates)){
            closest_cl = coalesce(closest_cl.y, closest_cl.x)) %>% 
     dplyr::select(-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
   
-  aqs <- st_drop_geometry(aqs)
 }
 
 message("==========FINISHED MERGING==========")

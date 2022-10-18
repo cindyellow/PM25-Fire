@@ -1,4 +1,4 @@
-### For merging AQS
+### For merging csn
 repo.dir = '/data/home/huan1766/PM25-Fire/'
 
 ## Capture messages and errors to a file.
@@ -34,6 +34,8 @@ for (year in years){
 datalist = lapply(all_files, function(x)st_read(paste0(data.fire.dir,x)))
 rep_pts <- do.call("rbind", datalist) 
 
+message("==========START READING==========")
+
 rep_pts <- rep_pts %>%
   st_as_sf() %>%
   st_set_crs(3310)
@@ -42,57 +44,73 @@ in_cali_smoke <- st_read(paste0(data.smoke.dir, "2003_2015_smoke.shp")) %>%
   st_as_sf() %>%
   st_set_crs(3310)
 
-# Read AQS data and restrict to dates
-aqs <- read.delim(paste0(remote.csn.dir, "CSN_PM25_SPEC_2000_2021_Cali.csv"), sep=",", strip.white=TRUE)
-# aqs <- aqs %>%
-#   filter(Date %in% as.character(dates))
-
-# Create geometry object for coordinates (used for sf calculations)
-aqs <- aqs %>%
-  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove=FALSE) %>%
-  st_transform(3310)
+# Read csn data and restrict to dates
+csn <- read.delim(paste0(remote.csn.dir, "CSN_PM25_SPEC_2000_2021_Cali.csv"), sep=",", strip.white=TRUE)
 
 # Set default values for smoke indicator variables
-aqs <- aqs %>%
+csn <- csn %>%
   mutate(fire_dist=NA,closest_cl=NA, light=NA, med=NA, heavy=NA)
+
+message(dim(csn)[1])
+message("==========FINISHED READING==========")
+
+message("==========START MERGING==========")
 
 for (d in as.list(dates)){
   day_smoke <- in_cali_smoke %>%
     filter(date == d)
-  day_aqs <- aqs %>%
+  day_csn <- csn %>%
     dplyr::select(c("Date", "Latitude", "Longitude")) %>%
-    filter(Date == d)
+    filter(Date == d) %>%
+    distinct() %>%
+    st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, remove=FALSE) %>%
+    st_transform(3310)
   day_fire <- rep_pts %>%
     filter(date == d)
   
-  if (dim(day_aqs)[1] == 0 | dim(day_fire)[1] == 0) next
+  if (dim(day_csn)[1] == 0) next
   
   # Get closest cluster & distance
-  closest_fire <- st_nearest_feature(day_aqs, day_fire)
-  day_aqs$fire_dist <- units::set_units(st_distance(day_aqs$geometry, day_fire[closest_fire,]$geometry, by_element = TRUE), value=km)
-  day_aqs$closest_cl <- day_fire[closest_fire,]$cluster
-
+  if (dim(day_fire)[1] != 0){
+    closest_fire <- st_nearest_feature(day_csn, day_fire)
+    day_csn$fire_dist <- units::set_units(st_distance(day_csn$geometry, day_fire[closest_fire,], by_element=TRUE), value=km)
+    day_csn$closest_cl <- day_fire[closest_fire,]$cluster
+  } else{
+    day_csn$fire_dist <- NA
+    day_csn$closest_cl <- NA
+  }
   # Get indicator variables
-  smoke_regions <- st_intersects(day_aqs$geometry, day_smoke$geometry)
-  day_aqs$light <- lapply(smoke_regions, function(x)ifelse('Light' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
-  day_aqs$med <- lapply(smoke_regions, function(x)ifelse('Medium' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
-  day_aqs$heavy <- lapply(smoke_regions, function(x)ifelse('Heavy' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
-  day_aqs <- as_tibble(day_aqs) %>%
-    dplyr::select(-geometry) %>%
+  if (dim(day_smoke)[1] != 0){
+    smoke_regions <- st_intersects(day_csn$geometry, day_smoke$geometry)
+    day_csn$light <- lapply(smoke_regions, function(x)ifelse('Light' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
+    day_csn$med <- lapply(smoke_regions, function(x)ifelse('Medium' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
+    day_csn$heavy <- lapply(smoke_regions, function(x)ifelse('Heavy' %in% unique(day_smoke[unlist(x),]$density), 1, 0))
+  } else{
+    day_csn$light <- NA
+    day_csn$med <- NA
+    day_csn$heavy <- NA
+  }
+  
+  day_csn <- as_tibble(day_csn) %>%
+    st_drop_geometry() %>%
+    as_tibble() %>%
     mutate(across(c("light", "med", "heavy"), as.double))
-
+  
   # Clean up everything
-  aqs <- aqs %>%
-    left_join(as_tibble(day_aqs), by=c("Date", "Latitude", "Longitude")) %>%
+  csn <- csn %>%
+    left_join(as_tibble(day_csn), by=c("Date", "Latitude", "Longitude")) %>%
     mutate(light = coalesce(light.y, light.x),
            med = coalesce(med.y, med.x),
            heavy = coalesce(heavy.y, heavy.x),
            fire_dist = coalesce(fire_dist.y, fire_dist.x),
            closest_cl = coalesce(closest_cl.y, closest_cl.x)) %>% 
-    dplyr::select(-geometry,-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
+    dplyr::select(-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
+  
 }
 
-write.csv(aqs,paste0(repo.dir, "data/merged/Merged_CSN_PM25_SPEC_2000_2015_Cali.csv"), row.names = FALSE)
+message("==========FINISHED MERGING==========")
+message(dim(csn)[1])
+write.csv(csn,paste0(repo.dir, "data/merged/Merged_CSN_PM25_SPEC_2000_2015_Cali.csv"), row.names = FALSE)
 
 ## reset message sink and close the file connection
 sink(type="message")
