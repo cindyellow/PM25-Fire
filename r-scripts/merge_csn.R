@@ -119,7 +119,7 @@ for(i in 1:length(years)){
 csn.merged <- do.call("rbind", csn.annual)
 message("==========FINISHED MERGING==========")
 message("Merged dataset dimension: ", dim(csn.merged)[1], " observations and ", dim(csn.merged)[2], " features.")
-write.csv(csn.merged, paste0(repo.dir, "data/merged/Merged_CSN_PM25_SPEC_2000_2015_Cali.csv"), row.names = FALSE)
+write.csv(csn.merged, paste0(repo.dir, "data/merged/Merged_CSN_PM25_SPEC_2000_2021_Cali.csv"), row.names = FALSE)
 
 ## reset message sink and close the file connection
 sink(type="message")
