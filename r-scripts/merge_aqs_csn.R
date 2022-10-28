@@ -123,6 +123,7 @@ for(i in 1:length(years)){
     
     # Clean up everything
     year_aqs <- year_aqs %>%
+      st_drop_geometry() %>%
       left_join(day_aqs, by=c("Date", "Latitude", "Longitude")) %>%
       mutate(light = coalesce(light.y, light.x),
              med = coalesce(med.y, med.x),
