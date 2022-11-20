@@ -27,15 +27,27 @@ message("Original dataset dimension: ", dim(aqs)[1], " observations and ", dim(a
 message("==========START MERGING==========")
 aqs.annual <- vector("list", length = length(years))
 
+# Define custom read file function to skip over errors
+read_file <- function (file_path) {
+  return(tryCatch(st_read(file_path), error=function(e) {NULL}))
+}
+
 for(i in 1:length(years)){
   y <- years[i]
   message("==========PROCESSING: ", y, "==========")
   year_aqs <- aqs %>%
     filter(format(as.POSIXct(Date, format="%Y-%m-%d"), format="%Y") == y)
   cl_filename <- paste0(y, "_fire_cluster_info.shp")
-  year_cl <- st_read(paste0(data.fire.dir, "cluster_info/", y, "/", cl_filename)) %>%
+  year_cl <- read_file(paste0(data.fire.dir, "cluster_info/", y, "/", cl_filename)) %>%
     st_drop_geometry() %>%
-    dplyr::select(-date)
+    dplyr::select(-date, -area_km2)
+  if (is.null(year_cl)){
+    year_aqs$frp_avg <- NA
+    year_aqs$frp_vars <- NA
+    year_aqs$num_pts <- NA
+    aqs.annual[[i]] <- year_aqs
+    next
+  }
   year_aqs <- year_aqs %>%
     st_drop_geometry() %>%
     left_join(year_cl, by=c("closest_cl"="cluster"))
