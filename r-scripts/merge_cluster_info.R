@@ -38,9 +38,7 @@ for(i in 1:length(years)){
   year_aqs <- aqs %>%
     filter(format(as.POSIXct(Date, format="%Y-%m-%d"), format="%Y") == y)
   cl_filename <- paste0(y, "_fire_cluster_info.shp")
-  year_cl <- read_file(paste0(data.fire.dir, "cluster_info/", y, "/", cl_filename)) %>%
-    st_drop_geometry() %>%
-    dplyr::select(-date, -area_km2)
+  year_cl <- read_file(paste0(data.fire.dir, "cluster_info/", y, "/", cl_filename))
   if (is.null(year_cl)){
     year_aqs$frp_avg <- NA
     year_aqs$frp_vars <- NA
@@ -48,6 +46,9 @@ for(i in 1:length(years)){
     aqs.annual[[i]] <- year_aqs
     next
   }
+  year_cl <- year_cl %>%
+    st_drop_geometry() %>%
+    dplyr::select(-date, -area_km2)
   year_aqs <- year_aqs %>%
     st_drop_geometry() %>%
     left_join(year_cl, by=c("closest_cl"="cluster"))
