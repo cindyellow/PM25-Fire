@@ -131,7 +131,7 @@ for(i in 1:length(years)){
              heavy = coalesce(heavy.y, heavy.x),
              fire_dist = coalesce(fire_dist.y, fire_dist.x),
              closest_cl = coalesce(closest_cl.y, closest_cl.x)) %>% 
-      a(-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
+      dplyr::select(-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
   }
   aqs.annual[[i]] <- year_aqs
   message("==========FINISHED: ", y, " ==========")  
