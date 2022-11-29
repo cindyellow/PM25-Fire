@@ -37,7 +37,8 @@ rep_pts <- do.call("rbind", shpfiles)
 message("==========START READING==========")
 
 rep_pts <- rep_pts %>%
-  st_as_sf()
+  st_as_sf() %>% 
+  st_set_crs(3310)
 
 in_cali_smoke <- st_read(paste0(data.smoke.dir, "2003_2022_smoke.shp")) %>%
   st_as_sf() %>%
