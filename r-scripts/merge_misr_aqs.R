@@ -100,7 +100,6 @@ for(i in 1:length(years)){
       closest_fire <- st_nearest_feature(day_aqs, day_fire)
       day_aqs$fire_dist <- units::set_units(st_distance(day_aqs$geometry, day_fire[closest_fire,], by_element = TRUE), value=km)
       day_aqs$closest_cl <- day_fire[closest_fire,]$cluster
-      message("date: ", d, "all nas: ", all(is.na(day_aqs$closest_cl)))
     } else{
       day_aqs$fire_dist <- NA
       day_aqs$closest_cl <- NA    
@@ -124,7 +123,6 @@ for(i in 1:length(years)){
     
     # Clean up everything
     year_aqs <- year_aqs %>%
-      st_drop_geometry() %>%
       left_join(day_aqs, by=c("Date", "Site.Latitude", "Site.Longitude")) %>%
       mutate(light = coalesce(light.y, light.x),
              med = coalesce(med.y, med.x),
@@ -132,9 +130,9 @@ for(i in 1:length(years)){
              fire_dist = coalesce(fire_dist.y, fire_dist.x),
              closest_cl = coalesce(closest_cl.y, closest_cl.x)) %>% 
       dplyr::select(-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
-    cls <- year_aqs %>% filter(Date == d) %>% select(closest_cl) %>% unique()
-    message("date: ", d, "all nas 2: ", all(is.na(cls)))
   }
+  year_aqs <- year_aqs %>%
+    st_drop_geometry()
   aqs.annual[[i]] <- year_aqs
   message("==========FINISHED: ", y, " ==========")  
 }
