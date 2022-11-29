@@ -97,7 +97,7 @@ for(i in 1:length(years)){
     # Get closest cluster & distance
     if (dim(day_fire)[1] != 0){
       closest_fire <- st_nearest_feature(day_aqs, day_fire)
-      day_aqs$fire_dist <- units::set_units(st_distance(day_aqs$geometry, day_fire[closest_fire,]$geometry, by_element = TRUE), value=km)
+      day_aqs$fire_dist <- units::set_units(st_distance(day_aqs$geometry, day_fire[closest_fire,], by_element = TRUE), value=km)
       day_aqs$closest_cl <- day_fire[closest_fire,]$cluster
     } else{
       day_aqs$fire_dist <- NA
