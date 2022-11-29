@@ -61,7 +61,7 @@ for(i in 1:length(years)){
 aqs.merged <- do.call("rbind", aqs.annual)
 message("==========FINISHED MERGING==========")
 message("Merged dataset dimension: ", dim(aqs.merged)[1], " observations and ", dim(aqs.merged)[2], " features.")
-write.csv(aqs.merged, paste0(repo.dir, "data/merged/WithCL_MISR_AQS_PM25_2000_2021_Cali.csv"), row.names = FALSE)
+write.csv(aqs.merged, paste0(repo.dir, "data/merged/WithCL_MISR_AQS_2000_2021.csv"), row.names = FALSE)
 
 ## reset message sink and close the file connection
 sink(type="message")
