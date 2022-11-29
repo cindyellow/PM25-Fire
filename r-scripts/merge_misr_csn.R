@@ -122,7 +122,6 @@ for(i in 1:length(years)){
     
     # Clean up everything
     year_csn <- year_csn %>%
-      st_drop_geometry() %>%
       left_join(day_csn, by=c("Date", "Site.Latitude", "Site.Longitude")) %>%
       mutate(light = coalesce(light.y, light.x),
              med = coalesce(med.y, med.x),
@@ -131,6 +130,8 @@ for(i in 1:length(years)){
              closest_cl = coalesce(closest_cl.y, closest_cl.x)) %>% 
       dplyr::select(-light.x, -light.y, -med.x, -med.y, -heavy.x, -heavy.y, -fire_dist.x, -fire_dist.y, -closest_cl.x, -closest_cl.y)
   }
+  year_csn <- year_csn %>%
+    st_drop_geometry()
   csn.annual[[i]] <- year_csn
   message("==========FINISHED: ", y, " ==========")  
 }
