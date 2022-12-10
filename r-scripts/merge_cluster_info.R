@@ -39,16 +39,23 @@ for(i in 1:length(years)){
     filter(format(as.POSIXct(Date, format="%Y-%m-%d"), format="%Y") == y)
   cl_filename <- paste0(y, "_fire_cluster_info.shp")
   year_cl <- read_file(paste0(data.fire.dir, "cluster_info/", y, "/", cl_filename))
+  rep_filename <- paste0(y, "_fire_rep_pts.shp")
+  year_reps <- read_file(paste0(data.fire.dir, "rep_pts/", y, "/", rep_filename))
   if (is.null(year_cl)){
     year_aqs$frp_avg <- NA
     year_aqs$frp_vars <- NA
     year_aqs$num_pts <- NA
+    year_aqs$ecosys <- NA
     aqs.annual[[i]] <- year_aqs
     next
   }
+  year_reps <- year_reps %>%
+    st_drop_geometry() %>%
+    select(cluster, ecosys)
   year_cl <- year_cl %>%
     st_drop_geometry() %>%
     mutate(date = as.character(date)) %>%
+    inner_join(year_reps, by=c("cluster")) %>%
     dplyr::select(-area_km2)
   year_aqs <- year_aqs %>%
     st_drop_geometry() %>%
