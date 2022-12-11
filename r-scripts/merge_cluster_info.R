@@ -51,7 +51,7 @@ for(i in 1:length(years)){
   }
   year_reps <- year_reps %>%
     st_drop_geometry() %>%
-    select(cluster, ecosys)
+    dplyr::select(cluster, ecosys)
   year_cl <- year_cl %>%
     st_drop_geometry() %>%
     mutate(date = as.character(date)) %>%
