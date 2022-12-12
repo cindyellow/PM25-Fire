@@ -37,8 +37,6 @@ for(i in 1:length(years)){
   message("==========PROCESSING: ", y, "==========")
   year_aqs <- aqs %>%
     filter(format(as.POSIXct(Date, format="%Y-%m-%d"), format="%Y") == y)
-  # cl_filename <- paste0(y, "_fire_cluster_info.shp")
-  # year_cl <- read_file(paste0(data.fire.dir, "cluster_info/", y, "/", cl_filename))
   rep_filename <- paste0(y, "_fire_rep_pts.shp")
   year_reps <- read_file(paste0(data.fire.dir, "rep_pts/", y, "/", rep_filename))
   if (is.null(year_reps)){
@@ -53,11 +51,6 @@ for(i in 1:length(years)){
     st_drop_geometry() %>%
     mutate(date = as.character(date)) %>%
     dplyr::select(cluster, date, ecosys, frp_avg, frp_vrs, num_pts)
-  # year_cl <- year_cl %>%
-  #   st_drop_geometry() %>%
-  #   mutate(date = as.character(date)) %>%
-  #   inner_join(year_reps, by="cluster") %>%
-  #   dplyr::select(-area_km2)
   year_aqs <- year_aqs %>%
     st_drop_geometry() %>%
     left_join(year_reps, by=c("closest_cl"="cluster", "Date" = "date")) %>%
