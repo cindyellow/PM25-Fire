@@ -55,11 +55,12 @@ for(i in 1:length(years)){
   year_cl <- year_cl %>%
     st_drop_geometry() %>%
     mutate(date = as.character(date)) %>%
-    inner_join(year_reps, by="cluster") %>%
+    # inner_join(year_reps, by="cluster") %>%
     dplyr::select(-area_km2)
   year_aqs <- year_aqs %>%
     st_drop_geometry() %>%
-    left_join(year_cl, by=c("closest_cl"="cluster", "Date" = "date"))
+    left_join(year_cl, by=c("closest_cl"="cluster", "Date" = "date")) %>%
+    left_join(year_reps, by=c("closest_cl"="cluster"))
   aqs.annual[[i]] <- year_aqs
   message("==========FINISHED: ", y, "==========")
 }
