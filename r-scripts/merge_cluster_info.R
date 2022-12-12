@@ -37,11 +37,11 @@ for(i in 1:length(years)){
   message("==========PROCESSING: ", y, "==========")
   year_aqs <- aqs %>%
     filter(format(as.POSIXct(Date, format="%Y-%m-%d"), format="%Y") == y)
-  cl_filename <- paste0(y, "_fire_cluster_info.shp")
-  year_cl <- read_file(paste0(data.fire.dir, "cluster_info/", y, "/", cl_filename))
+  # cl_filename <- paste0(y, "_fire_cluster_info.shp")
+  # year_cl <- read_file(paste0(data.fire.dir, "cluster_info/", y, "/", cl_filename))
   rep_filename <- paste0(y, "_fire_rep_pts.shp")
   year_reps <- read_file(paste0(data.fire.dir, "rep_pts/", y, "/", rep_filename))
-  if (is.null(year_cl)){
+  if (is.null(year_reps)){
     year_aqs$frp_avg <- NA
     year_aqs$frp_vars <- NA
     year_aqs$num_pts <- NA
@@ -51,18 +51,21 @@ for(i in 1:length(years)){
   }
   year_reps <- year_reps %>%
     st_drop_geometry() %>%
-    dplyr::select(cluster, ecosys)
-  year_cl <- year_cl %>%
-    st_drop_geometry() %>%
     mutate(date = as.character(date)) %>%
-    # inner_join(year_reps, by="cluster") %>%
-    dplyr::select(-area_km2)
+    dplyr::select(cluster, date, ecosys, frp_avg, frp_vrs, num_pts)
+  # year_cl <- year_cl %>%
+  #   st_drop_geometry() %>%
+  #   mutate(date = as.character(date)) %>%
+  #   inner_join(year_reps, by="cluster") %>%
+  #   dplyr::select(-area_km2)
   year_aqs <- year_aqs %>%
     st_drop_geometry() %>%
-    left_join(year_cl, by=c("closest_cl"="cluster", "Date" = "date")) %>%
-    left_join(year_reps, by=c("closest_cl"="cluster"))
+    left_join(year_reps, by=c("closest_cl"="cluster", "Date" = "date")) %>%
+    rename(frp_vars = frp_vrs)
+  
   aqs.annual[[i]] <- year_aqs
   message("==========FINISHED: ", y, "==========")
+  message("dim:", dim(year_aqs[2]))
 }
 
 aqs.merged <- do.call("rbind", aqs.annual)
