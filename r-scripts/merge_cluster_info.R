@@ -45,17 +45,17 @@ for(i in 1:length(years)){
     year_aqs$frp_avg <- NA
     year_aqs$frp_vars <- NA
     year_aqs$num_pts <- NA
-    year_aqs$ecosys <- NA
+    # year_aqs$ecosys <- NA
     aqs.annual[[i]] <- year_aqs
     next
   }
-  year_reps <- year_reps %>%
-    st_drop_geometry() %>%
-    dplyr::select(cluster, ecosys)
+  # year_reps <- year_reps %>%
+  #   st_drop_geometry() %>%
+  #   dplyr::select(cluster, ecosys)
   year_cl <- year_cl %>%
     st_drop_geometry() %>%
     mutate(date = as.character(date)) %>%
-    inner_join(year_reps, by=c("cluster")) %>%
+    # inner_join(year_reps, by=c("cluster")) %>%
     dplyr::select(-area_km2)
   year_aqs <- year_aqs %>%
     st_drop_geometry() %>%
