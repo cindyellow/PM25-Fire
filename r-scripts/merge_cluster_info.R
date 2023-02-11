@@ -19,7 +19,7 @@ months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
 
 message("==========START READING==========")
-aqs <- read.delim(paste0(repo.dir, "data/merged/Merged_MISR_AQS_Matched_2000_2021.csv"), sep=",", strip.white=T)
+aqs <- read.delim(paste0(repo.dir, "data/merged/Merged_MISR_CSN_Matched_2000_2021.csv"), sep=",", strip.white=T)
 
 message("==========FINISHED READING==========")
 message("Original dataset dimension: ", dim(aqs)[1], " observations and ", dim(aqs)[2], " features.")
@@ -64,7 +64,7 @@ for(i in 1:length(years)){
 aqs.merged <- do.call("rbind", aqs.annual)
 message("==========FINISHED MERGING==========")
 message("Merged dataset dimension: ", dim(aqs.merged)[1], " observations and ", dim(aqs.merged)[2], " features.")
-write.csv(aqs.merged, paste0(repo.dir, "data/merged/WithCL_MISR_AQS_2000_2021.csv"), row.names = FALSE)
+write.csv(aqs.merged, paste0(repo.dir, "data/merged/WithCL_MISR_CSN_2000_2021.csv"), row.names = FALSE)
 
 ## reset message sink and close the file connection
 sink(type="message")
