@@ -1,0 +1,170 @@
+****** Species: sulfate ******
+---- Experiment type: No AOD ----
+Training Features Shape: (1196, 18)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 18)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 0.89
+R2: 0.54
+---- Experiment type: AOD Only ----
+Training Features Shape: (1196, 19)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 19)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 0.76
+R2: 0.66
+---- Experiment type: Raw AOD & etc. ----
+Training Features Shape: (1196, 24)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 24)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 0.84
+R2: 0.59
+---- Experiment type: AOD Mix ----
+Training Features Shape: (1196, 92)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 92)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 0.78
+R2: 0.65
+================================================
+****** Species: nitrate ******
+---- Experiment type: No AOD ----
+Training Features Shape: (1196, 18)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 18)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 3.5
+R2: 0.23
+---- Experiment type: AOD Only ----
+Training Features Shape: (1196, 19)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 19)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 3.05
+R2: 0.41
+---- Experiment type: Raw AOD & etc. ----
+Training Features Shape: (1196, 24)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 24)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 2.75
+R2: 0.53
+---- Experiment type: AOD Mix ----
+Training Features Shape: (1196, 92)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 92)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 2.64
+R2: 0.56
+================================================
+****** Species: dust ******
+---- Experiment type: No AOD ----
+Training Features Shape: (1196, 18)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 18)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 1.14
+R2: 0.18
+---- Experiment type: AOD Only ----
+Training Features Shape: (1196, 19)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 19)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 1.18
+R2: 0.11
+---- Experiment type: Raw AOD & etc. ----
+Training Features Shape: (1196, 24)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 24)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 1.22
+R2: 0.06
+---- Experiment type: AOD Mix ----
+Training Features Shape: (1196, 92)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 92)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 1.31
+R2: -0.09
+================================================
+****** Species: EC_unadjusted ******
+---- Experiment type: No AOD ----
+Training Features Shape: (1196, 18)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 18)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 0.48
+R2: 0.49
+---- Experiment type: AOD Only ----
+Training Features Shape: (1196, 19)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 19)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 0.47
+R2: 0.51
+---- Experiment type: Raw AOD & etc. ----
+Training Features Shape: (1196, 24)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 24)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 0.47
+R2: 0.51
+---- Experiment type: AOD Mix ----
+Training Features Shape: (1196, 92)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 92)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 0.47
+R2: 0.51
+================================================
+****** Species: OC ******
+---- Experiment type: No AOD ----
+Training Features Shape: (1196, 18)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 18)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 1.16
+R2: 0.37
+---- Experiment type: AOD Only ----
+Training Features Shape: (1196, 19)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 19)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 1.15
+R2: 0.38
+---- Experiment type: Raw AOD & etc. ----
+Training Features Shape: (1196, 24)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 24)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 0.9
+R2: 0.62
+---- Experiment type: AOD Mix ----
+Training Features Shape: (1196, 92)
+Training Labels Shape: (1196,)
+Testing Features Shape: (513, 92)
+Testing Labels Shape: (513,)
+-- Performance --
+RMSE: 0.97
+R2: 0.55
+================================================
