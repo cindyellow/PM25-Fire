@@ -8,6 +8,8 @@ sink(zz, type="message")
 pkgs = c('dplyr', 'FedData', 'sf', 'raster')
 for(p in pkgs) require(p, character.only = T)
 rm(p, pkgs)
+new.packages <- pkgs[!(pkgs %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
 
 # Specify directory
 data.merged.dir = paste0(repo.dir, 'data/merged/')
