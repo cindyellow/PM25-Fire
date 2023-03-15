@@ -9,6 +9,8 @@ pkgs = c('dplyr', 'sf', 'raster')
 new.packages <- pkgs[!(pkgs %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 for(p in pkgs) require(p, character.only = T)
+new.packages <- pkgs[!(pkgs %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
 rm(p, pkgs)
 
 # Specify directory
