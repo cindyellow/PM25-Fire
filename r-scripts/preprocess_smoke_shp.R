@@ -14,6 +14,7 @@ sf_use_s2(FALSE)
 
 # Specify directory
 data.smoke.dir = paste0(repo.dir, 'data/smoke/')
+data.smoke.outdir = paste0(repo.dir, 'data/smoke_large/')
 
 # Specify the time range to examine
 years <- seq("2003", "2022", by=1)
@@ -45,7 +46,8 @@ smoke <- smoke %>%
   st_as_sf() 
 
 # Subset to California
-cal_bound <- st_read(paste0(repo.dir, "ca-state-boundary/CA_State_TIGER2016.shp"))
+# cal_bound <- st_read(paste0(repo.dir, "ca-state-boundary/CA_State_TIGER2016.shp"))
+cal_bound <- st_read(paste0(repo.dir, "data/CMAQ-boundary/CMAQboundary.shp"))
 cal_bound <- cal_bound %>%
   st_transform(3310)
 
@@ -62,7 +64,7 @@ in_cali_smoke <- smoke[in_bound,] %>%
   mutate(geometry = replace(geometry, is.na(st_is_valid(geometry)), NA),
          area = units::set_units(st_area(geometry), value=km^2))
 
-st_write(in_cali_smoke, paste0(data.smoke.dir,"2003_2022_smoke.shp"), append=FALSE)
+st_write(in_cali_smoke, paste0(data.smoke.outdir,"2003_2022_smoke.shp"), append=FALSE)
 
 ## reset message sink and close the file connection
 sink(type="message")
