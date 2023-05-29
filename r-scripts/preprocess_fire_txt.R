@@ -46,15 +46,15 @@ fire <- do.call("rbind", datalist)
 # Get sf geometry of coordinates
 fire <- fire %>%
   st_as_sf(coords = c("Lon", "Lat"), crs = 4326, remove=FALSE) %>%
-  st_transform(4326)
+  st_transform(3310)
 
 # Read in California's boundaries # 
 
 cal_bound <- st_read(paste0(repo.dir, "data/CMAQ-boundary/CMAQboundary.shp"))
 
-# Convert to the same coordinate system as HMS (4326)
+# Convert to the same coordinate system as HMS (3310)
 cal_bound <- cal_bound %>%
-  st_transform(4326)
+  st_transform(3310)
 
 # Get an array of whether each observation is in California
 in_bound <- lengths(st_intersects(fire, cal_bound))>0
@@ -211,7 +211,7 @@ for (y in years){
   for (d in as.list(dates)){
     day <- in_cali_fire %>%
       st_as_sf(coords = c("longitude", "latitude"), crs = 4326, remove=FALSE) %>%
-      st_transform(4326) %>%
+      st_transform(3310) %>%
       filter(date == d)
     
     cl <- build_best_cl(day)
