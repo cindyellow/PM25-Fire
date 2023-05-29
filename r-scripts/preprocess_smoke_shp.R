@@ -21,6 +21,8 @@ years <- seq("2003", "2022", by=1)
 months <- seq("01", "12", by=1)
 months[1:9] <- paste0("0",months[1:9])
 
+message("==========START READING==========")
+
 all_files <- c()
 for (year in years){
   for (month in months){
@@ -35,6 +37,9 @@ for (year in years){
 datalist <- lapply(all_files, function(x)read_sf(dsn = paste0(data.smoke.dir, x)))
 smoke <- do.call("rbind", datalist) 
 
+message("==========FINISHED READING==========")
+message("Original dataset dimension: ", dim(smoke)[1], " observations.")
+
 # Clean variables
 smoke <- smoke %>%
   st_transform(3310) %>%
@@ -46,7 +51,7 @@ smoke <- smoke %>%
   st_as_sf() 
 
 # Subset to California
-# cal_bound <- st_read(paste0(repo.dir, "ca-state-boundary/CA_State_TIGER2016.shp"))
+# cal_bound <- st_read(paste0(repo.dir, "data/ca-state-boundary/CA_State_TIGER2016.shp"))
 cal_bound <- st_read(paste0(repo.dir, "data/CMAQ-boundary/CMAQboundary.shp"))
 cal_bound <- cal_bound %>%
   st_transform(3310)
