@@ -171,7 +171,10 @@ get_rep_pts <- function(cl, day, cluster_info, k){
   return(reps)
 }
 
+message("==========START MERGING==========")
+
 for (y in years){
+  message("==========PROCESSING: ", y, "==========")
   # Get representative points and cluster information for all dates within range
   # Dataframes for storing all the info
   rep_pts <- data.frame(date=as.Date(character()),
@@ -231,6 +234,7 @@ for (y in years){
   ifelse(!dir.exists(file.path(data.fire.outdir, "rep_pts", y)), dir.create(file.path(data.fire.outdir, "rep_pts", y),recursive=TRUE), FALSE)
   st_write(cluster_info, paste0(data.fire.outdir, "cluster_info/", y, paste0("/", y,"_fire_cluster_info.shp")), append=FALSE)
   st_write(rep_pts, paste0(data.fire.outdir, "rep_pts/", y, paste0("/", y,"_fire_rep_pts.shp")), append=FALSE)
+  message("==========FINISHED: ", y, " ==========")  
 }
 ## reset message sink and close the file connection
 sink(type="message")
