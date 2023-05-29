@@ -24,6 +24,8 @@ months[1:9] <- paste0("0",months[1:9])
 
 minpts <- seq(5,100,by=5)
 
+message("==========START READING==========")
+
 all_files <- c()
 for (year in years){
   for (month in months){
@@ -86,6 +88,9 @@ in_cali_fire <- in_cali_fire %>%
                            format = "%Y-%m-%d %H:%M"),
     frp = na_if(frp, -999.000)
   ) 
+
+message("==========FINISHED READING==========")
+message("Original dataset dimension: ", dim(in_cali_fire)[1], " observations and ", dim(in_cali_fire)[2], " features.")
 
 # Function for finding best minpts for a day and building clusters based on that
 build_best_cl <- function(day){
