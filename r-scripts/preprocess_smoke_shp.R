@@ -58,7 +58,9 @@ cal_bound <- cal_bound %>%
 
 smoke <- smoke %>%
   st_as_sf(coords = c("Lon", "Lat"), crs = 4326, remove=FALSE) %>%
-  st_transform(3310) 
+  st_transform(3310) %>%
+  mutate(geometry = replace(geometry, is.na(st_is_valid(geometry)), NA))
+
 smoke$as_line <- st_cast(smoke$geometry, "MULTILINESTRING")
 smoke$count <- stringr::str_count(smoke$as_line, ",")
 smoke <- smoke %>%
@@ -66,8 +68,7 @@ smoke <- smoke %>%
 in_bound <- lengths(st_intersects(smoke$as_line, cal_bound))>0
 in_cali_smoke <- smoke[in_bound,] %>%
   select(-as_line, -count) %>%
-  mutate(geometry = replace(geometry, is.na(st_is_valid(geometry)), NA),
-         area = units::set_units(st_area(geometry), value=km^2))
+  mutate(area = units::set_units(st_area(geometry), value=km^2))
 
 st_write(in_cali_smoke, paste0(data.smoke.outdir,"2003_2022_smoke.shp"), append=FALSE)
 
