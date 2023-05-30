@@ -60,7 +60,7 @@ if (args[1]=='cali'){
 data.fire.dir = paste0(repo.dir, 'data/fire/')
 data.smoke.dir = paste0(repo.dir, 'data/smoke/')
 # Need to mount project beforehand
-remote.data.dir = paste0('/home/huan1766/remoteproject/PM25-Research/Data', remote.subdir)
+remote.data.dir = paste0('/home/huan1766/remoteproject/PM25-Research/Data/', remote.subdir)
 
 # Convert dataframes to sf objects
 years <- seq("2000", "2021", by=1)
