@@ -19,6 +19,9 @@ rm(p, pkgs)
 if (args[1]=='cali'){
   # California boundary
   bound <- st_read(paste0(repo.dir, "data/ca-state-boundary/CA_State_TIGER2016.shp"))
+  # Specify directory
+  data.fire.dir = paste0(repo.dir, 'data/fire/')
+  data.smoke.dir = paste0(repo.dir, 'data/smoke/')
   if (args[2]=='aqs'){
     remote.name <- 'AQS_PM25_2000_2021_Cali.csv'
     remote.subdir <- 'AQS Data/'
@@ -38,6 +41,9 @@ if (args[1]=='cali'){
 } else{
   # CMAQ boundary
   bound <- st_read(paste0(repo.dir, "data/CMAQ-boundary/CMAQboundary.shp"))
+  # Specify directory
+  data.fire.dir = paste0(repo.dir, 'data/fire_large/')
+  data.smoke.dir = paste0(repo.dir, 'data/smoke_large/')
   if (args[2]=='aqs'){
     remote.name <- 'AQS_PM25_2000_2021_USA.csv'
     remote.subdir <- 'AQS Data/'
@@ -55,10 +61,6 @@ if (args[1]=='cali'){
     remote.subdir <- 'MISR_Large/MISR_merged_data'
   }
 }
-
-# Specify directory
-data.fire.dir = paste0(repo.dir, 'data/fire/')
-data.smoke.dir = paste0(repo.dir, 'data/smoke/')
 # Need to mount project beforehand
 remote.data.dir = paste0('/home/huan1766/remoteproject/PM25-Research/Data/', remote.subdir)
 
