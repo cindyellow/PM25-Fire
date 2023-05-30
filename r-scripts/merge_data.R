@@ -31,7 +31,7 @@ if (args[1]=='cali'){
     remote.subdir <- 'CSN Data/'
   } else if (args[2] == 'aqs_csn'){
     remote.name <- 'AQS_CSN_Data_2000_2021.csv'
-    remote.subdir <- 'AQS-CSN Merging/'
+    remote.subdir <- 'data/aqs/'
   } else if (args[2] == 'misr_csn'){
     remote.name <- 'MISR_CSN_Matched.csv'
     remote.subdir <- 'MISR/MISR_merged_data/'
@@ -56,7 +56,7 @@ if (args[1]=='cali'){
     remote.subdir <- 'CSN Data/'
   } else if (args[2] == 'aqs_csn'){
     remote.name <- 'AQS_CSN_Data_2000_2021.csv'
-    remote.subdir <- 'AQS-CSN Merging/'
+    remote.subdir <- 'data/aqs/'
   } else if (args[2] == 'misr_csn'){
     remote.name <- 'MISR_CSN_Matched.csv'
     remote.subdir <- 'MISR_Large/MISR_merged_data/'
@@ -71,6 +71,11 @@ if (args[1]=='cali'){
 }
 # Need to mount project beforehand
 remote.data.dir = paste0('/home/huan1766/remoteproject/PM25-Research/Data/', remote.subdir)
+
+if (args[2] == 'aqs_csn'){
+  # unzipped and stored on PM25-Fire repo
+  remote.data.dir = paste0(repo.dir, remote.subdir)
+}
 
 # Convert dataframes to sf objects
 years <- seq("2000", "2021", by=1)
@@ -100,7 +105,7 @@ in_bound_smoke <- st_read(paste0(data.smoke.dir, "2003_2022_smoke.shp")) %>%
   st_as_sf() %>%
   st_set_crs(3310)
 
-# Read CSN data and restrict to dates
+# Read data and restrict to dates
 data <- read.delim(paste0(remote.data.dir, remote.name), sep=",", strip.white=TRUE, row.names=NULL)
 
 if ("Site.Longitude" %in% colnames(data) && "Site.Latitude" %in% colnames(data)){
