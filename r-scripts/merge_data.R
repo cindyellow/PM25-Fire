@@ -17,6 +17,7 @@ for(p in pkgs) require(p, character.only = T)
 rm(p, pkgs)
 
 if (args[1]=='cali'){
+  message("==========USING CALI BOUNDS==========")
   # California boundary
   bound <- st_read(paste0(repo.dir, "data/ca-state-boundary/CA_State_TIGER2016.shp"))
   # Specify directory
@@ -34,11 +35,14 @@ if (args[1]=='cali'){
   } else if (args[2] == 'misr_csn'){
     remote.name <- 'MISR_CSN_Matched.csv'
     remote.subdir <- 'MISR/MISR_merged_data/'
-  } else{
+  } else if (args[2] == 'misr_aqs'){
     remote.name <- 'MISR_AQS_Matched.csv'
     remote.subdir <- 'MISR/MISR_merged_data/'
+  } else{
+    stop("Invalid Arg2. Pick from the following: aqs, csn, aqs_csn, misr_csn, misr_aqs")
   }
-} else{
+} else if (args[1]=='cmaq'){
+  message("==========USING CMAQ BOUNDS==========")
   # CMAQ boundary
   bound <- st_read(paste0(repo.dir, "data/CMAQ-boundary/CMAQboundary.shp"))
   # Specify directory
@@ -56,10 +60,14 @@ if (args[1]=='cali'){
   } else if (args[2] == 'misr_csn'){
     remote.name <- 'MISR_CSN_Matched.csv'
     remote.subdir <- 'MISR_Large/MISR_merged_data'
-  } else{
+  } else if (args[2] == 'misr_aqs'){
     remote.name <- 'MISR_AQS_Matched.csv'
     remote.subdir <- 'MISR_Large/MISR_merged_data'
+  } else{
+    stop("Invalid Arg2. Pick from the following: aqs, csn, aqs_csn, misr_csn, misr_aqs")
   }
+} else{
+  stop("Invalid Arg1. Pick from the following: cali, cmaq")
 }
 # Need to mount project beforehand
 remote.data.dir = paste0('/home/huan1766/remoteproject/PM25-Research/Data/', remote.subdir)
