@@ -59,10 +59,10 @@ if (args[1]=='cali'){
     remote.subdir <- 'AQS-CSN Merging/'
   } else if (args[2] == 'misr_csn'){
     remote.name <- 'MISR_CSN_Matched.csv'
-    remote.subdir <- 'MISR_Large/MISR_merged_data'
+    remote.subdir <- 'MISR_Large/MISR_merged_data/'
   } else if (args[2] == 'misr_aqs'){
     remote.name <- 'MISR_AQS_Matched.csv'
-    remote.subdir <- 'MISR_Large/MISR_merged_data'
+    remote.subdir <- 'MISR_Large/MISR_merged_data/'
   } else{
     stop("Invalid Arg2. Pick from the following: aqs, csn, aqs_csn, misr_csn, misr_aqs")
   }
