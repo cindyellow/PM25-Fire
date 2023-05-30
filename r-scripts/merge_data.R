@@ -149,7 +149,7 @@ for(i in 1:length(years)){
       dplyr::select(c("Date", coords_name)) %>%
       filter(Date == d) %>%
       distinct() %>%
-      st_as_sf(coords = coords_names, crs = 4326, remove=FALSE) %>%
+      st_as_sf(coords = coords_name, crs = 4326, remove=FALSE) %>%
       st_transform(3310)
     day_fire <- rep_pts %>%
       filter(date == d)
