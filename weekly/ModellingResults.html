@@ -15307,7 +15307,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <ol start="3">
 <li>Dust</li>
 </ol>
-<p><img src="../img/imputed/wo-out/ft-imp/dust-aod_only-ft_imp_rf.png" width="450" height="400"/><img src="../img/imputed/wo-out/fitted/dust-aod_only-fitted_rf.png" width="450" height="400"/></p>
+<p><img src="../img/imputed/ft-imp/dust-aod_only-ft_imp_rf.png" width="450" height="400"/><img src="../img/imputed/fitted/dust-aod_only-fitted_rf.png" width="450" height="400"/></p>
 <ol start="4">
 <li>EC</li>
 </ol>
@@ -15315,7 +15315,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <ol start="5">
 <li>OC</li>
 </ol>
-<p><img src="../img/imputed/wo-out/ft-imp/OC-aod_prod-ft_imp_rf.png" width="450" height="400"/><img src="../img/imputed/wo-out/fitted/OC-aod_prod-fitted_rf.png" width="450" height="400"/></p>
+<p><img src="../img/imputed/ft-imp/OC-aod_prod-ft_imp_rf.png" width="450" height="400"/><img src="../img/imputed/fitted/OC-aod_prod-fitted_rf.png" width="450" height="400"/></p>
 <ul>
 <li>AOD is always in the top 2 when used in the model.</li>
 <li>Month and year are usually in the top 3 important features as well, followed by site location.</li>
@@ -15349,7 +15349,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h3 id="Outliers">Outliers<a class="anchor-link" href="#Outliers">&#182;</a></h3><ul>
 <li>916 outliers for PM2.5 were removed under the cutoff 38.1 in the model fitted on non-NAs. In the imputed model, there were 3894 outliers removed with the cutoff 37.37.</li>
-<li>Values less than 0 were also removed since they are likely due to error.</li>
+<li>Values less than 0 were replaced with 0 since they are likely due to error.</li>
 </ul>
 
 </div>
@@ -15417,7 +15417,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h3 id="Variable-Importance">Variable Importance<a class="anchor-link" href="#Variable-Importance">&#182;</a></h3><p>Now, let's take a look at the 10 most important features for the best model.</p>
-<img src="../img/PM25/PM25-aod_only-ft_imp_rf.png" width="500"/>
+<p><img src="../img/PM25/PM25-aod_only-ft_imp_rf.png" width="450" height="400"/><img src="../img/PM25/PM25-aod_only-fitted_rf.png" width="450" height="400"/></p>
 <ul>
 <li>We see similar variables as for all the species models.</li>
 <li><a href="https://www.mrlc.gov/data/legends/national-land-cover-database-class-legend-and-description">Land code 81</a> also appeared as significant. It refers to the ecosystem consisting of &quot;pasture/hay-areas of grasses, legumes, or grass-legume mixtures planted for livestock grazing or the production of seed or hay crops, typically on a perennial cycle. Pasture/hay vegetation accounts for greater than 20% of total vegetation.&quot;</li>
